@@ -1,0 +1,10 @@
+entrypoint = "index.js"
+modules = ["nodejs-20:v10-20231103-2b03dda"]
+hidden = [".config", "package-lock.json"]
+
+[nix]
+channel = "stable-23_05"
+
+[deployment]
+run = ["node", "index.js"]
+deploymentTarget = "cloudrun"
