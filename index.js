@@ -1,6 +1,7 @@
 // index.js
 import express from "express";
 import studentLoginRouter from "./routes/studentLogin.js";
+import adminLoginRouter from "./routes/adminLogin.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -26,4 +27,10 @@ app.use("/auth", studentLoginRouter);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+});
+
+app.use("/auth", adminLoginRouter);
+
+app.get("/admin-login", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin-login.html"));
 });
