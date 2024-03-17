@@ -20,7 +20,6 @@ dbConnection.connect((error) => {
 });
 
 // Route to handle the POST request from the login form
-
 router.post("/student-login", (req, res) => {
   const { std_id, std_password } = req.body;
   const query =
@@ -33,7 +32,7 @@ router.post("/student-login", (req, res) => {
       req.session.user = { std_id: results[0].std_id }; // Example of setting the session
       res.redirect("/student-dashboard");
     } else {
-      res.status(401).send("Invalid student ID or password");
+      res.redirect("/"); // Redirect to login page if authentication fails
     }
   });
 });
