@@ -1,11 +1,8 @@
-import express from "express";
+// db.js
 import mysql from "mysql";
 import dotenv from "dotenv";
 
 dotenv.config(); // Load environment variables from .env file
-
-const app = express();
-const port = process.env.PORT || 3001;
 
 // Configure database connection
 const dbConnection = mysql.createConnection({
@@ -15,26 +12,14 @@ const dbConnection = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
-let dbConnected = false; // Better to manage connection state locally or with more sophisticated state management
-
-// Attempt to connect to the database
+// Connect to the database
 dbConnection.connect((error) => {
-  dbConnected = !error;
   if (error) {
     console.error("Error connecting to the database:", error);
+    process.exit(1); // Stop the process if the database connection fails
   } else {
     console.log("Successfully connected to the database.");
   }
 });
 
-// Serve an HTML page with database connection status
-app.get("/", (req, res) => {
-  const htmlResponse = dbConnected
-    ? "<h1>Database Connection Successful</h1>"
-    : "<h1>Database Connection Failed</h1>";
-  res.send(htmlResponse);
-});
-
-app.listen(port, () => {
-  console.log(`Express server initialized on port ${port}`);
-});
+export default dbConnection;

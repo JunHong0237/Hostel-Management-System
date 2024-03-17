@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+  </head>
+  <body>
+    <h2>Student Dashboard</h2>
+    <div id="studentInfo">
+      <!-- Student information will be displayed here -->
+    </div>
+    <h3>Edit Profile</h3>
+    <form id="editProfileForm">
+      <div>
+        <label for="std_email">Email:</label>
+        <input type="email" id="std_email" name="std_email" required />
+      </div>
+      <div>
+        <label for="std_phone">Phone Number:</label>
+        <input type="text" id="std_phone" name="std_phone" required />
+      </div>
+      <div>
+        <label for="std_faculty">Faculty:</label>
+        <input type="text" id="std_faculty" name="std_faculty" required />
+      </div>
+      <div>
+        <label for="std_year">Year of Study:</label>
+        <input type="text" id="std_year" name="std_year" required />
+      </div>
+      <div>
+        <label for="std_state">State of Residence:</label>
+        <input type="text" id="std_state" name="std_state" required />
+      </div>
+      <div>
+        <label for="std_pref">Room Preference:</label>
+        <input type="text" id="std_pref" name="std_pref" required />
+      </div>
+      <button type="submit">Update Profile</button>
+    </form>
+
+    <div>
+      <h3>Room Summary</h3>
+      <button onclick="window.location.href='/add-room'">Add Room</button>
+    </div>
+
+    <script src="/js/studentDashboard.js"></script>
+  </body>
+</html>
