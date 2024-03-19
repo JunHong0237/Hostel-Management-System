@@ -1,15 +1,22 @@
 import express from "express";
+import dbConnection from "../db.js";
+
 const router = express.Router();
 
-// Assuming you're using the mysql connection setup from before
-//import dbConnection from "./dbConnection"; // Ensure you export dbConnection from your existing file
-// Update the import path to reference db.js from the root directory
-import dbConnection from "../db.js";
+// Middleware to check if a user is logged in
+function isAuthenticated(req, res, next) {
+  if (!req.session.user) {
+    return res.status(401).send("User not authenticated");
+  }
+  next();
+}
+
+// Apply isAuthenticated middleware to all routes in this router
+router.use(isAuthenticated);
 
 // Fetch student information
 router.get("/student-info", (req, res) => {
-  // Replace 'authenticatedStudentId' with actual logic to retrieve the logged-in student's ID
-  const studentId = req.session.authenticatedStudentId;
+  const studentId = req.session.user.std_id;
 
   const query =
     "SELECT std_id, std_fullName, std_gender, std_email, std_phone, std_faculty, std_year, std_state, std_pref FROM Student_Details WHERE std_id = ?";
@@ -27,10 +34,15 @@ router.get("/student-info", (req, res) => {
 
 // Update student information
 router.put("/student-info", (req, res) => {
-  // Extract the fields that can be updated
+  // Extract and validate the fields that can be updated
   const { std_email, std_phone, std_faculty, std_year, std_state, std_pref } =
     req.body;
-  const studentId = req.session.authenticatedStudentId; // Again, ensure you get the actual student ID from session or another auth mechanism
+  const studentId = req.session.user.std_id;
+
+  // Basic validation (Expand this based on your requirements)
+  if (!std_email || !std_phone) {
+    return res.status(400).send("Required fields are missing");
+  }
 
   const query =
     "UPDATE Student_Details SET std_email = ?, std_phone = ?, std_faculty = ?, std_year = ?, std_state = ?, std_pref = ? WHERE std_id = ?";
@@ -49,7 +61,12 @@ router.put("/student-info", (req, res) => {
       if (error) {
         return res.status(500).send("Error updating student information");
       }
-      return res.send("Profile updated successfully");
+      if (results.affectedRows > 0) {
+        return res.status(204).send(); // No content to send back
+      } else {
+        // No records updated, could be because the student ID didn't match
+        return res.status(404).send("Student not found or no changes made.");
+      }
     },
   );
 });
