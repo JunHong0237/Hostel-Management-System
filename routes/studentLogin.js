@@ -38,7 +38,7 @@ router.post("/student-login", (req, res) => {
           res.status(500).send("Failed to save session");
         } else {
           // Redirect to the student dashboard only after the session is saved
-          res.redirect("/student-dashboard");
+          res.redirect("student-dashboard");
         }
       });
     } else {
