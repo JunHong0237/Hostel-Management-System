@@ -28,9 +28,11 @@ router.post("/student-login", (req, res) => {
   dbConnection.query(query, [std_id, std_password], (error, results) => {
     if (error) {
       res.status(500).send("Database query failed");
-    } else if (results.length > 0) {
-      // TODO: Implement session or token logic here if needed
-      res.send("Login Successful!");
+    } // studentLogin.js
+    // After successful authentication, store student ID in session
+    else if (results.length > 0) {
+      req.session.studentId = std_id; // Store student ID in session
+      res.redirect("/dashboard"); // Redirect to dashboard
     } else {
       res.status(401).send("Invalid student ID or password");
     }
