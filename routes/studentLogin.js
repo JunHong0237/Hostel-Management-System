@@ -19,6 +19,7 @@ dbConnection.connect((error) => {
   console.log("Successfully connected to the database.");
 });
 
+// Route to handle the POST request from the login form
 router.post("/student-login", (req, res) => {
   const { std_id, std_password } = req.body;
   const query =
@@ -28,21 +29,10 @@ router.post("/student-login", (req, res) => {
     if (error) {
       res.status(500).send("Database query failed");
     } else if (results.length > 0) {
-      // Set the session user object
-      req.session.user = { std_id: results[0].std_id };
-      console.log("Student logged in:", req.session.user); // Add for debugging
-      // Explicitly save the session before redirecting
-      req.session.save((err) => {
-        if (err) {
-          console.error("Session save error:", err);
-          res.status(500).send("Failed to save session");
-        } else {
-          // Redirect to the student dashboard only after the session is saved
-          res.redirect("/api/student-dashboard");
-        }
-      });
+      // TODO: Implement session or token logic here if needed
+      res.send("Login Successful!");
     } else {
-      res.redirect("/"); // Redirect to login page if authentication fails
+      res.status(401).send("Invalid student ID or password");
     }
   });
 });
