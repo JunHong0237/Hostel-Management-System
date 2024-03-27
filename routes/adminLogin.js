@@ -4,7 +4,7 @@ import mysql from "mysql";
 import { fileURLToPath } from "url";
 import path from "path";
 
-const adminLoginRouter = express.Router();
+const router = express.Router();
 
 // ES6 modules fix for __dirname
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -27,7 +27,7 @@ dbConnection.connect((error) => {
 });
 
 // Route to handle the POST request from the admin login form
-adminLoginRouter.post("/admin-login", (req, res) => {
+router.post("/admin-login", (req, res) => {
   const { admin_id, admin_password } = req.body;
   const query =
     "SELECT * FROM Admin_Details WHERE admin_id = ? AND admin_password = ?";
@@ -44,4 +44,4 @@ adminLoginRouter.post("/admin-login", (req, res) => {
   });
 });
 
-export default adminLoginRouter;
+export default router;
