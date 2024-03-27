@@ -3,7 +3,7 @@ import express from "express";
 import mysql from "mysql";
 
 // Create a router for this module
-const router = express.Router();
+const studentLoginRouter = express.Router();
 
 // MySQL connection (make sure to fill this with your own database credentials)
 const dbConnection = mysql.createConnection({
@@ -20,7 +20,7 @@ dbConnection.connect((error) => {
 });
 
 // Route to handle the POST request from the login form
-router.post("/student-login", (req, res) => {
+studentLoginRouter.post("/student-login", (req, res) => {
   const { std_id, std_password } = req.body;
   const query =
     "SELECT * FROM Student_Details WHERE std_id = ? AND std_password = ?";
@@ -39,4 +39,4 @@ router.post("/student-login", (req, res) => {
   });
 });
 
-export default router;
+export default studentLoginRouter;
