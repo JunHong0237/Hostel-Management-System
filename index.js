@@ -1,36 +1,59 @@
-// index.js
 import express from "express";
-import studentLoginRouter from "./routes/studentLogin.js";
-import adminLoginRouter from "./routes/adminLogin.js";
-import path from "path";
+import mysql from "mysql2";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
 import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ES6 modules fix for __dirname
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// For __dirname in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Serve static files from 'views' directory
-app.use(express.static(path.join(__dirname, "views")));
-
-// Serve the student-login.html when the root route '/' is accessed
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "student-login.html"));
+// MySQL connection
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
 });
 
-// Use the studentLoginRouter for the '/auth' path
-app.use("/auth", studentLoginRouter);
+db.connect((err) => {
+  if (err) {
+    console.error("Error connecting: " + err.stack);
+    return;
+  }
+  console.log("Connected as id " + db.threadId);
+});
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public")); // Serve static files
+app.set("view engine", "ejs");
+
+// Routes
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/login.html");
+});
+
+app.post("/login", (req, res) => {
+  const { std_id, std_password } = req.body;
+  db.query(
+    "SELECT * FROM Student_Details WHERE std_id = ? AND std_password = ?",
+    [std_id, std_password],
+    (error, results) => {
+      if (results.length > 0) {
+        res.render("dashboard", { student: results[0] });
+      } else {
+        res.send("Incorrect Student ID and/or Password!");
+      }
+    },
+  );
+});
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
-app.use("/auth", adminLoginRouter);
-
-app.get("/admin-login", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "admin-login.html"));
+  console.log(`Server running on http://localhost:${port}`);
 });
