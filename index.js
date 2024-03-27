@@ -39,7 +39,7 @@ app.use(
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }, // Set to true if serving over HTTPS
+    cookie: { secure: true }, // Set to true if serving over HTTPS
   }),
 );
 
