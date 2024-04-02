@@ -15,7 +15,7 @@
         <p>Available Beds: <%= room.room_capacity - room.room_occupancy %></p>
         <!-- Add more details if necessary -->
       <form action="/select-room" method="get">
-        <input type="hidden" name="std_id" value="<%= student.std_id %>" />
+        <input type="hidden" name="std_id" value="<%= studentId %>" />
         <button type="submit">Select Room</button>
       </form>
 
