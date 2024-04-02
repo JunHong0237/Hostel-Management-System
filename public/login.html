@@ -2,18 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student Login</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .login-container {
+        background: #ffffff;
+        padding: 2em;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+      }
+      .login-container h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 1em;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      input {
+        padding: 1em;
+        margin-bottom: 1em;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 1em;
+        border: none;
+        border-radius: 5px;
+        background-color: #5cb85c;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #4cae4c;
+      }
+    </style>
   </head>
   <body>
-    <form action="/login" method="post">
-      <input type="text" name="std_id" placeholder="Student ID" required />
-      <input
-        type="password"
-        name="std_password"
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div class="login-container">
+      <h2>Student Login</h2>
+      <form action="/login" method="post">
+        <input type="text" name="std_id" placeholder="Student ID" required />
+        <input
+          type="password"
+          name="std_password"
+          placeholder="Password"
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   </body>
 </html>
