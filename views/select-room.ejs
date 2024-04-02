@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Room</title>
+    <!-- Add your stylesheet links here -->
+</head>
+<body>
+    <h1>Select a Room</h1>
+    <div>
+        <% if (rooms.length > 0) { %>
+              <!-- Update room links to include the student ID -->
+              <% rooms.forEach(room => { %>
+                <div>
+                  <p>Room Number: <%= room.room_no %></p>
+                  <p>Capacity: <%= room.room_capacity %></p>
+                  <p>Available Beds: <%= room.bedAvail %></p>
+                  <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>">View Details</a>
+                </div>
+              <% }) %>
+
+        <% } else { %>
+            <p>No rooms available.</p>
+        <% } %>
+    </div>
+</body>
+</html>

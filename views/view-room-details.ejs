@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Details</title>
+    <!-- Add your stylesheet links here -->
+</head>
+<body>
+    <h1>Room Details</h1>
+    <div>
+        <p>Room Number: <%= room.room_no %></p>
+        <p>Capacity: <%= room.room_capacity %></p>
+        <p>Occupancy: <%= room.room_occupancy %></p>
+        <p>Available Beds: <%= room.room_capacity - room.room_occupancy %></p>
+        <!-- Add more details if necessary -->
+      <form action="/select-room" method="get">
+        <input type="hidden" name="std_id" value="<%= student.std_id %>" />
+        <button type="submit">Select Room</button>
+      </form>
+
+
+    </div>
+</body>
+</html>
