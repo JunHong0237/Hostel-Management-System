@@ -14,7 +14,8 @@
         <p>Occupancy: <%= room.room_occupancy %></p>
         <p>Available Beds: <%= room.room_capacity - room.room_occupancy %></p>
         <!-- Add more details if necessary -->
-      <form action="/select-room" method="get">
+      <!-- This should be in your view-room-details.ejs file -->
+      <form action="/select-room/<%= room.room_id %>" method="post">
         <input type="hidden" name="std_id" value="<%= studentId %>" />
         <button type="submit">Select Room</button>
       </form>

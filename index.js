@@ -121,7 +121,7 @@ app.get("/view-room-details/:room_id", (req, res) => {
 app.post("/select-room/:room_id", (req, res) => {
   const { room_id } = req.params;
   const { std_id } = req.body; // Getting student's ID from the body
-
+  console.log("std_id:", std_id);
   // Start a transaction to update both the Room_Details and Student_Details atomically
   db.beginTransaction((err) => {
     if (err) {
@@ -178,9 +178,43 @@ app.post("/select-room/:room_id", (req, res) => {
           }
           console.log("Transaction Complete.");
           // Redirect or send a success message/page
-          res.redirect("/dashboard"); // Assuming you have a route for the dashboard
+          // Assuming you have a route for the dashboard
+          res.redirect(`/dashboard?std_id=${std_id}`);
         });
       });
     });
   });
+});
+
+app.get("/dashboard", (req, res) => {
+  // Assuming you have studentId stored in session or passed as a query parameter
+  const studentId = req.query.std_id; // Or however you're retrieving the student's ID
+
+  if (!studentId) {
+    res.status(400).send("Student ID is required.");
+    return;
+  }
+
+  db.query(
+    "SELECT * FROM Student_Details WHERE std_id = ?",
+    [studentId],
+    (error, results) => {
+      if (error) {
+        console.error("Error fetching student details: " + error.message);
+        res
+          .status(500)
+          .send("An error occurred while fetching student details.");
+        return;
+      }
+
+      if (results.length > 0) {
+        // Fetch more data as needed, e.g., the student's room details
+        res.render("dashboard", {
+          student: results[0] /*, other data as needed */,
+        });
+      } else {
+        res.send("Student not found.");
+      }
+    },
+  );
 });
