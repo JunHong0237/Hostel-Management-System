@@ -1,28 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Room</title>
-    <!-- Add your stylesheet links here -->
-</head>
-<body>
-    <h1>Select a Room</h1>
-    <div>
-        <% if (rooms.length > 0) { %>
-              <!-- Update room links to include the student ID -->
-              <% rooms.forEach(room => { %>
-                <div>
-                  <p>Room Number: <%= room.room_no %></p>
-                  <p>Capacity: <%= room.room_capacity %></p>
-                  <p>Available Beds: <%= room.bedAvail %></p>
-                  <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>">View Details</a>
-                </div>
-              <% }) %>
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Select Room</title>
+              <!-- Add your stylesheet links here -->
+              <style>
+                  body {
+                      font-family: 'Arial', sans-serif;
+                      margin: 0;
+                      padding: 0;
+                      background: #f4f4f4;
+                  }
 
-        <% } else { %>
-            <p>No rooms available.</p>
-        <% } %>
-    </div>
-</body>
-</html>
+                  .container {
+                      width: 80%;
+                      margin: auto;
+                      overflow: hidden;
+                  }
+
+                  .room {
+                      background: #fff;
+                      padding: 20px;
+                      margin-bottom: 10px;
+                      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                  }
+
+                  .room h2 {
+                      font-size: 20px;
+                      color: #333;
+                  }
+
+                  .room p {
+                      font-size: 16px;
+                      color: #666;
+                  }
+
+                  .room a {
+                      display: inline-block;
+                      padding: 10px 20px;
+                      background: #333;
+                      color: #fff;
+                      text-decoration: none;
+                      margin-top: 10px;
+                  }
+
+                  .room a:hover {
+                      background: #555;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>Select a Room</h1>
+                  <div>
+                      <% if (rooms.length > 0) { %>
+                            <% rooms.forEach(room => { %>
+                              <div class="room">
+                                <h2>Room Number: <%= room.room_no %></h2>
+                                <p>Capacity: <%= room.room_capacity %></p>
+                                <p>Occupancy: <%= room.room_occupancy %></p>
+                                <p>Available Beds: <%= room.bedAvail %></p>
+                                <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>">View Details</a>
+                              </div>
+                            <% }) %>
+                      <% } else { %>
+                          <p>No rooms available.</p>
+                      <% } %>
+                  </div>
+              </div>
+          </body>
+          </html>
