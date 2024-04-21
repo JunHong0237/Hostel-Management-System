@@ -67,18 +67,17 @@
             <p><strong>Year:</strong> <%= student.std_year %></p>
             <p><strong>State:</strong> <%= student.std_state %></p>
             <p><strong>Preference:</strong> <%= student.std_pref %></p>
-            <p><strong>Room ID:</strong> <%= student.room_id ? student.room_id : 'Not assigned' %></p>
-        </div>
-
-        <% if (!student.room_id) { %>
-          <div class="add-room">
-              <a href="/select-room?std_id=<%= student.std_id %>" class="button">Add Room</a>
+          <p><strong>Room Number:</strong> <%= student.room_no ? student.room_no : 'Not assigned' %></p>
           </div>
-        <% } else { %>
-          <div class="info">
-              <p>You have already selected a room.</p>
-          </div>
-        <% } %>
+          <% if (!student.room_id) { %>
+              <div class="add-room">
+                  <a href="/select-room?std_id=<%= student.std_id %>" class="button">Add Room</a>
+              </div>
+          <% } else { %>
+              <div class="info">
+                  <p>You have already selected a room.</p>
+              </div>
+          <% } %>
     </div>
 </body>
 </html>

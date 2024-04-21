@@ -204,36 +204,39 @@ app.post("/select-room/:room_id", (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-  const studentId = req.query.std_id;
+  const studentId = req.query.std_id; // Or however you're retrieving the student's ID
 
   if (!studentId) {
     res.status(400).send("Student ID is required.");
     return;
   }
 
-  db.query(
-    "SELECT * FROM Student_Details WHERE std_id = ?",
-    [studentId],
-    (error, results) => {
-      if (error) {
-        console.error("Error fetching student details: " + error.message);
-        res
-          .status(500)
-          .send("An error occurred while fetching student details.");
-        return;
-      }
+  // Updated query to join Student_Details and Room_Details to fetch room number
+  const query = `
+    SELECT Student_Details.*, Room_Details.room_no
+    FROM Student_Details
+    LEFT JOIN Room_Details ON Student_Details.room_id = Room_Details.room_id
+    WHERE Student_Details.std_id = ?
+  `;
 
-      if (results.length > 0) {
-        const student = results[0];
-        // Check if the student has a room_id assigned
-        const hasRoom = student.room_id != null;
-        res.render("dashboard", {
-          student: student,
-          hasRoom: hasRoom, // Pass this new variable to your EJS template
-        });
-      } else {
-        res.send("Student not found.");
-      }
-    },
-  );
+  db.query(query, [studentId], (error, results) => {
+    if (error) {
+      console.error(
+        "Error fetching student and room details: " + error.message,
+      );
+      res.status(500).send("An error occurred while fetching student details.");
+      return;
+    }
+
+    if (results.length > 0) {
+      const student = results[0];
+      const hasRoom = student.room_id != null;
+      res.render("dashboard", {
+        student: student,
+        hasRoom: hasRoom,
+      });
+    } else {
+      res.send("Student not found.");
+    }
+  });
 });
