@@ -67,21 +67,38 @@ app.get("/select-room", (req, res) => {
     return;
   }
 
-  // Query to get all rooms with at least one available bed
-  const query = `
-    SELECT room_id, room_no, room_capacity, room_occupancy, (room_capacity - room_occupancy) AS bedAvail
-    FROM Room_Details
-    WHERE room_capacity > room_occupancy
-  `;
-
-  db.query(query, (error, rooms) => {
+  // First, check if the student already has a room assigned
+  const checkRoomAssignedQuery =
+    "SELECT room_id FROM Student_Details WHERE std_id = ? AND room_id IS NOT NULL";
+  db.query(checkRoomAssignedQuery, [studentId], (error, results) => {
     if (error) {
-      console.error("Error fetching rooms: " + error.message);
-      res.status(500).send("An error occurred while fetching the rooms.");
+      console.error("Error checking room assignment: " + error.message);
+      res.status(500).send("An error occurred while checking room assignment.");
       return;
     }
-    // Render the select-room view with the available rooms and studentId
-    res.render("select-room", { rooms: rooms, studentId: studentId });
+
+    if (results.length > 0) {
+      // The student already has a room assigned
+      res.send("You have already selected a room.");
+      return;
+    }
+
+    // If no room is assigned, proceed to show available rooms
+    const query = `
+      SELECT room_id, room_no, room_capacity, room_occupancy, (room_capacity - room_occupancy) AS bedAvail
+      FROM Room_Details
+      WHERE room_capacity > room_occupancy
+    `;
+
+    db.query(query, (error, rooms) => {
+      if (error) {
+        console.error("Error fetching rooms: " + error.message);
+        res.status(500).send("An error occurred while fetching the rooms.");
+        return;
+      }
+      // Render the select-room view with the available rooms and studentId
+      res.render("select-room", { rooms: rooms, studentId: studentId });
+    });
   });
 });
 
@@ -187,8 +204,7 @@ app.post("/select-room/:room_id", (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-  // Assuming you have studentId stored in session or passed as a query parameter
-  const studentId = req.query.std_id; // Or however you're retrieving the student's ID
+  const studentId = req.query.std_id;
 
   if (!studentId) {
     res.status(400).send("Student ID is required.");
@@ -208,9 +224,12 @@ app.get("/dashboard", (req, res) => {
       }
 
       if (results.length > 0) {
-        // Fetch more data as needed, e.g., the student's room details
+        const student = results[0];
+        // Check if the student has a room_id assigned
+        const hasRoom = student.room_id != null;
         res.render("dashboard", {
-          student: results[0] /*, other data as needed */,
+          student: student,
+          hasRoom: hasRoom, // Pass this new variable to your EJS template
         });
       } else {
         res.send("Student not found.");
