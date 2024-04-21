@@ -107,26 +107,39 @@ app.get("/view-room-details/:room_id", (req, res) => {
   const { room_id } = req.params;
   const { std_id } = req.query; // Get the student ID from the query string
 
-  // Ensure that the student ID is provided
   if (!std_id) {
     res.send("Student ID is required.");
     return;
   }
 
-  // Define the SQL query to fetch room details
-  const query = "SELECT * FROM Room_Details WHERE room_id = ?";
+  // Define the SQL query to fetch room details including details of other students in the same room
+  const roomQuery = "SELECT * FROM Room_Details WHERE room_id = ?";
+  const studentsQuery = `
+    SELECT std_fullname, std_faculty, std_year, std_state, std_pref, std_email, std_phone
+    FROM Student_Details
+    WHERE room_id = ?
+  `;
 
-  db.query(query, [room_id], (error, roomDetails) => {
+  db.query(roomQuery, [room_id], (error, roomDetails) => {
     if (error) {
       console.error("Database query error: " + error);
       res.send("An error occurred while fetching room details.");
       return;
     }
     if (roomDetails.length > 0) {
-      // Render the room details view
-      res.render("view-room-details", {
-        room: roomDetails[0],
-        studentId: std_id, // Pass the student ID to the view
+      // Now fetch details of other students in the same room
+      db.query(studentsQuery, [room_id], (error, studentDetails) => {
+        if (error) {
+          console.error("Database query error: " + error);
+          res.send("An error occurred while fetching student details.");
+          return;
+        }
+        // Render the room details view with room info and list of students
+        res.render("view-room-details", {
+          room: roomDetails[0],
+          students: studentDetails,
+          studentId: std_id, // Pass the current student's ID
+        });
       });
     } else {
       res.send("Room not found.");
