@@ -37,27 +37,23 @@
         .info strong {
             font-weight: 600;
         }
-
-
-      .add-room {
-          text-align: center; /* Center the button */
-          margin-top: 20px; /* Spacing from the info above */
-      }
-
-      .button {
-          display: inline-block;
-          padding: 10px 20px;
-          border-radius: 5px;
-          background-color: #4CAF50; /* Green background */
-          color: white; /* White text */
-          text-decoration: none; /* Remove underline from links */
-          font-weight: bold;
-          transition: background-color 0.3s; /* Smooth background color change */
-      }
-
-      .button:hover {
-          background-color: #45a049; /* Darker shade of green */
-      }
+        .add-room {
+            text-align: center; /* Center the button */
+            margin-top: 20px; /* Spacing from the info above */
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            text-decoration: none; /* Remove underline from links */
+            font-weight: bold;
+            transition: background-color 0.3s; /* Smooth background color change */
+        }
+        .button:hover {
+            background-color: #45a049; /* Darker shade of green */
+        }
     </style>
 </head>
 <body>
@@ -71,12 +67,18 @@
             <p><strong>Year:</strong> <%= student.std_year %></p>
             <p><strong>State:</strong> <%= student.std_state %></p>
             <p><strong>Preference:</strong> <%= student.std_pref %></p>
-            <p><strong>Room ID:</strong> <%= student.room_id %></p>
+            <p><strong>Room ID:</strong> <%= student.room_id ? student.room_id : 'Not assigned' %></p>
         </div>
-     
-      <div class="add-room">
-          <a href="/select-room?std_id=<%= student.std_id %>"class="button">Add Room</a>
-      </div>
+
+        <% if (!student.room_id) { %>
+          <div class="add-room">
+              <a href="/select-room?std_id=<%= student.std_id %>" class="button">Add Room</a>
+          </div>
+        <% } else { %>
+          <div class="info">
+              <p>You have already selected a room.</p>
+          </div>
+        <% } %>
     </div>
 </body>
 </html>
