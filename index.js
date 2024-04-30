@@ -217,39 +217,174 @@ app.post("/select-room/:room_id", (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-  const studentId = req.query.std_id; // Or however you're retrieving the student's ID
+  const studentId = req.query.std_id;
 
   if (!studentId) {
     res.status(400).send("Student ID is required.");
     return;
   }
 
-  // Updated query to join Student_Details and Room_Details to fetch room number
-  const query = `
-    SELECT Student_Details.*, Room_Details.room_no
-    FROM Student_Details
-    LEFT JOIN Room_Details ON Student_Details.room_id = Room_Details.room_id
-    WHERE Student_Details.std_id = ?
+  const studentDetailsQuery = `
+    SELECT s.*, r.room_no, r.room_capacity, r.room_occupancy
+    FROM Student_Details s
+    LEFT JOIN Room_Details r ON s.room_id = r.room_id
+    WHERE s.std_id = ?
   `;
 
-  db.query(query, [studentId], (error, results) => {
+  db.query(studentDetailsQuery, [studentId], (error, studentResults) => {
     if (error) {
-      console.error(
-        "Error fetching student and room details: " + error.message,
-      );
+      console.error("Error fetching student details: " + error.message);
       res.status(500).send("An error occurred while fetching student details.");
       return;
     }
+    if (studentResults.length > 0) {
+      const student = studentResults[0];
+      const roomDetails = student.room_id
+        ? {
+            room_no: student.room_no,
+            room_capacity: student.room_capacity,
+            room_occupancy: student.room_occupancy,
+          }
+        : null;
 
-    if (results.length > 0) {
-      const student = results[0];
-      const hasRoom = student.room_id != null;
-      res.render("dashboard", {
-        student: student,
-        hasRoom: hasRoom,
-      });
+      // Check if the student has a room and get roommates details
+      if (student.room_id) {
+        const roommatesQuery = `
+          SELECT std_fullname, std_faculty, std_year, std_state, std_pref, std_email, std_phone
+          FROM Student_Details
+          WHERE room_id = ? AND std_id != ?
+        `;
+        db.query(
+          roommatesQuery,
+          [student.room_id, studentId],
+          (error, roommatesResults) => {
+            if (error) {
+              console.error(
+                "Error fetching roommates details: " + error.message,
+              );
+              res
+                .status(500)
+                .send("An error occurred while fetching roommates details.");
+              return;
+            }
+            res.render("dashboard", {
+              student: student,
+              roomDetails: roomDetails,
+              roommates: roommatesResults,
+            });
+          },
+        );
+      } else {
+        // Student does not have a room
+        res.render("dashboard", {
+          student: student,
+          roomDetails: null,
+          roommates: [],
+        });
+      }
     } else {
       res.send("Student not found.");
     }
   });
+});
+
+app.post("/admin/login", (req, res) => {
+  const { admin_id, admin_password } = req.body;
+  console.log("Admin ID:", admin_id); // For debugging
+  console.log("Admin Password:", admin_password); // For debugging
+
+  // SQL query to check admin credentials
+  const query =
+    "SELECT * FROM Admin_Details WHERE admin_id = ? AND admin_password = ?";
+
+  db.query(query, [admin_id, admin_password], (error, results) => {
+    if (error) {
+      // Handle any errors that occur during the query
+      console.error("Error in admin login query: ", error);
+      res.status(500).send("An error occurred during the login process.");
+      return;
+    }
+
+    console.log("Query Results:", results); // For debugging
+    if (results.length > 0) {
+      // If the query returns a record, login is successful
+      res.render("admin-dashboard", { admin: results[0] }); // Pass the admin data to the dashboard
+    } else {
+      // If the record is not found, send an error message
+      res.send("Incorrect username and/or password!");
+    }
+  });
+});
+
+app.get("/admin/dashboard", (req, res) => {
+  // Render the admin dashboard view
+  res.render("admin-dashboard");
+});
+
+app.get("/admin/students", (req, res) => {
+  // Query to select all student details
+  const query = "SELECT * FROM Student_Details";
+
+  db.query(query, (error, results) => {
+    if (error) {
+      // Handle any errors that occur during the query
+      console.error("Error fetching student details: ", error);
+      res.status(500).send("An error occurred while fetching student details.");
+      return;
+    }
+
+    // Render the admin-student-details view, passing the student data
+    res.render("admin-student-details", { students: results });
+  });
+});
+
+app.get("/admin/rooms", (req, res) => {
+  // Query to select all room details
+  const query =
+    "SELECT room_id, room_no, room_capacity, room_occupancy, (room_capacity - room_occupancy) AS bedAvail, room_gender FROM Room_Details";
+
+  db.query(query, (error, results) => {
+    if (error) {
+      // Handle any errors that occur during the query
+      console.error("Error fetching room details: ", error);
+      res.status(500).send("An error occurred while fetching room details.");
+      return;
+    }
+
+    // Render the admin-room-details view, passing the room data
+    res.render("admin-room-details", { rooms: results });
+  });
+});
+
+app.post("/admin/students/register", (req, res) => {
+  const { std_id, std_fullName, std_gender, std_password } = req.body;
+
+  // Creating a new Date object
+  const now = new Date();
+  // Formatting date and time: YYYY-MM-DD HH:MM:SS
+  const reg_date = now.toISOString().slice(0, 19).replace("T", " ");
+
+  // SQL query to insert a new student record
+  const query =
+    "INSERT INTO Student_Details (std_id, std_fullName, std_gender, std_password, reg_date) VALUES (?, ?, ?, ?, ?)";
+
+  db.query(
+    query,
+    [std_id, std_fullName, std_gender, std_password, reg_date],
+    (error, results) => {
+      if (error) {
+        // Handle any errors that occur during the query
+        console.error("Error registering new student: ", error);
+        res
+          .status(500)
+          .send("An error occurred while registering the student.");
+        return;
+      }
+
+      // After registration, redirect back to the student details page or send a success message
+      res.redirect("/admin/students");
+      // Or you could render the page with a success message
+      // res.render("admin-student-details", { successMessage: "Student registered successfully." });
+    },
+  );
 });
