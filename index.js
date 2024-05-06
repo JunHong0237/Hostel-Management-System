@@ -388,3 +388,128 @@ app.post("/admin/students/register", (req, res) => {
     },
   );
 });
+
+app.get("/admin/room/view/:room_id", async (req, res) => {
+  const { room_id } = req.params;
+
+  try {
+    const roomDetailsQuery = "SELECT * FROM Room_Details WHERE room_id = ?";
+    const [roomDetails] = await db.promise().query(roomDetailsQuery, [room_id]);
+
+    const studentQuery = "SELECT * FROM Student_Details WHERE room_id = ?";
+    const [students] = await db.promise().query(studentQuery, [room_id]);
+
+    res.render("view-room", {
+      room: roomDetails[0],
+      students: students,
+    });
+  } catch (error) {
+    console.error("Error fetching room details: ", error);
+    res.status(500).send("An error occurred while fetching room details.");
+  }
+});
+app.get("/admin/room/unassign/:std_id", async (req, res) => {
+  const { std_id } = req.params;
+
+  try {
+    // First, retrieve the current room ID for the student
+    const getRoomIdQuery =
+      "SELECT room_id FROM Student_Details WHERE std_id = ?";
+    const [studentRoom] = await db.promise().query(getRoomIdQuery, [std_id]);
+    const { room_id } = studentRoom[0];
+
+    // Begin a transaction to ensure data consistency
+    await db.promise().beginTransaction();
+
+    // Unassign the student
+    const unassignStudentQuery =
+      "UPDATE Student_Details SET room_id = NULL WHERE std_id = ?";
+    await db.promise().query(unassignStudentQuery, [std_id]);
+
+    // Decrement room occupancy
+    const updateRoomQuery =
+      "UPDATE Room_Details SET room_occupancy = room_occupancy - 1 WHERE room_id = ?";
+    await db.promise().query(updateRoomQuery, [room_id]);
+
+    // Commit the transaction
+    await db.promise().commit();
+
+    // Redirect back to the room details page or send a success message
+    res.redirect("back");
+  } catch (error) {
+    // If an error occurs, rollback the transaction
+    await db.promise().rollback();
+    console.error(
+      "Error unassigning student and updating room details: ",
+      error,
+    );
+    res
+      .status(500)
+      .send(
+        "An error occurred while unassigning the student and updating room details.",
+      );
+  }
+});
+app.post("/admin/rooms/add", async (req, res) => {
+  const { room_no, room_capacity, room_gender } = req.body;
+  const room_occupancy = 0;
+  const bedAvail = room_capacity; // Initially equal to capacity
+
+  try {
+    const query =
+      "INSERT INTO Room_Details (room_no, room_capacity, room_gender, room_occupancy, bedAvail) VALUES (?, ?, ?, ?, ?)";
+    await db
+      .promise()
+      .query(query, [
+        room_no,
+        room_capacity,
+        room_gender,
+        room_occupancy,
+        bedAvail,
+      ]);
+
+    // Redirect back to the room details page or send a success message
+    res.redirect("/admin/rooms");
+  } catch (error) {
+    console.error("Error adding new room: ", error);
+    res.status(500).send("An error occurred while adding the room.");
+  }
+});
+app.get("/admin/rooms/check-students/:room_id", async (req, res) => {
+  const { room_id } = req.params;
+  try {
+    const query =
+      "SELECT COUNT(*) AS studentCount FROM Student_Details WHERE room_id = ?";
+    const [results] = await db.promise().query(query, [room_id]);
+    res.json({ studentCount: results[0].studentCount });
+  } catch (error) {
+    console.error("Error checking students in room: ", error);
+    res.status(500).send("An error occurred while checking students in room.");
+  }
+});
+app.post("/admin/rooms/delete/:room_id", async (req, res) => {
+  const { room_id } = req.params;
+  try {
+    await db.promise().beginTransaction();
+
+    // Unassign students
+    const unassignQuery =
+      "UPDATE Student_Details SET room_id = NULL WHERE room_id = ?";
+    await db.promise().query(unassignQuery, [room_id]);
+
+    // Delete the room
+    const deleteRoomQuery = "DELETE FROM Room_Details WHERE room_id = ?";
+    await db.promise().query(deleteRoomQuery, [room_id]);
+
+    await db.promise().commit();
+    res.json({
+      success: true,
+      message:
+        "Room and all student assignments have been deleted successfully.",
+    });
+  } catch (error) {
+    await db.promise().rollback();
+    console.error("Error deleting room: ", error);
+    res.status(500).json({ success: false, message: "Failed to delete room." });
+  }
+});

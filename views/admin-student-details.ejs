@@ -1,124 +1,199 @@
-              <!DOCTYPE html>
-              <html lang="en">
-              <head>
-                  <meta charset="UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>Admin - Student Details</title>
-                  <style>
-                      body {
-                          font-family: Arial, sans-serif;
-                          background-color: #f4f4f4;
-                          margin: 0;
-                          padding: 20px;
-                          color: #333;
-                      }
-                      h1 {
-                          color: #0056b3;
-                      }
-                      table {
-                          width: 100%;
-                          border-collapse: collapse;
-                          margin-top: 20px;
-                      }
-                      th, td {
-                          text-align: left;
-                          padding: 8px;
-                          border-bottom: 1px solid #ddd;
-                      }
-                      th {
-                          background-color: #0056b3;
-                          color: white;
-                      }
-                      tr:hover {
-                          background-color: #f5f5f5;
-                      }
-                      .actions {
-                          text-align: center;
-                      }
-                      .button {
-                          padding: 5px 10px;
-                          text-decoration: none;
-                          color: white;
-                          background-color: #4CAF50;
-                          border: none;
-                          border-radius: 5px;
-                      }
-                      .button:hover {
-                          background-color: #45a049;
-                      }
-                      .button.delete {
-                          background-color: #f44336;
-                      }
-                      .button.delete:hover {
-                          background-color: #e31b0c;
-                      }
-                  </style>
-              </head>
-              <body>
-                  <h1>Student Details</h1>
-                  <table>
-                      <thead>
-                          <tr>
-                              <th>ID</th>
-                              <th>Full Name</th>
-                              <th>Email</th>
-                              <th>Gender</th>
-                              <th>Phone</th>
-                              <th>Faculty</th>
-                              <th>Actions</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <% students.forEach(function(student) { %>
-                              <tr>
-                                  <td><%= student.std_id %></td>
-                                  <td><%= student.std_fullName %></td>
-                                  <td><%= student.std_email %></td>
-                                  <td><%= student.std_gender %></td>
-                                  <td><%= student.std_phone %></td>
-                                  <td><%= student.std_faculty %></td>
-                                  <td class="actions">
-                                      <a href="/edit/<%= student.std_id %>" class="button">Edit</a>
-                                      <a href="/delete/<%= student.std_id %>" class="button delete">Delete</a>
-                                  </td>
-                              </tr>
-                          <% }); %>
-                      </tbody>
-                  </table>
-                            <!-- Existing HTML up to the <main> tag -->
+                                              <!DOCTYPE html>
+                                              <html lang="en">
+                                              <head>
+                                                  <meta charset="UTF-8">
+                                                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                                  <title>Admin - Student Details</title>
+                                                  <style>
+                                                      body {
+                                                          font-family: Arial, sans-serif;
+                                                          background-color: #f9f9f9; /* Light gray background */
+                                                          margin: 0;
+                                                          padding: 20px;
+                                                          color: #333;
+                                                      }
+                                                      header {
+                                                          background-color: #007BFF; /* Blue background */
+                                                          color: white;
+                                                          padding: 10px 20px;
+                                                          text-align: center;
+                                                      }
+                                                      nav {
+                                                          background-color: #007BFF; /* Blue background */
+                                                          padding: 10px 0;
+                                                          margin-bottom: 20px;
+                                                      }
+                                                      nav ul {
+                                                          list-style-type: none;
+                                                          padding: 0;
+                                                          margin: 0;
+                                                          text-align: center;
+                                                      }
+                                                      nav ul li {
+                                                          display: inline;
+                                                          margin-right: 20px;
+                                                      }
+                                                      nav ul li a {
+                                                          color: white;
+                                                          text-decoration: none;
+                                                          font-size: 16px;
+                                                      }
+                                                      table {
+                                                          width: 100%;
+                                                          border-collapse: collapse;
+                                                          margin-top: 20px;
+                                                      }
+                                                      th, td {
+                                                          text-align: left;
+                                                          padding: 8px;
+                                                          border-bottom: 1px solid #ddd;
+                                                      }
+                                                      th {
+                                                          background-color: #007BFF; /* Blue headers */
+                                                          color: white;
+                                                      }
+                                                      tr:hover {
+                                                          background-color: #f5f5f5;
+                                                      }
+                                                      .actions {
+                                                          text-align: center;
+                                                      }
+                                                      .button {
+                                                          padding: 5px 10px;
+                                                          text-decoration: none;
+                                                          color: white;
+                                                          background-color: #28a745; /* Green buttons */
+                                                          border: none;
+                                                          border-radius: 5px;
+                                                          cursor: pointer;
+                                                      }
+                                                      .button:hover {
+                                                          background-color: #218838;
+                                                      }
+                                                      .button.delete {
+                                                          background-color: #dc3545; /* Red delete buttons */
+                                                      }
+                                                      .button.delete:hover {
+                                                          background-color: #c82333;
+                                                      }
+                                                      #registerModal {
+                                                          display: none;
+                                                          position: fixed;
+                                                          left: 50%;
+                                                          top: 50%;
+                                                          transform: translate(-50%, -50%);
+                                                          background-color: white;
+                                                          padding: 20px;
+                                                          border-radius: 5px;
+                                                          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                                                          z-index: 1000;
+                                                      }
+                                                      #overlay {
+                                                          display: none;
+                                                          position: fixed;
+                                                          width: 100%;
+                                                          height: 100%;
+                                                          top: 0;
+                                                          left: 0;
+                                                          right: 0;
+                                                          bottom: 0;
+                                                          background-color: rgba(0,0,0,0.5);
+                                                          z-index: 999;
+                                                      }
+                                                      
+                                                  </style>
+                                              </head>
+                                              <body>
+                                                  <header>
+                                                      <h1>Student Details</h1>
+                                                  </header>
+                                                  <nav>
+                                                      <ul>
+                                                          <li><a href="/admin/dashboard">Dashboard</a></li>
+                                                          <li><a href="/admin/students">Student Details</a></li>
+                                                          <li><a href="/admin/rooms">Room Details</a></li>
+                                                      </ul>
+                                                  </nav>
+                                                  <table>
+                                                      <thead>
+                                                          <tr>
+                                                              <th>ID</th>
+                                                              <th>Full Name</th>
+                                                              <th>Gender</th>
+                                                              <th>Email</th>
+                                                              <th>Phone</th>
+                                                              <th>Faculty</th>
+                                                              <th>Registration Date</th>
+                                                              <th>Actions</th>
+                                                          </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                          <% students.forEach(function(student) { %>
+                                                          <tr>
+                                                              <td><%= student.std_id %></td>
+                                                              <td><%= student.std_fullname %></td>
+                                                              <td><%= student.std_gender %></td>
+                                                              <td><%= student.std_email %></td>
+                                                              <td><%= student.std_phone %></td>
+                                                              <td><%= student.std_faculty %></td>
+                                                              <td><%= student.reg_date %></td>
+                                                              <td class="actions">
+                                                                  <a href="/edit/<%= student.std_id %>" class="button">Edit</a>
+                                                                  <a href="/delete/<%= student.std_id %>" class="button delete">Delete</a>
+                                                              </td>
+                                                          </tr>
+                                                          <% }); %>
+                                                      </tbody>
+                                                  </table>
+                                                              <main>
+                                                                  <button onclick="showModal()" class="button">Register New Student</button>
+                                                                  <div id="registerModal" class="modal">
+                                                                      <form action="/admin/students/register" method="post" class="modal-content">
+                                                                          <h2>Register New Student</h2>
+                                                                          <table>
+                                                                              <tr>
+                                                                                  <td><label for="std_id">Student ID:</label></td>
+                                                                                  <td><input type="text" id="std_id" name="std_id" required></td>
+                                                                              </tr>
+                                                                              <tr>
+                                                                                  <td><label for="std_fullName">Full Name:</label></td>
+                                                                                  <td><input type="text" id="std_fullName" name="std_fullName" required></td>
+                                                                              </tr>
+                                                                              <tr>
+                                                                                  <td><label for="std_gender">Gender:</label></td>
+                                                                                  <td>
+                                                                                      <select id="std_gender" name="std_gender" required>
+                                                                                          <option value="Male">Male</option>
+                                                                                          <option value="Female">Female</option>
+                                                                                      </select>
+                                                                                  </td>
+                                                                              </tr>
+                                                                              <tr>
+                                                                                  <td><label for="std_password">Initial Password:</label></td>
+                                                                                  <td><input type="password" id="std_password" name="std_password" required></td>
+                                                                              </tr>
+                                                                              <tr>
+                                                                                  <td colspan="2" class="modal-actions">
+                                                                                      <input type="submit" value="Register" class="button">
+                                                                                      <button type="button" onclick="hideModal()" class="button">Cancel</button>
+                                                                                  </td>
+                                                                              </tr>
+                                                                          </table>
+                                                                      </form>
 
-                            <main>
-                                <!-- Button to trigger modal or new page for registering student -->
-                                <button onclick="document.getElementById('registerModal').style.display='block'">Register New Student</button>
+                                                                  </div>
+                                                                  <div id="overlay" class="overlay" onclick="hideModal()"></div>
+                                                              </main>
 
-                                <!-- The rest of your existing page content -->
-
-                                <!-- Registration form (modal style) -->
-                                <div id="registerModal" style="display:none;">
-                                    <form action="/admin/students/register" method="post">
-                                        <label for="std_id">Student ID:</label>
-                                        <input type="text" id="std_id" name="std_id" required>
-
-                                        <label for="std_fullName">Full Name:</label>
-                                        <input type="text" id="std_fullName" name="std_fullName" required>
-
-                                        <label for="std_gender">Gender:</label>
-                                        <select id="std_gender" name="std_gender" required>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <!-- Add more options as needed -->
-                                        </select>
-
-                                        <label for="std_password">Initial Password:</label>
-                                        <input type="password" id="std_password" name="std_password" required>
-
-                                        <input type="submit" value="Register">
-                                        <button type="button" onclick="document.getElementById('registerModal').style.display='none'">Cancel</button>
-                                    </form>
-                                </div>
-                            </main>
-
-                            <!-- Rest of your HTML -->
-
-              </body>
-              </html>
+                                                  <script>
+                                                      function showModal() {
+                                                          document.getElementById('registerModal').style.display = 'block';
+                                                          document.getElementById('overlay').style.display = 'block';
+                                                      }
+                                                      function hideModal() {
+                                                          document.getElementById('registerModal').style.display = 'none';
+                                                          document.getElementById('overlay').style.display = 'none';
+                                                      }
+                                                  </script>
+                                              </body>
+                                              </html>
