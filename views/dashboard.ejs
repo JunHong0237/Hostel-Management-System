@@ -1,154 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 0;
-        }
-        .dashboard-container {
-            max-width: 1000px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2 {
-            color: #333;
-            text-align: center;
-        }
-        .info, .room-summary {
-            background: #e9e9e9;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        p {
-            margin: 10px 0;
-            color: #555;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #f3f3f3;
-            color: #333;
-        }
-        .button, .logout button {
-            padding: 10px 20px;
-            border-radius: 5px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            display: inline-block;
-            text-decoration: none;
-            margin: 10px 0;
-        }
-        .button:hover, .logout button:hover {
-            background-color: #45a049;
-        }
-        .logout {
-            text-align: right;
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
-    </style>
-            <body>
-                <div class="dashboard-container">
-                    <h1>Welcome, <%= student.std_fullname %></h1>
-                    <div class="info">
-                        <p><strong>Gender:</strong> <%= student.std_gender %></p>
-                        <p><strong>Email:</strong> <%= student.std_email %></p>
-                        <p><strong>Phone:</strong> <%= student.std_phone %></p>
-                        <p><strong>Faculty:</strong> <%= student.std_faculty %></p>
-                        <p><strong>Year:</strong> <%= student.std_year %></p>
-                        <p><strong>State:</strong> <%= student.std_state %></p>
-                        <p><strong>Preference:</strong> <%= student.std_pref %></p>
-                        <p><strong>Room Number:</strong> <%= student.room_no ? student.room_no : 'Not assigned' %></p>
-                    </div>
-                    <% if (!student.room_id) { %>
-                        <div class="add-room">
-                            <a href="/select-room?std_id=<%= student.std_id %>" class="button">Add Room</a>
-                        </div>
-                    <% } else { %>
-                        <div class="info">
-                            <p>You have already selected a room.</p>
-                            <!-- Room Summary Table -->
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Room Number</th>
-                                        <th>Capacity</th>
-                                        <th>Occupancy</th>
-                                        <th>Available Beds</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><%= roomDetails.room_no %></td>
-                                        <td><%= roomDetails.room_capacity %></td>
-                                        <td><%= roomDetails.room_occupancy %></td>
-                                        <td><%= roomDetails.room_capacity - roomDetails.room_occupancy %></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <!-- Other Students Information Table -->
-                            <h2>Roommates:</h2>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Faculty</th>
-                                        <th>Year</th>
-                                        <th>State</th>
-                                        <th>Preference</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% roommates.forEach(function(roommate) { %>
-                                        <tr>
-                                            <td><%= roommate.std_faculty %></td>
-                                            <td><%= roommate.std_year %></td>
-                                            <td><%= roommate.std_state %></td>
-                                            <td><%= roommate.std_pref %></td>
-                                            <td><%= roommate.std_email %></td>
-                                            <td><%= roommate.std_phone %></td>
-                                        </tr>
-                                    <% }); %>
-                                </tbody>
-                            </table>
-                        </div>
-                    <% } %>
-                </div>
-                      <!-- Logout Button -->
-                      <div class="logout">
-                          <button onclick="logout()" class="button">Logout</button>
-                      </div>
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>Dashboard</title>
+                            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+                        </head>
+                        <body>
+                            <div class="container mt-4">
+                                <div class="text-center mb-4">
+                                    <h1>Welcome, <%= student.std_fullname %></h1>
+                                </div>
 
-            </body>
-                      <script>
-                      function logout() {
-                        // If using localStorage to store logged-in state
-                        localStorage.removeItem('loggedIn'); // Adjust this to your actual key
-                        window.location.href = '/'; // Redirect to the login page
-                      }
-                      </script>
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Student Information</h5>
+                                        <p><strong>Gender:</strong> <%= student.std_gender %></p>
+                                        <p><strong>Email:</strong> <%= student.std_email %></p>
+                                        <p><strong>Phone:</strong> <%= student.std_phone %></p>
+                                        <p><strong>Faculty:</strong> <%= student.std_faculty %></p>
+                                        <p><strong>Year:</strong> <%= student.std_year %></p>
+                                        <p><strong>State:</strong> <%= student.std_state %></p>
+                                        <p><strong>Preference:</strong> <%= student.std_pref %></p>
+                                        <p><strong>Room Number:</strong> <%= student.room_no ? student.room_no : 'Not assigned' %></p>
+                                    </div>
+                                </div>
 
-            </html>
+                                <% if (!student.room_id) { %>
+                                    <div class="text-center mb-4">
+                                        <a href="/select-room?std_id=<%= student.std_id %>" class="btn btn-success">Add Room</a>
+                                    </div>
+                                <% } else { %>
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Room Details</h5>
+                                            <p>You have already selected a room.</p>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Room Number</th>
+                                                        <th>Capacity</th>
+                                                        <th>Occupancy</th>
+                                                        <th>Available Beds</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><%= roomDetails.room_no %></td>
+                                                        <td><%= roomDetails.room_capacity %></td>
+                                                        <td><%= roomDetails.room_occupancy %></td>
+                                                        <td><%= roomDetails.room_capacity - roomDetails.room_occupancy %></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <h5 class="card-title mt-4">Roommates</h5>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Faculty</th>
+                                                        <th>Year</th>
+                                                        <th>State</th>
+                                                        <th>Preference</th>
+                                                        <th>Email</th>
+                                                        <th>Phone</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% roommates.forEach(function(roommate) { %>
+                                                        <tr>
+                                                            <td><%= roommate.std_faculty %></td>
+                                                            <td><%= roommate.std_year %></td>
+                                                            <td><%= roommate.std_state %></td>
+                                                            <td><%= roommate.std_pref %></td>
+                                                            <td><%= roommate.std_email %></td>
+                                                            <td><%= roommate.std_phone %></td>
+                                                        </tr>
+                                                    <% }); %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                <% } %>
+
+                                <div class="text-right">
+                                    <button onclick="logout()" class="btn btn-danger">Logout</button>
+                                </div>
+                            </div>
+
+                            <script>
+                                function logout() {
+                                    // If using localStorage to store logged-in state
+                                    localStorage.removeItem('loggedIn'); // Adjust this to your actual key
+                                    window.location.href = '/'; // Redirect to the login page
+                                }
+                            </script>
+
+                            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+                            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+                            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                        </body>
+                        </html>

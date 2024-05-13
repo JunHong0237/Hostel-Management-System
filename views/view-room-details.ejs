@@ -1,112 +1,69 @@
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>Room Details</title>
-                            <style>
-                                body {
-                                    font-family: 'Arial', sans-serif;
-                                    background-color: #f4f4f4;
-                                    margin: 0;
-                                    padding: 0;
-                                }
-                                .container {
-                                    width: 80%;
-                                    margin: auto;
-                                    background: white;
-                                    padding: 20px;
-                                    border-radius: 8px;
-                                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                                    margin-top: 20px;
-                                }
-                                h1, h2 {
-                                    text-align: center;
-                                    color: #333;
-                                }
-                                p {
-                                    font-size: 16px;
-                                    color: #666;
-                                    line-height: 1.5;
-                                }
-                                table {
-                                    width: 100%;
-                                    border-collapse: collapse;
-                                    margin-top: 20px;
-                                }
-                                th, td {
-                                    border: 1px solid #ddd;
-                                    text-align: left;
-                                    padding: 8px;
-                                }
-                                th {
-                                    background-color: #f2f2f2;
-                                }
-                                .button {
-                                    display: block;
-                                    width: 100%;
-                                    padding: 10px 0;
-                                    margin: 20px 0;
-                                    font-size: 18px;
-                                    color: white;
-                                    background-color: #007bff;
-                                    border: none;
-                                    border-radius: 5px;
-                                    cursor: pointer;
-                                }
-                                .button:hover {
-                                    background-color: #0056b3;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="container">
-                                <h1>Room Details</h1>
-                                <div class="room-info">
-                                    <p>Room Number: <%= room.room_no %></p>
-                                    <p>Capacity: <%= room.room_capacity %></p>
-                                    <p>Occupancy: <%= room.room_occupancy %></p>
-                                    <p>Available Beds: <%= room.room_capacity - room.room_occupancy %></p>
-                                </div>
+                                            <!DOCTYPE html>
+                                            <html lang="en">
+                                            <head>
+                                                <meta charset="UTF-8">
+                                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                                <title>Room Details</title>
+                                                <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+                                            </head>
+                                            <body class="bg-light">
+                                                <div class="container mt-5">
+                                                    <div class="card shadow-lg">
+                                                        <div class="card-body">
+                                                            <h1 class="card-title text-center mb-4">Room Details</h1>
+                                                            <div class="room-info mb-4">
+                                                                <p><strong>Room Number:</strong> <%= room.room_no %></p>
+                                                                <p><strong>Capacity:</strong> <%= room.room_capacity %></p>
+                                                                <p><strong>Occupancy:</strong> <%= room.room_occupancy %></p>
+                                                                <p><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
+                                                            </div>
 
-                                <h2>Other Students in Room:</h2>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Faculty</th>
-                                            <th>Year</th>
-                                            <th>State</th>
-                                            <th>Preference</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% if (students.length > 0) { %>
-                                            <% students.forEach(function(student) { %>
-                                                <tr>
-                                                    <td><%= student.std_fullname %></td>
-                                                    <td><%= student.std_faculty %></td>
-                                                    <td><%= student.std_year %></td>
-                                                    <td><%= student.std_state %></td>
-                                                    <td><%= student.std_pref %></td>
-                                                    <td><%= student.std_email %></td>
-                                                    <td><%= student.std_phone %></td>
-                                                </tr>
-                                            <% }); %>
-                                        <% } else { %>
-                                            <tr>
-                                                <td colspan="7">No other students in this room.</td>
-                                            </tr>
-                                        <% } %>
-                                    </tbody>
-                                </table>
+                                                            <h2 class="text-center mb-4">Other Students in Room</h2>
+                                                            <div class="table-responsive mb-4">
+                                                                <table class="table table-bordered">
+                                                                    <thead class="thead-light">
+                                                                        <tr>
+                                                                            <th>Name</th>
+                                                                            <th>Faculty</th>
+                                                                            <th>Year</th>
+                                                                            <th>State</th>
+                                                                            <th>Preference</th>
+                                                                            <th>Email</th>
+                                                                            <th>Phone</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <% if (students.length > 0) { %>
+                                                                            <% students.forEach(function(student) { %>
+                                                                                <tr>
+                                                                                    <td><%= student.std_fullname %></td>
+                                                                                    <td><%= student.std_faculty %></td>
+                                                                                    <td><%= student.std_year %></td>
+                                                                                    <td><%= student.std_state %></td>
+                                                                                    <td><%= student.std_pref %></td>
+                                                                                    <td><%= student.std_email %></td>
+                                                                                    <td><%= student.std_phone %></td>
+                                                                                </tr>
+                                                                            <% }); %>
+                                                                        <% } else { %>
+                                                                            <tr>
+                                                                                <td colspan="7" class="text-center">No other students in this room.</td>
+                                                                            </tr>
+                                                                        <% } %>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
 
-                                <form action="/select-room/<%= room.room_id %>" method="post">
-                                    <input type="hidden" name="std_id" value="<%= studentId %>" />
-                                    <button type="submit" class="button">Select Room</button>
-                                </form>
-                            </div>
-                        </body>
-                        </html>
+                                                            <form action="/select-room/<%= room.room_id %>" method="post">
+                                                                <input type="hidden" name="std_id" value="<%= studentId %>" />
+                                                                <button type="submit" class="btn btn-primary btn-block">Select Room</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+                                                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+                                                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                                            </body>
+                                            </html>

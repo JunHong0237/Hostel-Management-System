@@ -1,184 +1,144 @@
-                                                                                                  <!DOCTYPE html>
-                                                                                                  <html lang="en">
-                                                                                                  <head>
-                                                                                                      <meta charset="UTF-8">
-                                                                                                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                                                                                      <title>Admin - Room Details</title>
-                                                                                                      <style>
-                                                                                                          body {
-                                                                                                              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                                                                                                              background-color: #f9f9f9;
-                                                                                                              margin: 0;
-                                                                                                              padding: 20px;
-                                                                                                          }
-                                                                                                          header, footer {
-                                                                                                              background-color: #007BFF;
-                                                                                                              color: white;
-                                                                                                              padding: 10px 20px;
-                                                                                                              text-align: center;
-                                                                                                          }
-                                                                                                          nav ul {
-                                                                                                              background-color: #007BFF;
-                                                                                                              padding: 10px 0;
-                                                                                                              list-style: none;
-                                                                                                              margin: 0;
-                                                                                                              text-align: center;
-                                                                                                          }
-                                                                                                          nav ul li {
-                                                                                                              display: inline;
-                                                                                                              margin-right: 10px;
-                                                                                                          }
-                                                                                                          nav ul li a {
-                                                                                                              color: white;
-                                                                                                              text-decoration: none;
-                                                                                                          }
-                                                                                                          main {
-                                                                                                              padding: 20px 0;
-                                                                                                          }
-                                                                                                          table {
-                                                                                                              width: 100%;
-                                                                                                              border-collapse: collapse;
-                                                                                                          }
-                                                                                                          th, td {
-                                                                                                              padding: 8px;
-                                                                                                              border: 1px solid #ddd;
-                                                                                                              text-align: left;
-                                                                                                          }
-                                                                                                          th {
-                                                                                                              background-color: #007BFF;
-                                                                                                              color: white;
-                                                                                                          }
-                                                                                                          tr:nth-child(even) {
-                                                                                                              background-color: #f2f2f2;
-                                                                                                          }
-                                                                                                          tr:hover {
-                                                                                                              background-color: #ddd;
-                                                                                                          }
-                                                                                                          .button, .delete {
-                                                                                                              display: inline-block;
-                                                                                                              padding: 8px 12px;
-                                                                                                              margin: 5px;
-                                                                                                              background-color: #28a745;
-                                                                                                              color: white;
-                                                                                                              border: none;
-                                                                                                              border-radius: 4px;
-                                                                                                              cursor: pointer;
-                                                                                                              text-decoration: none;
-                                                                                                          }
-                                                                                                          .button:hover {
-                                                                                                              background-color: #218838;
-                                                                                                          }
-                                                                                                          .delete {
-                                                                                                              background-color: #dc3545;
-                                                                                                          }
-                                                                                                          .delete:hover {
-                                                                                                              background-color: #c82333;
-                                                                                                          }
-                                                                                                          #addRoomForm {
-                                                                                                              display: none; 
-                                                                                                              background: #ffffff;
-                                                                                                              padding: 20px;
-                                                                                                              border-radius: 5px;
-                                                                                                              box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                                                                                                              margin-top: 20px;
-                                                                                                          }
-                                                                                                      </style>
-                                                                                                  </head>
-                                                                                                  <body>
-                                                                                                      <header>
-                                                                                                          <h1>Room Details</h1>
-                                                                                                      </header>
-                                                                                                      <nav>
-                                                                                                          <ul>
-                                                                                                              <li><a href="/admin/dashboard">Dashboard</a></li>
-                                                                                                                <li><a href="/admin/students">Student Details</a></li>
-                                                                                                                <li><a href="/admin/rooms">Room Details</a></li>
-                                                                                                          </ul>
-                                                                                                      </nav>
-                                                                                                      <main>
-                                                                                                          <table>
-                                                                                                              <thead>
-                                                                                                                  <tr>
-                                                                                                                      <th>Room ID</th>
-                                                                                                                      <th>Room Number</th>
-                                                                                                                      <th>Capacity</th>
-                                                                                                                      <th>Occupancy</th>
-                                                                                                                      <th>Available Beds</th>
-                                                                                                                      <th>Room Type</th>
-                                                                                                                      <th>Actions</th>
-                                                                                                                  </tr>
-                                                                                                              </thead>
-                                                                                                              <tbody>
-                                                                                                                  <% rooms.forEach(function(room) { %>
-                                                                                                                  <tr>
-                                                                                                                      <td><%= room.room_id %></td>
-                                                                                                                      <td><%= room.room_no %></td>
-                                                                                                                      <td><%= room.room_capacity %></td>
-                                                                                                                      <td><%= room.room_occupancy %></td>
-                                                                                                                      <td><%= room.bedAvail %></td>
-                                                                                                                      <td><%= room.room_gender %></td>
-                                                                                                                      <td>
-                                                                                                                          <a href="/admin/rooms/edit/<%= room.room_id %>" class="button">Edit</a>
-                                                                                                                          <a href="/admin/room/view/<%= room.room_id %>" class="button">View</a>
-                                                                                                                          <button onclick="confirmRoomDeletion('<%= room.room_id %>', '<%= room.room_no %>')" class="delete">Delete</button>
-                                                                                                                      </td>
-                                                                                                                  </tr>
-                                                                                                                  <% }); %>
-                                                                                                              </tbody>
-                                                                                                          </table>
-                                                                                                          <button class="button" onclick="toggleAddRoomForm()">Add New Room</button>
-                                                                                                      </main>
+                                                                                                                                          <!DOCTYPE html>
+                                                                                                                                          <html lang="en">
+                                                                                                                                          <head>
+                                                                                                                                              <meta charset="UTF-8">
+                                                                                                                                              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                                                                                                                              <title>Admin - Room Details</title>
+                                                                                                                                              <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+                                                                                                                                          </head>
+                                                                                                                                          <body>
+                                                                                                                                              <!-- Header -->
+                                                                                                                                              <header class="bg-primary text-white text-center py-3">
+                                                                                                                                                  <h1>Room Details</h1>
+                                                                                                                                              </header>
 
-                                                                                                      <div id="addRoomForm">
-                                                                                                          <h2>Add New Room</h2>
-                                                                                                          <form action="/admin/rooms/add" method="post">
-                                                                                                              <label for="room_no">Room Number:</label>
-                                                                                                              <input type="text" id="room_no" name="room_no" required>
-                                                                                                              <label for="room_capacity">Room Capacity:</label>
-                                                                                                              <select id="room_capacity" name="room_capacity" required>
-                                                                                                                  <option value="1">1</option>
-                                                                                                                  <option value="2">2</option>
-                                                                                                                  <option value="4">4</option>
-                                                                                                              </select>
-                                                                                                              <label for="room_gender">Room Gender:</label>
-                                                                                                              <select id="room_gender" name="room_gender" required>
-                                                                                                                  <option value="Male">Male</option>
-                                                                                                                  <option value="Female">Female</option>
-                                                                                                                  <option value="Mixed"></option>
-                                                                                                              </select>
-                                                                                                              <button type="submit" class="button">Add Room</button>
-                                                                                                          </form>
-                                                                                                      </div>
+                                                                                                                                              <!-- Navbar -->
+                                                                                                                                              <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                                                                                                                                                  <div class="container">
+                                                                                                                                                      <a class="navbar-brand" href="#">Admin</a>
+                                                                                                                                                      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                                                                                                                                                          <span class="navbar-toggler-icon"></span>
+                                                                                                                                                      </button>
+                                                                                                                                                      <div class="collapse navbar-collapse" id="navbarNav">
+                                                                                                                                                          <ul class="navbar-nav ml-auto">
+                                                                                                                                                              <li class="nav-item">
+                                                                                                                                                                  <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+                                                                                                                                                              </li>
+                                                                                                                                                              <li class="nav-item">
+                                                                                                                                                                  <a class="nav-link" href="/admin/students">Student Details</a>
+                                                                                                                                                              </li>
+                                                                                                                                                              <li class="nav-item">
+                                                                                                                                                                  <a class="nav-link" href="/admin/rooms">Room Details</a>
+                                                                                                                                                              </li>
+                                                                                                                                                          </ul>
+                                                                                                                                                      </div>
+                                                                                                                                                  </div>
+                                                                                                                                              </nav>
 
-                                                                                                      <script>
-                                                                                                      function toggleAddRoomForm() {
-                                                                                                          var form = document.getElementById('addRoomForm');
-                                                                                                          form.style.display = form.style.display === 'none' ? 'block' : 'none';
-                                                                                                      }
+                                                                                                                                              <!-- Main Content -->
+                                                                                                                                              <main class="container mt-4">
+                                                                                                                                                  <!-- Room Details Table -->
+                                                                                                                                                  <div class="table-responsive">
+                                                                                                                                                      <table class="table table-striped">
+                                                                                                                                                          <thead class="thead-dark">
+                                                                                                                                                              <tr>
+                                                                                                                                                                  <th>Room ID</th>
+                                                                                                                                                                  <th>Room Number</th>
+                                                                                                                                                                  <th>Capacity</th>
+                                                                                                                                                                  <th>Occupancy</th>
+                                                                                                                                                                  <th>Available Beds</th>
+                                                                                                                                                                  <th>Room Type</th>
+                                                                                                                                                                  <th>Actions</th>
+                                                                                                                                                              </tr>
+                                                                                                                                                          </thead>
+                                                                                                                                                          <tbody>
+                                                                                                                                                              <% rooms.forEach(function(room) { %>
+                                                                                                                                                              <tr>
+                                                                                                                                                                  <td><%= room.room_id %></td>
+                                                                                                                                                                  <td><%= room.room_no %></td>
+                                                                                                                                                                  <td><%= room.room_capacity %></td>
+                                                                                                                                                                  <td><%= room.room_occupancy %></td>
+                                                                                                                                                                  <td><%= room.bedAvail %></td>
+                                                                                                                                                                  <td><%= room.room_gender %></td>
+                                                                                                                                                                  <td>
+                                                                                                                                                                      <a href="/admin/rooms/edit/<%= room.room_id %>" class="btn btn-success btn-sm">Edit</a>
+                                                                                                                                                                      <a href="/admin/room/view/<%= room.room_id %>" class="btn btn-primary btn-sm">View</a>
+                                                                                                                                                                      <button onclick="confirmRoomDeletion('<%= room.room_id %>', '<%= room.room_no %>')" class="btn btn-danger btn-sm">Delete</button>
+                                                                                                                                                                  </td>
+                                                                                                                                                              </tr>
+                                                                                                                                                              <% }); %>
+                                                                                                                                                          </tbody>
+                                                                                                                                                      </table>
+                                                                                                                                                  </div>
 
-                                                                                                      function confirmRoomDeletion(roomId, roomNo) {
-                                                                                                          fetch(`/admin/rooms/check-students/${roomId}`)
-                                                                                                          .then(response => response.json())
-                                                                                                          .then(data => {
-                                                                                                              const message = `There are ${data.studentCount} student(s) in room ${roomNo}. Are you sure you want to unassign all students and delete this room?`;
-                                                                                                              if (confirm(message)) {
-                                                                                                                  fetch(`/admin/rooms/delete/${roomId}`, { method: 'POST' })
-                                                                                                                  .then(response => response.json())
-                                                                                                                  .then(data => {
-                                                                                                                      alert(data.message);
-                                                                                                                      if (data.success) {
-                                                                                                                          window.location.reload(); // Refresh the page to reflect changes
-                                                                                                                      }
-                                                                                                                  })
-                                                                                                                  .catch(error => console.error('Error:', error));
-                                                                                                              }
-                                                                                                          })
-                                                                                                          .catch(error => console.error('Error:', error));
-                                                                                                      }
-                                                                                                      </script>
+                                                                                                                                                  <!-- Add New Room Button -->
+                                                                                                                                                  <button class="btn btn-success mb-3" onclick="toggleAddRoomForm()">Add New Room</button>
 
-                                                                                                      <footer>
-                                                                                                          <!-- Footer content here -->
-                                                                                                      </footer>
-                                                                                                  </body>
-                                                                                                  </html>
+                                                                                                                                                  <!-- Add New Room Form -->
+                                                                                                                                                  <div id="addRoomForm" class="card mt-3" style="display: none;">
+                                                                                                                                                      <div class="card-body">
+                                                                                                                                                          <h2 class="card-title">Add New Room</h2>
+                                                                                                                                                          <form action="/admin/rooms/add" method="post">
+                                                                                                                                                              <div class="form-group">
+                                                                                                                                                                  <label for="room_no">Room Number:</label>
+                                                                                                                                                                  <input type="text" id="room_no" name="room_no" class="form-control" required>
+                                                                                                                                                              </div>
+                                                                                                                                                              <div class="form-group">
+                                                                                                                                                                  <label for="room_capacity">Room Capacity:</label>
+                                                                                                                                                                  <select id="room_capacity" name="room_capacity" class="form-control" required>
+                                                                                                                                                                      <option value="1">1</option>
+                                                                                                                                                                      <option value="2">2</option>
+                                                                                                                                                                      <option value="4">4</option>
+                                                                                                                                                                  </select>
+                                                                                                                                                              </div>
+                                                                                                                                                              <div class="form-group">
+                                                                                                                                                                  <label for="room_gender">Room Gender:</label>
+                                                                                                                                                                  <select id="room_gender" name="room_gender" class="form-control" required>
+                                                                                                                                                                      <option value="Male">Male</option>
+                                                                                                                                                                      <option value="Female">Female</option>
+                                                                                                                                                                      <option value="Mixed">Mixed</option>
+                                                                                                                                                                  </select>
+                                                                                                                                                              </div>
+                                                                                                                                                              <button type="submit" class="btn btn-success">Add Room</button>
+                                                                                                                                                          </form>
+                                                                                                                                                      </div>
+                                                                                                                                                  </div>
+                                                                                                                                              </main>
+
+                                                                                                                                              <!-- Footer -->
+                                                                                                                                              <footer class="bg-primary text-white text-center py-3">
+                                                                                                                                                  <!-- Footer content here -->
+                                                                                                                                              </footer>
+
+                                                                                                                                              <script>
+                                                                                                                                                  function toggleAddRoomForm() {
+                                                                                                                                                      var form = document.getElementById('addRoomForm');
+                                                                                                                                                      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                                                                                                                                                  }
+
+                                                                                                                                                  function confirmRoomDeletion(roomId, roomNo) {
+                                                                                                                                                      fetch(`/admin/rooms/check-students/${roomId}`)
+                                                                                                                                                      .then(response => response.json())
+                                                                                                                                                      .then(data => {
+                                                                                                                                                          const message = `There are ${data.studentCount} student(s) in room ${roomNo}. Are you sure you want to unassign all students and delete this room?`;
+                                                                                                                                                          if (confirm(message)) {
+                                                                                                                                                              fetch(`/admin/rooms/delete/${roomId}`, { method: 'POST' })
+                                                                                                                                                              .then(response => response.json())
+                                                                                                                                                              .then(data => {
+                                                                                                                                                                  alert(data.message);
+                                                                                                                                                                  if (data.success) {
+                                                                                                                                                                      window.location.reload(); // Refresh the page to reflect changes
+                                                                                                                                                                  }
+                                                                                                                                                              })
+                                                                                                                                                              .catch(error => console.error('Error:', error));
+                                                                                                                                                          }
+                                                                                                                                                      })
+                                                                                                                                                      .catch(error => console.error('Error:', error));
+                                                                                                                                                  }
+                                                                                                                                              </script>
+
+                                                                                                                                              <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+                                                                                                                                              <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+                                                                                                                                              <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                                                                                                                                          </body>
+                                                                                                                                          </html>
