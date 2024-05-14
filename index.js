@@ -514,39 +514,59 @@ app.post("/admin/rooms/delete/:room_id", async (req, res) => {
   }
 });
 
+app.get("/admin/dashboard-data", async (req, res) => {
+  try {
+    // Fetch data for room occupancy
+    const [roomOccupancy] = await db
+      .promise()
+      .query("SELECT room_no, room_capacity, room_occupancy FROM Room_Details");
 
+    // Fetch data for gender distribution
+    const [genderDistribution] = await db
+      .promise()
+      .query(
+        "SELECT std_gender, COUNT(*) as count FROM Student_Details GROUP BY std_gender",
+      );
 
+    // Fetch data for students by faculty
+    const [studentsByFaculty] = await db
+      .promise()
+      .query(
+        "SELECT std_faculty, COUNT(*) as count FROM Student_Details GROUP BY std_faculty",
+      );
 
-app.get('/admin/dashboard-data', async (req, res) => {
-    try {
-        // Fetch data for room occupancy
-        const [roomOccupancy] = await db.promise().query("SELECT room_no, room_capacity, room_occupancy FROM Room_Details");
+    // Fetch data for room preference
+    const [roomPreference] = await db
+      .promise()
+      .query(
+        "SELECT std_pref, COUNT(*) as count FROM Student_Details GROUP BY std_pref",
+      );
 
-        // Fetch data for gender distribution
-        const [genderDistribution] = await db.promise().query("SELECT std_gender, COUNT(*) as count FROM Student_Details GROUP BY std_gender");
+    // Fetch data for student registration over time
+    const [studentRegistration] = await db
+      .promise()
+      .query(
+        "SELECT DATE(reg_date) as reg_date, COUNT(*) as count FROM Student_Details GROUP BY DATE(reg_date)",
+      );
 
-        // Fetch data for students by faculty
-        const [studentsByFaculty] = await db.promise().query("SELECT std_faculty, COUNT(*) as count FROM Student_Details GROUP BY std_faculty");
+    // Fetch data for room type distribution
+    const [roomType] = await db
+      .promise()
+      .query(
+        "SELECT room_gender, COUNT(*) as count FROM Room_Details GROUP BY room_gender",
+      );
 
-        // Fetch data for room preference
-        const [roomPreference] = await db.promise().query("SELECT std_pref, COUNT(*) as count FROM Student_Details GROUP BY std_pref");
-
-        // Fetch data for student registration over time
-        const [studentRegistration] = await db.promise().query("SELECT DATE(reg_date) as reg_date, COUNT(*) as count FROM Student_Details GROUP BY DATE(reg_date)");
-
-        // Fetch data for room type distribution
-        const [roomType] = await db.promise().query("SELECT room_gender, COUNT(*) as count FROM Room_Details GROUP BY room_gender");
-
-        res.json({
-            roomOccupancy,
-            genderDistribution,
-            studentsByFaculty,
-            roomPreference,
-            studentRegistration,
-            roomType
-        });
-    } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        res.status(500).send('An error occurred while fetching dashboard data.');
-    }
+    res.json({
+      roomOccupancy,
+      genderDistribution,
+      studentsByFaculty,
+      roomPreference,
+      studentRegistration,
+      roomType,
+    });
+  } catch (error) {
+    console.error("Error fetching dashboard data:", error);
+    res.status(500).send("An error occurred while fetching dashboard data.");
+  }
 });
+
