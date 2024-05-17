@@ -321,17 +321,32 @@ app.get("/admin/dashboard", (req, res) => {
   res.render("admin-dashboard");
 });
 
-app.get("/admin/students", (req, res) => {
-  // Query to select all student details
-  const query = "SELECT * FROM Student_Details";
+const formatDate = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  const seconds = String(d.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
 
+// Example usage in a route:
+app.get("/admin/students", (req, res) => {
+  // Fetch student details from the database
+  const query = "SELECT * FROM Student_Details";
   db.query(query, (error, results) => {
     if (error) {
-      // Handle any errors that occur during the query
       console.error("Error fetching student details: ", error);
       res.status(500).send("An error occurred while fetching student details.");
       return;
     }
+
+    // Format the registration date
+    results.forEach((student) => {
+      student.reg_date = formatDate(student.reg_date);
+    });
 
     // Render the admin-student-details view, passing the student data
     res.render("admin-student-details", { students: results });
@@ -570,3 +585,60 @@ app.get("/admin/dashboard-data", async (req, res) => {
   }
 });
 
+// Existing code...
+
+// Route to handle room update
+app.post("/admin/rooms/edit", (req, res) => {
+  const { room_id, room_no, room_capacity, room_gender } = req.body;
+
+  const checkOccupancyQuery =
+    "SELECT room_occupancy FROM Room_Details WHERE room_id = ?";
+
+  db.query(checkOccupancyQuery, [room_id], (error, results) => {
+    if (error) {
+      console.error("Error checking room occupancy: ", error);
+      res.status(500).send("An error occurred while checking room occupancy.");
+      return;
+    }
+
+    if (results.length > 0 && results[0].room_occupancy > 0) {
+      res
+        .status(400)
+        .send(
+          "Cannot edit room details as there are students assigned to this room.",
+        );
+      return;
+    }
+
+    const updateRoomQuery = `
+            UPDATE Room_Details 
+            SET room_no = ?, room_capacity = ?, room_gender = ?, room_occupancy = ?, bedAvail = ?
+            WHERE room_id = ?
+        `;
+
+    const newBedAvail = room_capacity - results[0].room_occupancy;
+
+    db.query(
+      updateRoomQuery,
+      [
+        room_no,
+        room_capacity,
+        room_gender,
+        results[0].room_occupancy,
+        newBedAvail,
+        room_id,
+      ],
+      (error, result) => {
+        if (error) {
+          console.error("Error updating room details: ", error);
+          res
+            .status(500)
+            .send("An error occurred while updating room details.");
+          return;
+        }
+
+        res.redirect("/admin/rooms");
+      },
+    );
+  });
+});
