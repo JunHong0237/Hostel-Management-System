@@ -642,3 +642,46 @@ app.post("/admin/rooms/edit", (req, res) => {
     );
   });
 });
+
+// Existing code...
+
+app.post("/admin/students/edit", (req, res) => {
+  const {
+    new_std_id,
+    original_std_id,
+    std_fullname,
+    std_gender,
+    std_password,
+  } = req.body;
+
+  console.log(req.body); // Debug: log the received form data
+
+  let updateQuery;
+  let queryParams;
+
+  if (std_password) {
+    updateQuery = `
+            UPDATE Student_Details 
+            SET std_fullname = ?, std_gender = ?, std_password = ?
+            WHERE std_id = ?
+        `;
+    queryParams = [std_fullname, std_gender, std_password, original_std_id];
+  } else {
+    updateQuery = `
+            UPDATE Student_Details 
+            SET std_fullname = ?, std_gender = ?
+            WHERE std_id = ?
+        `;
+    queryParams = [std_fullname, std_gender, original_std_id];
+  }
+
+  db.query(updateQuery, queryParams, (error, result) => {
+    if (error) {
+      console.error("Error updating student details: ", error);
+      res.status(500).send("An error occurred while updating student details.");
+      return;
+    }
+
+    res.redirect("/admin/students");
+  });
+});

@@ -79,7 +79,7 @@
                         <td><%= student.std_pref %></td>
                         <td><%= new Date(student.reg_date).toLocaleString('en-GB', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '') %></td>
                         <td class="text-center">
-                            <a href="/edit/<%= student.std_id %>" class="btn btn-success btn-sm">Edit</a>
+                            <button class="btn btn-success btn-sm" onclick="openEditModal('<%= student.std_id %>', '<%= student.std_fullname %>', '<%= student.std_gender %>')">Edit</button>
                             <a href="/delete/<%= student.std_id %>" class="btn btn-danger btn-sm">Delete</a>
                         </td>
                     </tr>
@@ -119,8 +119,46 @@
                                 <label for="std_password">Initial Password:</label>
                                 <input type="password" id="std_password" name="std_password" class="form-control" required>
                             </div>
-                      
                             <button type="submit" class="btn btn-success">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Student Modal -->
+        <div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editStudentModalLabel">Edit Student</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editStudentForm" action="/admin/students/edit" method="post">
+                            <div class="form-group">
+                                <label for="edit_std_id">Student ID:</label>
+                                <input type="text" id="edit_std_id" name="new_std_id" class="form-control" required>
+                                <input type="hidden" id="original_std_id" name="original_std_id">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_std_fullname">Full Name:</label>
+                                <input type="text" id="edit_std_fullname" name="std_fullname" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_std_gender">Gender:</label>
+                                <select id="edit_std_gender" name="std_gender" class="form-control" required>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit_std_password">Reset Password:</label>
+                                <input type="password" id="edit_std_password" name="std_password" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-success">Update Student</button>
                         </form>
                     </div>
                 </div>
@@ -134,14 +172,20 @@
 
     <script>
         function logout() {
-            // Clear any client-side authentication data if necessary
-            // For example, you might want to clear cookies or localStorage items
-            // localStorage.removeItem('authToken');
             window.location.href = '/admin-login.html';
+        }
+
+        function openEditModal(std_id, std_fullname, std_gender) {
+            document.getElementById('edit_std_id').value = std_id;
+            document.getElementById('original_std_id').value = std_id;
+            document.getElementById('edit_std_fullname').value = std_fullname;
+            document.getElementById('edit_std_gender').value = std_gender;
+            document.getElementById('edit_std_password').value = '';
+            $('#editStudentModal').modal('show');
         }
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
