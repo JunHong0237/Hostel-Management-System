@@ -80,7 +80,7 @@
                         <td><%= new Date(student.reg_date).toLocaleString('en-GB', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '') %></td>
                         <td class="text-center">
                             <button class="btn btn-success btn-sm" onclick="openEditModal('<%= student.std_id %>', '<%= student.std_fullname %>', '<%= student.std_gender %>')">Edit</button>
-                            <a href="/delete/<%= student.std_id %>" class="btn btn-danger btn-sm">Delete</a>
+                            <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<%= student.std_id %>', '<%= student.std_fullname %>')">Delete</button>
                         </td>
                     </tr>
                     <% }); %>
@@ -160,6 +160,29 @@
                 </div>
             </div>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteStudentModal" tabindex="-1" role="dialog" aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteStudentModalLabel">Delete Student</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete <strong id="delete_student_name"></strong>?</p>
+                        <form id="deleteStudentForm" action="/admin/students/delete" method="post">
+                            <input type="hidden" id="delete_std_id" name="std_id">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <footer class="bg-primary text-white text-center py-3">
@@ -177,6 +200,12 @@
             document.getElementById('edit_std_gender').value = std_gender;
             document.getElementById('edit_std_password').value = '';
             $('#editStudentModal').modal('show');
+        }
+
+        function openDeleteModal(std_id, std_fullname) {
+            document.getElementById('delete_std_id').value = std_id;
+            document.getElementById('delete_student_name').innerText = std_fullname;
+            $('#deleteStudentModal').modal('show');
         }
     </script>
 

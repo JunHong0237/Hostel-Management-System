@@ -151,8 +151,7 @@ app.get("/view-room-details/:room_id", (req, res) => {
 app.post("/select-room/:room_id", (req, res) => {
   const { room_id } = req.params;
   const { std_id } = req.body; // Getting student's ID from the body
-  console.log("std_id:", std_id);
-  // Start a transaction to update both the Room_Details and Student_Details atomically
+
   db.beginTransaction((err) => {
     if (err) {
       console.error("Error starting transaction: ", err);
@@ -161,8 +160,11 @@ app.post("/select-room/:room_id", (req, res) => {
     }
 
     // Query to increment room occupancy and decrement available beds
-    const updateRoomQuery =
-      "UPDATE Room_Details SET room_occupancy = room_occupancy + 1 WHERE room_id = ? AND room_capacity > room_occupancy";
+    const updateRoomQuery = `
+      UPDATE Room_Details 
+      SET room_occupancy = room_occupancy + 1, 
+          bedAvail = bedAvail - 1 
+      WHERE room_id = ? AND room_capacity > room_occupancy`;
 
     db.query(updateRoomQuery, [room_id], (error, result) => {
       if (error) {
@@ -207,8 +209,6 @@ app.post("/select-room/:room_id", (req, res) => {
             return;
           }
           console.log("Transaction Complete.");
-          // Redirect or send a success message/page
-          // Assuming you have a route for the dashboard
           res.redirect(`/dashboard?std_id=${std_id}`);
         });
       });
@@ -678,4 +678,46 @@ app.post("/admin/students/edit", (req, res) => {
 
     res.redirect("/admin/students");
   });
+});
+
+app.post("/admin/students/delete", async (req, res) => {
+  const { std_id } = req.body;
+
+  try {
+    await db.promise().beginTransaction();
+
+    // Get the room ID of the student to be deleted
+    const [studentRoom] = await db
+      .promise()
+      .query("SELECT room_id FROM Student_Details WHERE std_id = ?", [std_id]);
+
+    if (studentRoom.length > 0 && studentRoom[0].room_id) {
+      const room_id = studentRoom[0].room_id;
+
+      // Unassign the student from the room
+      const unassignQuery =
+        "UPDATE Student_Details SET room_id = NULL WHERE std_id = ?";
+      await db.promise().query(unassignQuery, [std_id]);
+
+      // Update the room occupancy and bed availability
+      const updateRoomQuery = `
+        UPDATE Room_Details 
+        SET room_occupancy = room_occupancy - 1, 
+            bedAvail = bedAvail + 1 
+        WHERE room_id = ?`;
+      await db.promise().query(updateRoomQuery, [room_id]);
+    }
+
+    // Delete the student record
+    const deleteQuery = "DELETE FROM Student_Details WHERE std_id = ?";
+    await db.promise().query(deleteQuery, [std_id]);
+
+    await db.promise().commit();
+
+    res.redirect("/admin/students");
+  } catch (error) {
+    await db.promise().rollback();
+    console.error("Error deleting student: ", error);
+    res.status(500).send("An error occurred while deleting the student.");
+  }
 });
