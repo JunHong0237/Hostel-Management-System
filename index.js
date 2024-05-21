@@ -114,38 +114,45 @@ app.get("/select-room", (req, res) => {
     return;
   }
 
-  // First, check if the student already has a room assigned
-  const checkRoomAssignedQuery =
-    "SELECT room_id FROM Student_Details WHERE std_id = ? AND room_id IS NOT NULL";
-  db.query(checkRoomAssignedQuery, [studentId], (error, results) => {
+  // First, check if the student already has a room assigned and fetch their gender
+  const checkStudentQuery =
+    "SELECT room_id, std_gender FROM Student_Details WHERE std_id = ?";
+  db.query(checkStudentQuery, [studentId], (error, results) => {
     if (error) {
-      console.error("Error checking room assignment: " + error.message);
-      res.status(500).send("An error occurred while checking room assignment.");
+      console.error("Error checking student details: " + error.message);
+      res.status(500).send("An error occurred while checking student details.");
       return;
     }
 
     if (results.length > 0) {
-      // The student already has a room assigned
-      res.send("You have already selected a room.");
-      return;
-    }
+      const studentGender = results[0].std_gender;
+      const roomId = results[0].room_id;
 
-    // If no room is assigned, proceed to show available rooms
-    const query = `
-      SELECT room_id, room_no, room_capacity, room_occupancy, (room_capacity - room_occupancy) AS bedAvail
-      FROM Room_Details
-      WHERE room_capacity > room_occupancy
-    `;
-
-    db.query(query, (error, rooms) => {
-      if (error) {
-        console.error("Error fetching rooms: " + error.message);
-        res.status(500).send("An error occurred while fetching the rooms.");
+      if (roomId) {
+        // The student already has a room assigned
+        res.send("You have already selected a room.");
         return;
       }
-      // Render the select-room view with the available rooms and studentId
-      res.render("select-room", { rooms: rooms, studentId: studentId });
-    });
+
+      // If no room is assigned, proceed to show available rooms based on student's gender
+      const query = `
+        SELECT room_id, room_no, room_capacity, room_occupancy, (room_capacity - room_occupancy) AS bedAvail
+        FROM Room_Details
+        WHERE room_capacity > room_occupancy AND (room_gender = ? OR room_gender = 'Mixed')
+      `;
+
+      db.query(query, [studentGender], (error, rooms) => {
+        if (error) {
+          console.error("Error fetching rooms: " + error.message);
+          res.status(500).send("An error occurred while fetching the rooms.");
+          return;
+        }
+        // Render the select-room view with the available rooms and studentId
+        res.render("select-room", { rooms: rooms, studentId: studentId });
+      });
+    } else {
+      res.send("Student not found.");
+    }
   });
 });
 
