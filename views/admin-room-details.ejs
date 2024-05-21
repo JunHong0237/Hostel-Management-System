@@ -82,7 +82,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body" id="deleteRoomModalBody">
             Are you sure you want to delete this room?
           </div>
           <div class="modal-footer">
@@ -195,8 +195,18 @@
     }
 
     function openDeleteModal(roomId, roomNo) {
-      document.getElementById('confirmDeleteButton').setAttribute('data-room-id', roomId);
-      $('#deleteRoomModal').modal('show');
+      fetch(`/admin/rooms/check-students/${roomId}`)
+        .then(response => response.json())
+        .then(data => {
+          const message = `There are ${data.studentCount} student(s) in room ${roomNo}. Are you sure you want to unassign all students and delete this room?`;
+          document.getElementById('deleteRoomModalBody').textContent = message;
+          document.getElementById('confirmDeleteButton').setAttribute('data-room-id', roomId);
+          $('#deleteRoomModal').modal('show');
+        })
+        .catch(error => {
+          console.error('Error checking students in room:', error);
+          alert('Failed to check the number of students in the room.');
+        });
     }
 
     document.getElementById('confirmDeleteButton').addEventListener('click', function() {
