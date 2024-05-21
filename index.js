@@ -104,6 +104,47 @@ app.post("/login", (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+app.post("/edit-profile", (req, res) => {
+  const {
+    std_id,
+    std_email,
+    std_phone,
+    std_faculty,
+    std_year,
+    std_state,
+    std_pref,
+    std_password,
+  } = req.body;
+
+  let query =
+    "UPDATE Student_Details SET std_email = ?, std_phone = ?, std_faculty = ?, std_year = ?, std_state = ?, std_pref = ? ";
+  const params = [
+    std_email,
+    std_phone,
+    std_faculty,
+    std_year,
+    std_state,
+    std_pref,
+    std_id,
+  ];
+
+  if (std_password) {
+    query += ", std_password = ? ";
+    params.splice(params.length - 1, 0, std_password); // Insert password before std_id
+  }
+
+  query += "WHERE std_id = ?";
+
+  db.query(query, params, (error, results) => {
+    if (error) {
+      console.error("Error updating student details: ", error);
+      res.status(500).send("An error occurred while updating student details.");
+      return;
+    }
+
+    res.redirect(`/dashboard?std_id=${std_id}`);
+  });
+});
 
 // Route to display room selection page
 app.get("/select-room", (req, res) => {
