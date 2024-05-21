@@ -46,7 +46,54 @@ app.post("/login", (req, res) => {
     [std_id, std_password],
     (error, results) => {
       if (results.length > 0) {
-        res.render("dashboard", { student: results[0] });
+        const student = results[0];
+        if (student.room_id) {
+          const roomDetailsQuery = `
+            SELECT r.room_no, r.room_capacity, r.room_occupancy
+            FROM Room_Details r
+            JOIN Student_Details s ON r.room_id = s.room_id
+            WHERE s.std_id = ?
+          `;
+          const roommatesQuery = `
+            SELECT std_faculty, std_year, std_state, std_pref, std_email, std_phone
+            FROM Student_Details
+            WHERE room_id = ? AND std_id != ?
+          `;
+          db.query(roomDetailsQuery, [std_id], (error, roomResults) => {
+            if (error) {
+              console.error("Error fetching room details:", error);
+              res
+                .status(500)
+                .send("An error occurred while fetching room details.");
+              return;
+            }
+            const roomDetails = roomResults.length > 0 ? roomResults[0] : null;
+
+            db.query(
+              roommatesQuery,
+              [student.room_id, std_id],
+              (error, roommates) => {
+                if (error) {
+                  console.error("Error fetching roommates:", error);
+                  res
+                    .status(500)
+                    .send("An error occurred while fetching roommates.");
+                  return;
+                }
+                console.log("Student:", student);
+                console.log("Room Details:", roomDetails);
+                console.log("Roommates:", roommates);
+                res.render("dashboard", { student, roomDetails, roommates });
+              },
+            );
+          });
+        } else {
+          res.render("dashboard", {
+            student,
+            roomDetails: null,
+            roommates: [],
+          });
+        }
       } else {
         res.send("Incorrect Student ID and/or Password!");
       }
