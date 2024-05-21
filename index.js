@@ -646,13 +646,7 @@ app.post("/admin/rooms/edit", (req, res) => {
 // Existing code...
 
 app.post("/admin/students/edit", (req, res) => {
-  const {
-    new_std_id,
-    original_std_id,
-    std_fullname,
-    std_gender,
-    std_password,
-  } = req.body;
+  const { original_std_id, std_fullname, std_gender, std_password } = req.body;
 
   console.log(req.body); // Debug: log the received form data
 

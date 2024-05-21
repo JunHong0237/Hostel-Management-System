@@ -138,11 +138,7 @@
                     </div>
                     <div class="modal-body">
                         <form id="editStudentForm" action="/admin/students/edit" method="post">
-                            <div class="form-group">
-                                <label for="edit_std_id">Student ID:</label>
-                                <input type="text" id="edit_std_id" name="new_std_id" class="form-control" required>
-                                <input type="hidden" id="original_std_id" name="original_std_id">
-                            </div>
+                            <input type="hidden" id="original_std_id" name="original_std_id">
                             <div class="form-group">
                                 <label for="edit_std_fullname">Full Name:</label>
                                 <input type="text" id="edit_std_fullname" name="std_fullname" class="form-control" required>
@@ -176,7 +172,6 @@
         }
 
         function openEditModal(std_id, std_fullname, std_gender) {
-            document.getElementById('edit_std_id').value = std_id;
             document.getElementById('original_std_id').value = std_id;
             document.getElementById('edit_std_fullname').value = std_fullname;
             document.getElementById('edit_std_gender').value = std_gender;
