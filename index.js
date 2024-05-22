@@ -2,6 +2,8 @@ import express from "express";
 import mysql from "mysql2";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
+import multer from "multer";
+import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
@@ -13,6 +15,18 @@ const port = process.env.PORT || 3000;
 // For __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Set up storage for uploaded files
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // MySQL connection
 const db = mysql.createConnection({
@@ -104,7 +118,8 @@ app.post("/login", (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
-app.post("/edit-profile", (req, res) => {
+
+app.post("/edit-profile", upload.single("profile_pic"), (req, res) => {
   const {
     std_id,
     std_email,
@@ -115,6 +130,7 @@ app.post("/edit-profile", (req, res) => {
     std_pref,
     std_password,
   } = req.body;
+  let profilePicPath = req.file ? req.file.filename : null;
 
   let query =
     "UPDATE Student_Details SET std_email = ?, std_phone = ?, std_faculty = ?, std_year = ?, std_state = ?, std_pref = ? ";
@@ -133,6 +149,11 @@ app.post("/edit-profile", (req, res) => {
     params.splice(params.length - 1, 0, std_password); // Insert password before std_id
   }
 
+  if (profilePicPath) {
+    query += ", profile_pic = ? ";
+    params.splice(params.length - 1, 0, profilePicPath); // Insert profilePicPath before std_id
+  }
+
   query += "WHERE std_id = ?";
 
   db.query(query, params, (error, results) => {
@@ -144,6 +165,27 @@ app.post("/edit-profile", (req, res) => {
 
     res.redirect(`/dashboard?std_id=${std_id}`);
   });
+});
+
+// New route to handle profile picture upload
+app.post("/upload-profile-pic", upload.single("profile_pic"), (req, res) => {
+  const std_id = req.body.std_id;
+  const profilePicPath = req.file.filename;
+
+  db.query(
+    "UPDATE Student_Details SET profile_pic = ? WHERE std_id = ?",
+    [profilePicPath, std_id],
+    (error, results) => {
+      if (error) {
+        console.error("Error updating profile picture:", error);
+        res
+          .status(500)
+          .send("An error occurred while updating profile picture.");
+        return;
+      }
+      res.redirect(`/dashboard?std_id=${std_id}`);
+    },
+  );
 });
 
 // Route to display room selection page

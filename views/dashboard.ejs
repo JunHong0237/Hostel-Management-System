@@ -12,10 +12,14 @@
             <a class="navbar-brand" href="#">Dashboard</a>
             <div class="ml-auto dropdown">
                 <div class="d-flex align-items-center">
-                    <img src="path/to/profile/picture.png" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+                    <% if (student.profile_pic) { %>
+                        <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+                    <% } else { %>
+                        <img src="/images/profile.jpg" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+                    <% } %>
                     <span class="ml-2"><%= student.std_fullname %></span>
                     <button class="btn btn-link dropdown-toggle" type="button" id="settingsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="/path/to/image.png" alt="Settings" width="20" height="20">
+                        <img src="/images/setting.png" alt="Settings" width="5" height="20">
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="settingsDropdown">
                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editProfileModal">Edit Profile</a>
@@ -32,16 +36,62 @@
         </div>
 
         <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Student Information</h5>
-                <p><strong>Gender:</strong> <%= student.std_gender %></p>
-                <p><strong>Email:</strong> <%= student.std_email %></p>
-                <p><strong>Phone:</strong> <%= student.std_phone %></p>
-                <p><strong>Faculty:</strong> <%= student.std_faculty %></p>
-                <p><strong>Year:</strong> <%= student.std_year %></p>
-                <p><strong>State:</strong> <%= student.std_state %></p>
-                <p><strong>Preference:</strong> <%= student.std_pref %></p>
-                <p><strong>Room Number:</strong> <%= roomDetails ? roomDetails.room_no : 'Not assigned' %></p>
+            <div class="card-body d-flex">
+                <div class="mr-4">
+                    <% if (student.profile_pic) { %>
+                        <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" class="rounded" width="150" height="150">
+                    <% } else { %>
+                        <img src="/images/profile.jpg" alt="Profile Picture" class="rounded" width="150" height="150">
+                    <% } %>
+                </div>
+                <div>
+                    <table class="table">
+                        <tr>
+                            <th>Student ID</th>
+                            <td><%= student.std_id %></td>
+                        </tr>
+                        <tr>
+                            <th>Student Name</th>
+                            <td><%= student.std_fullname %></td>
+                        </tr>
+                        <tr>
+                            <th>Gender</th>
+                            <td><%= student.std_gender %></td>
+                        </tr>
+                        <tr>
+                            <th>Student Email</th>
+                            <td><%= student.std_email %></td>
+                        </tr>
+                        <tr>
+                            <th>Phone Number</th>
+                            <td><%= student.std_phone %></td>
+                        </tr>
+                        <tr>
+                            <th>Year of Degree</th>
+                            <td><%= student.std_year %></td>
+                        </tr>
+                        <tr>
+                            <th>Faculty</th>
+                            <td><%= student.std_faculty %></td>
+                        </tr>
+                        <tr>
+                            <th>State of Residence</th>
+                            <td><%= student.std_state %></td>
+                        </tr>
+                        <tr>
+                            <th>Room Environment Preference</th>
+                            <td><%= student.std_pref %></td>
+                        </tr>
+                        <tr>
+                            <th>Student Registration Date</th>
+                            <td><%= student.reg_date %></td>
+                        </tr>
+                        <tr>
+                            <th>Room Number</th>
+                            <td><%= roomDetails ? roomDetails.room_no : 'Not assigned' %></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -118,8 +168,13 @@
             </button>
           </div>
           <div class="modal-body">
-            <form id="editProfileForm" action="/edit-profile" method="post">
+            <form id="editProfileForm" action="/edit-profile" method="post" enctype="multipart/form-data">
               <input type="hidden" name="std_id" value="<%= student.std_id %>">
+
+              <div class="form-group">
+                <label for="profile_pic">Profile Picture</label>
+                <input type="file" class="form-control" id="profile_pic" name="profile_pic">
+              </div>
 
               <div class="form-group">
                 <label for="std_email">Email</label>
