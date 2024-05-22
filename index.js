@@ -268,47 +268,126 @@ app.get("/select-room", (req, res) => {
 });
 
 // Route to view details for a specific room
+// Route to view details for a specific room
 app.get("/view-room-details/:room_id", (req, res) => {
   const { room_id } = req.params;
-  const { std_id } = req.query; // Get the student ID from the query string
+  const { std_id } = req.query;
 
   if (!std_id) {
     res.send("Student ID is required.");
     return;
   }
 
-  // Define the SQL query to fetch room details including details of other students in the same room
+  const studentQuery = "SELECT * FROM Student_Details WHERE std_id = ?";
   const roomQuery = "SELECT * FROM Room_Details WHERE room_id = ?";
   const studentsQuery = `
-    SELECT std_fullname, std_faculty, std_year, std_state, std_pref, std_email, std_phone
-    FROM Student_Details
-    WHERE room_id = ?
-  `;
+        SELECT std_fullname, std_faculty, std_year, std_state, std_pref, std_email, std_phone,
+        (CASE
+            WHEN std_faculty = ? THEN 20 ELSE 0 END +
+         CASE
+            WHEN std_year = ? THEN 10 ELSE 0 END +
+         CASE
+            WHEN std_state = ? THEN 5 ELSE 0 END +
+         CASE
+            WHEN std_pref = ? THEN 40 ELSE 0 END
+        ) AS matchingPercentage
+        FROM Student_Details
+        WHERE room_id = ?
+    `;
 
-  db.query(roomQuery, [room_id], (error, roomDetails) => {
-    if (error) {
-      console.error("Database query error: " + error);
-      res.send("An error occurred while fetching room details.");
+  db.query(studentQuery, [std_id], (err, selectedStudentResults) => {
+    if (err || selectedStudentResults.length === 0) {
+      res.send("Student not found.");
       return;
     }
-    if (roomDetails.length > 0) {
-      // Now fetch details of other students in the same room
-      db.query(studentsQuery, [room_id], (error, studentDetails) => {
-        if (error) {
-          console.error("Database query error: " + error);
-          res.send("An error occurred while fetching student details.");
+
+    const selectedStudent = selectedStudentResults[0];
+
+    db.query(roomQuery, [room_id], (err, roomDetails) => {
+      if (err || roomDetails.length === 0) {
+        res.send("Room not found.");
+        return;
+      }
+
+      db.query(
+        studentsQuery,
+        [
+          selectedStudent.std_faculty,
+          selectedStudent.std_year,
+          selectedStudent.std_state,
+          selectedStudent.std_pref,
+          room_id,
+        ],
+        (err, studentDetails) => {
+          if (err) {
+            res.send("An error occurred while fetching student details.");
+            return;
+          }
+
+          res.render("view-room-details", {
+            room: roomDetails[0],
+            students: studentDetails,
+            selectedStudent: selectedStudent,
+            showSuccessModal: req.query.success || false,
+          });
+        },
+      );
+    });
+  });
+});
+
+// Route to handle room selection
+app.post("/select-room/:room_id", (req, res) => {
+  const { room_id } = req.params;
+  const { std_id } = req.body;
+
+  db.beginTransaction((err) => {
+    if (err) {
+      res.status(500).send("An error occurred.");
+      return;
+    }
+
+    const updateRoomQuery = `
+            UPDATE Room_Details 
+            SET room_occupancy = room_occupancy + 1, 
+                bedAvail = bedAvail - 1 
+            WHERE room_id = ? AND room_capacity > room_occupancy`;
+
+    db.query(updateRoomQuery, [room_id], (err, result) => {
+      if (err || result.affectedRows === 0) {
+        db.rollback(() => {
+          res.status(409).send("No available beds or room does not exist.");
+        });
+        return;
+      }
+
+      const updateStudentQuery =
+        "UPDATE Student_Details SET room_id = ? WHERE std_id = ?";
+      db.query(updateStudentQuery, [room_id, std_id], (err) => {
+        if (err) {
+          db.rollback(() => {
+            res
+              .status(500)
+              .send("An error occurred while updating student details.");
+          });
           return;
         }
-        // Render the room details view with room info and list of students
-        res.render("view-room-details", {
-          room: roomDetails[0],
-          students: studentDetails,
-          studentId: std_id, // Pass the current student's ID
+
+        db.commit((err) => {
+          if (err) {
+            db.rollback(() => {
+              res
+                .status(500)
+                .send("An error occurred during transaction commit.");
+            });
+            return;
+          }
+          res.redirect(
+            `/view-room-details/${room_id}?std_id=${std_id}&success=true`,
+          );
         });
       });
-    } else {
-      res.send("Room not found.");
-    }
+    });
   });
 });
 

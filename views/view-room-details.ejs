@@ -1,69 +1,134 @@
-                                            <!DOCTYPE html>
-                                            <html lang="en">
-                                            <head>
-                                                <meta charset="UTF-8">
-                                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                                <title>Room Details</title>
-                                                <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-                                            </head>
-                                            <body class="bg-light">
-                                                <div class="container mt-5">
-                                                    <div class="card shadow-lg">
-                                                        <div class="card-body">
-                                                            <h1 class="card-title text-center mb-4">Room Details</h1>
-                                                            <div class="room-info mb-4">
-                                                                <p><strong>Room Number:</strong> <%= room.room_no %></p>
-                                                                <p><strong>Capacity:</strong> <%= room.room_capacity %></p>
-                                                                <p><strong>Occupancy:</strong> <%= room.room_occupancy %></p>
-                                                                <p><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
-                                                            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">Room Details</h1>
+                <div class="room-info mb-4">
+                    <p><strong>Room Number:</strong> <%= room.room_no %></p>
+                    <p><strong>Capacity:</strong> <%= room.room_capacity %></p>
+                    <p><strong>Occupancy:</strong> <%= room.room_occupancy %></p>
+                    <p><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
+                </div>
 
-                                                            <h2 class="text-center mb-4">Other Students in Room</h2>
-                                                            <div class="table-responsive mb-4">
-                                                                <table class="table table-bordered">
-                                                                    <thead class="thead-light">
-                                                                        <tr>
-                                                                            <th>Name</th>
-                                                                            <th>Faculty</th>
-                                                                            <th>Year</th>
-                                                                            <th>State</th>
-                                                                            <th>Preference</th>
-                                                                            <th>Email</th>
-                                                                            <th>Phone</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <% if (students.length > 0) { %>
-                                                                            <% students.forEach(function(student) { %>
-                                                                                <tr>
-                                                                                    <td><%= student.std_fullname %></td>
-                                                                                    <td><%= student.std_faculty %></td>
-                                                                                    <td><%= student.std_year %></td>
-                                                                                    <td><%= student.std_state %></td>
-                                                                                    <td><%= student.std_pref %></td>
-                                                                                    <td><%= student.std_email %></td>
-                                                                                    <td><%= student.std_phone %></td>
-                                                                                </tr>
-                                                                            <% }); %>
-                                                                        <% } else { %>
-                                                                            <tr>
-                                                                                <td colspan="7" class="text-center">No other students in this room.</td>
-                                                                            </tr>
-                                                                        <% } %>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
+                <h2 class="text-center mb-4">Other Students in Room</h2>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Faculty</th>
+                                <th>Year</th>
+                                <th>State</th>
+                                <th>Preference</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Matching %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (students.length > 0) { %>
+                                <% students.forEach(function(student, index) { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td class="<%= student.std_faculty === selectedStudent.std_faculty ? 'bg-success text-white' : '' %>"><%= student.std_faculty %></td>
+                                        <td class="<%= student.std_year === selectedStudent.std_year ? 'bg-success text-white' : '' %>"><%= student.std_year %></td>
+                                        <td class="<%= student.std_state === selectedStudent.std_state ? 'bg-success text-white' : '' %>"><%= student.std_state %></td>
+                                        <td class="<%= student.std_pref === selectedStudent.std_pref ? 'bg-success text-white' : '' %>"><%= student.std_pref %></td>
+                                        <td><%= student.std_email %></td>
+                                        <td><%= student.std_phone %></td>
+                                        <td class="text-success"><%= student.matchingPercentage %>%</td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="8" class="text-center">No other students in this room.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
 
-                                                            <form action="/select-room/<%= room.room_id %>" method="post">
-                                                                <input type="hidden" name="std_id" value="<%= studentId %>" />
-                                                                <button type="submit" class="btn btn-primary btn-block">Select Room</button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                <h2 class="text-center mb-4">Your Information</h2>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Faculty</th>
+                                <th>Year</th>
+                                <th>State</th>
+                                <th>Preference</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><%= selectedStudent.std_faculty %></td>
+                                <td><%= selectedStudent.std_year %></td>
+                                <td><%= selectedStudent.std_state %></td>
+                                <td><%= selectedStudent.std_pref %></td>
+                                <td><%= selectedStudent.std_email %></td>
+                                <td><%= selectedStudent.std_phone %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                                                <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-                                                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-                                                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-                                            </body>
-                                            </html>
+                <div class="text-center">
+                    <a href="/select-room?std_id=<%= selectedStudent.std_id %>" class="btn btn-secondary">Return</a>
+                    <form action="/select-room/<%= room.room_id %>" method="post" class="d-inline">
+                        <input type="hidden" name="std_id" value="<%= selectedStudent.std_id %>">
+                        <button type="submit" class="btn btn-primary">Select Room</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Room Selection</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    You have successfully selected the room!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="redirectToDashboard()">Return to Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function redirectToDashboard() {
+            window.location.href = '/dashboard?std_id=<%= selectedStudent.std_id %>';
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <% if (showSuccessModal) { %>
+        <script>
+            $(document).ready(function() {
+                $('#successModal').modal('show');
+            });
+        </script>
+    <% } %>
+</body>
+</html>
