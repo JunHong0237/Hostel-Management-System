@@ -148,48 +148,90 @@ app.post("/edit-profile", (req, res) => {
 
 // Route to display room selection page
 app.get("/select-room", (req, res) => {
-  const studentId = req.query.std_id; // Retrieve the student ID from the query parameter
+  const studentId = req.query.std_id;
 
   if (!studentId) {
     res.status(400).send("Student ID is required.");
     return;
   }
 
-  // First, check if the student already has a room assigned and fetch their gender
   const checkStudentQuery =
-    "SELECT room_id, std_gender FROM Student_Details WHERE std_id = ?";
-  db.query(checkStudentQuery, [studentId], (error, results) => {
+    "SELECT std_faculty, std_year, std_state, std_pref, std_gender FROM Student_Details WHERE std_id = ?";
+  db.query(checkStudentQuery, [studentId], (error, studentResults) => {
     if (error) {
       console.error("Error checking student details: " + error.message);
       res.status(500).send("An error occurred while checking student details.");
       return;
     }
 
-    if (results.length > 0) {
-      const studentGender = results[0].std_gender;
-      const roomId = results[0].room_id;
+    if (studentResults.length > 0) {
+      const student = studentResults[0];
 
-      if (roomId) {
-        // The student already has a room assigned
-        res.send("You have already selected a room.");
-        return;
-      }
-
-      // If no room is assigned, proceed to show available rooms based on student's gender
-      const query = `
-        SELECT room_id, room_no, room_capacity, room_occupancy, (room_capacity - room_occupancy) AS bedAvail
-        FROM Room_Details
-        WHERE room_capacity > room_occupancy AND (room_gender = ? OR room_gender = 'Mixed')
-      `;
-
-      db.query(query, [studentGender], (error, rooms) => {
+      const roomQuery =
+        "SELECT room_id, room_no, room_capacity, room_occupancy, room_gender FROM Room_Details WHERE room_capacity > room_occupancy AND room_gender = ?";
+      db.query(roomQuery, [student.std_gender], (error, roomResults) => {
         if (error) {
           console.error("Error fetching rooms: " + error.message);
           res.status(500).send("An error occurred while fetching the rooms.");
           return;
         }
-        // Render the select-room view with the available rooms and studentId
-        res.render("select-room", { rooms: rooms, studentId: studentId });
+
+        // Fetch roommates for each room and calculate recommendation score
+        const roomPromises = roomResults.map((room) => {
+          return new Promise((resolve, reject) => {
+            const roommatesQuery =
+              "SELECT std_faculty, std_year, std_state, std_pref FROM Student_Details WHERE room_id = ?";
+            db.query(roommatesQuery, [room.room_id], (error, roommates) => {
+              if (error) {
+                reject(error);
+              } else {
+                // Calculate matching score
+                let score = 0;
+                let totalMatches = 0;
+
+                roommates.forEach((roommate) => {
+                  if (roommate.std_pref === student.std_pref) score += 40;
+                  if (roommate.std_faculty === student.std_faculty) score += 20;
+                  if (roommate.std_year === student.std_year) score += 10;
+                  if (roommate.std_state === student.std_state) score += 5;
+                  totalMatches += 1;
+                });
+
+                // Calculate percentage score
+                const recommendationPercentage =
+                  totalMatches > 0 ? (score / (totalMatches * 75)) * 100 : 0;
+
+                resolve({
+                  ...room,
+                  score,
+                  recommendationPercentage,
+                });
+              }
+            });
+          });
+        });
+
+        // Wait for all room promises to resolve
+        Promise.all(roomPromises)
+          .then((roomsWithScores) => {
+            // Sort rooms by score in descending order
+            roomsWithScores.sort(
+              (a, b) => b.recommendationPercentage - a.recommendationPercentage,
+            );
+
+            res.render("select-room", {
+              rooms: roomsWithScores,
+              studentId: studentId,
+            });
+          })
+          .catch((error) => {
+            console.error(
+              "Error processing room recommendations: " + error.message,
+            );
+            res
+              .status(500)
+              .send("An error occurred while processing room recommendations.");
+          });
       });
     } else {
       res.send("Student not found.");
