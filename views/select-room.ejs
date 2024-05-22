@@ -1,4 +1,3 @@
-<!-- select-room.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,24 +9,41 @@
 <body class="bg-light">
   <div class="container mt-5">
     <h1 class="text-center mb-4">Select a Room</h1>
-    <div>
-      <% if (rooms.length > 0) { %>
-        <% rooms.forEach(room => { %>
-          <div class="card mb-4 shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Room Number: <%= room.room_no %></h5>
-              <p class="card-text">Capacity: <%= room.room_capacity %></p>
-              <p class="card-text">Occupancy: <%= room.room_occupancy %></p>
-              <p class="card-text">Available Beds: <%= room.room_capacity - room.room_occupancy %></p>
-              <p class="card-text">Recommendation: <%= room.recommendationPercentage.toFixed(2) %>%</p>
-              <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>" class="btn btn-primary">View Details</a>
-            </div>
-          </div>
-        <% }) %>
-      <% } else { %>
-        <p class="text-center">No rooms available.</p>
-      <% } %>
+    <div class="mb-4">
+      <p>Rooms are recommended based on how well they match your preferences and the preferences of your potential roommates. The higher the percentage, the better the match.</p>
+      <p>The recommendation is based on the following criteria:</p>
+      <ul>
+        <li><strong>Room Environment Preference:</strong> Matches your preference</li>
+        <li><strong>Faculty:</strong> Matches your faculty</li>
+        <li><strong>Year of Study:</strong> Matches your year of study</li>
+        <li><strong>State of Residence:</strong> Matches your state of residence</li>
+      </ul>
     </div>
+
+    <% if (rooms.length > 0) { %>
+      <% rooms.forEach(room => { %>
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header">
+            <h5 class="mb-0">Room Number: <%= room.room_no %></h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text"><strong>Capacity:</strong> <%= room.room_capacity %></p>
+            <p class="card-text"><strong>Occupancy:</strong> <%= room.room_occupancy %></p>
+            <p class="card-text"><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
+            <div class="mb-2">
+              <span class="card-text recommendation-score"><strong>Recommendation:</strong> <%= room.recommendationPercentage.toFixed(2) %>%</span>
+              <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: <%= room.recommendationPercentage %>%;" aria-valuenow="<%= room.recommendationPercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-secondary" role="progressbar" style="width: <%= 100 - room.recommendationPercentage %>%;" aria-valuenow="<%= 100 - room.recommendationPercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>" class="btn btn-primary">View Details</a>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p class="text-center">No rooms available.</p>
+    <% } %>
   </div>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

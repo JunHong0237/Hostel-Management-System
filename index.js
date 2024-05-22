@@ -155,8 +155,11 @@ app.get("/select-room", (req, res) => {
     return;
   }
 
-  const checkStudentQuery =
-    "SELECT std_faculty, std_year, std_state, std_pref, std_gender FROM Student_Details WHERE std_id = ?";
+  const checkStudentQuery = `
+    SELECT std_faculty, std_year, std_state, std_pref, std_gender 
+    FROM Student_Details 
+    WHERE std_id = ?`;
+
   db.query(checkStudentQuery, [studentId], (error, studentResults) => {
     if (error) {
       console.error("Error checking student details: " + error.message);
@@ -167,8 +170,11 @@ app.get("/select-room", (req, res) => {
     if (studentResults.length > 0) {
       const student = studentResults[0];
 
-      const roomQuery =
-        "SELECT room_id, room_no, room_capacity, room_occupancy, room_gender FROM Room_Details WHERE room_capacity > room_occupancy AND room_gender = ?";
+      const roomQuery = `
+        SELECT room_id, room_no, room_capacity, room_occupancy, room_gender 
+        FROM Room_Details 
+        WHERE room_capacity > room_occupancy AND room_gender = ?`;
+
       db.query(roomQuery, [student.std_gender], (error, roomResults) => {
         if (error) {
           console.error("Error fetching rooms: " + error.message);
@@ -176,62 +182,84 @@ app.get("/select-room", (req, res) => {
           return;
         }
 
-        // Fetch roommates for each room and calculate recommendation score
-        const roomPromises = roomResults.map((room) => {
-          return new Promise((resolve, reject) => {
-            const roommatesQuery =
-              "SELECT std_faculty, std_year, std_state, std_pref FROM Student_Details WHERE room_id = ?";
-            db.query(roommatesQuery, [room.room_id], (error, roommates) => {
-              if (error) {
-                reject(error);
-              } else {
-                // Calculate matching score
-                let score = 0;
-                let totalMatches = 0;
+        if (roomResults.length === 0) {
+          res.render("select-room", { rooms: [], studentId });
+          return;
+        }
 
-                roommates.forEach((roommate) => {
-                  if (roommate.std_pref === student.std_pref) score += 40;
-                  if (roommate.std_faculty === student.std_faculty) score += 20;
-                  if (roommate.std_year === student.std_year) score += 10;
-                  if (roommate.std_state === student.std_state) score += 5;
-                  totalMatches += 1;
-                });
+        // Fetch roommates for all rooms in a single query
+        const roomIds = roomResults.map((room) => room.room_id);
+        const roommatesQuery = `
+          SELECT room_id, std_faculty, std_year, std_state, std_pref 
+          FROM Student_Details 
+          WHERE room_id IN (?)`;
 
-                // Calculate percentage score
-                const recommendationPercentage =
-                  totalMatches > 0 ? (score / (totalMatches * 75)) * 100 : 0;
+        db.query(roommatesQuery, [roomIds], (error, roommatesResults) => {
+          if (error) {
+            console.error("Error fetching roommates: " + error.message);
+            res.status(500).send("An error occurred while fetching roommates.");
+            return;
+          }
 
-                resolve({
-                  ...room,
-                  score,
-                  recommendationPercentage,
-                });
+          const roommatesByRoom = roommatesResults.reduce((acc, roommate) => {
+            if (!acc[roommate.room_id]) {
+              acc[roommate.room_id] = [];
+            }
+            acc[roommate.room_id].push(roommate);
+            return acc;
+          }, {});
+
+          // Calculate recommendation scores
+          const roomsWithScores = roomResults.map((room) => {
+            const roommates = roommatesByRoom[room.room_id] || [];
+            let score = 0;
+            let preferenceMatchCount = 0;
+            let facultyMatchCount = 0;
+            let yearMatchCount = 0;
+            let stateMatchCount = 0;
+
+            roommates.forEach((roommate) => {
+              if (roommate.std_pref === student.std_pref) {
+                score += 40;
+                preferenceMatchCount++;
+              }
+              if (roommate.std_faculty === student.std_faculty) {
+                score += 20;
+                facultyMatchCount++;
+              }
+              if (roommate.std_year === student.std_year) {
+                score += 10;
+                yearMatchCount++;
+              }
+              if (roommate.std_state === student.std_state) {
+                score += 5;
+                stateMatchCount++;
               }
             });
+
+            const totalMatches = roommates.length;
+            const recommendationPercentage =
+              totalMatches > 0 ? (score / (totalMatches * 75)) * 100 : 0;
+
+            return {
+              ...room,
+              score,
+              recommendationPercentage,
+              totalMatches,
+              preferenceMatchCount,
+              facultyMatchCount,
+              yearMatchCount,
+              stateMatchCount,
+            };
           });
+
+          // Sort rooms by recommendation score
+          roomsWithScores.sort(
+            (a, b) => b.recommendationPercentage - a.recommendationPercentage,
+          );
+
+          res.render("select-room", { rooms: roomsWithScores, studentId });
         });
-
-        // Wait for all room promises to resolve
-        Promise.all(roomPromises)
-          .then((roomsWithScores) => {
-            // Sort rooms by score in descending order
-            roomsWithScores.sort(
-              (a, b) => b.recommendationPercentage - a.recommendationPercentage,
-            );
-
-            res.render("select-room", {
-              rooms: roomsWithScores,
-              studentId: studentId,
-            });
-          })
-          .catch((error) => {
-            console.error(
-              "Error processing room recommendations: " + error.message,
-            );
-            res
-              .status(500)
-              .send("An error occurred while processing room recommendations.");
-          });
       });
     } else {
       res.send("Student not found.");
