@@ -6,7 +6,7 @@
     <title>Dashboard</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="#">Dashboard</a>
@@ -31,225 +31,208 @@
     </nav>
 
     <div class="container mt-4">
-        <div class="text-center mb-4">
-            <h1>Welcome, <%= student.std_fullname %></h1>
-        </div>
-
         <div class="card mb-4">
-            <div class="card-body d-flex">
-                <div class="mr-4">
-                    <% if (student.profile_pic) { %>
-                        <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" class="rounded" width="150" height="150">
-                    <% } else { %>
-                        <img src="/images/profile.jpg" alt="Profile Picture" class="rounded" width="150" height="150">
-                    <% } %>
-                </div>
-                <div>
-                    <table class="table">
-                        <tr>
-                            <th>Student ID</th>
-                            <td><%= student.std_id %></td>
-                        </tr>
-                        <tr>
-                            <th>Student Name</th>
-                            <td><%= student.std_fullname %></td>
-                        </tr>
-                        <tr>
-                            <th>Gender</th>
-                            <td><%= student.std_gender %></td>
-                        </tr>
-                        <tr>
-                            <th>Student Email</th>
-                            <td><%= student.std_email %></td>
-                        </tr>
-                        <tr>
-                            <th>Phone Number</th>
-                            <td><%= student.std_phone %></td>
-                        </tr>
-                        <tr>
-                            <th>Year of Degree</th>
-                            <td><%= student.std_year %></td>
-                        </tr>
-                        <tr>
-                            <th>Faculty</th>
-                            <td><%= student.std_faculty %></td>
-                        </tr>
-                        <tr>
-                            <th>State of Residence</th>
-                            <td><%= student.std_state %></td>
-                        </tr>
-                        <tr>
-                            <th>Room Environment Preference</th>
-                            <td><%= student.std_pref %></td>
-                        </tr>
-                        <tr>
-                            <th>Student Registration Date</th>
-                            <td><%= student.reg_date %></td>
-                        </tr>
-                        <tr>
-                            <th>Room Number</th>
-                            <td><%= roomDetails ? roomDetails.room_no : 'Not assigned' %></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <% if (!student.room_id) { %>
-            <div class="text-center mb-4">
-                <a href="/select-room?std_id=<%= student.std_id %>" class="btn btn-success" id="addRoomButton">Add Room</a>
-            </div>
-        <% } else { %>
-            <% if (roomDetails) { %>
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Room Details</h5>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Room Number</th>
-                                    <th>Capacity</th>
-                                    <th>Occupancy</th>
-                                    <th>Available Beds</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><%= roomDetails.room_no %></td>
-                                    <td><%= roomDetails.room_capacity %></td>
-                                    <td><%= roomDetails.room_occupancy %></td>
-                                    <td><%= roomDetails.room_capacity - roomDetails.room_occupancy %></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            <% } else { %>
-                <p>You have not selected a room yet.</p>
-            <% } %>
-
-            <h5 class="card-title mt-4">Roommates</h5>
-            <table class="table table-bordered">
-                <thead>
+            <div class="card-body text-center">
+                <% if (student.profile_pic) { %>
+                    <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" class="rounded" width="150" height="150">
+                <% } else { %>
+                    <img src="/images/profile.jpg" alt="Profile Picture" class="rounded" width="150" height="150">
+                <% } %>
+                <table class="table mt-3">
+                    <tr>
+                        <th>Student ID</th>
+                        <td><%= student.std_id %></td>
+                    </tr>
+                    <tr>
+                        <th>Student Name</th>
+                        <td><%= student.std_fullname %></td>
+                    </tr>
+                    <tr>
+                        <th>Gender</th>
+                        <td><%= student.std_gender %></td>
+                    </tr>
+                    <tr>
+                        <th>Student Email</th>
+                        <td><%= student.std_email %></td>
+                    </tr>
+                    <tr>
+                        <th>Phone Number</th>
+                        <td><%= student.std_phone %></td>
+                    </tr>
+                    <tr>
+                        <th>Year of Degree</th>
+                        <td><%= student.std_year %></td>
+                    </tr>
                     <tr>
                         <th>Faculty</th>
-                        <th>Year</th>
-                        <th>State</th>
-                        <th>Preference</th>
-                        <th>Email</th>
-                        <th>Phone</th>
+                        <td><%= student.std_faculty %></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <% roommates.forEach(function(roommate) { %>
+                    <tr>
+                        <th>State of Residence</th>
+                        <td><%= student.std_state %></td>
+                    </tr>
+                    <tr>
+                        <th>Room Environment Preference</th>
+                        <td><%= student.std_pref %></td>
+                    </tr>
+                    <tr>
+                        <th>Student Registration Date</th>
+                        <td><%= student.reg_date %></td>
+                    </tr>
+                    <tr>
+                        <th>Room Number</th>
+                        <td><%= roomDetails ? roomDetails.room_no : 'Not assigned' %></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title text-center">Room Summary</h4>
+                <% if (!student.room_id) { %>
+                    <p class="text-center">No record</p>
+                    <div class="text-center">
+                        <a href="/select-room?std_id=<%= student.std_id %>" class="btn btn-success">Add Room</a>
+                    </div>
+                <% } else { %>
+                    <table class="table">
                         <tr>
-                            <td><%= roommate.std_faculty %></td>
-                            <td><%= roommate.std_year %></td>
-                            <td><%= roommate.std_state %></td>
-                            <td><%= roommate.std_pref %></td>
-                            <td><%= roommate.std_email %></td>
-                            <td><%= roommate.std_phone %></td>
+                            <th>Room Number</th>
+                            <td><%= roomDetails.room_no %></td>
                         </tr>
-                    <% }); %>
-                </tbody>
-            </table>
-        <% } %>
-
+                        <tr>
+                            <th>Room Capacity</th>
+                            <td><%= roomDetails.room_capacity %></td>
+                        </tr>
+                        <tr>
+                            <th>Room Occupancy</th>
+                            <td><%= roomDetails.room_occupancy %></td>
+                        </tr>
+                        <tr>
+                            <th>Available Beds</th>
+                            <td><%= roomDetails.room_capacity - roomDetails.room_occupancy %></td>
+                        </tr>
+                    </table>
+                    <h5 class="card-title mt-4">Roommates</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Gender</th>
+                                <th>Student Email</th>
+                                <th>Phone Number</th>
+                                <th>Year of Degree</th>
+                                <th>Faculty</th>
+                                <th>State of Residence</th>
+                                <th>Room Environment Preference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% roommates.forEach(function(roommate) { %>
+                                <tr>
+                                    <td><%= roommate.std_id %></td>
+                                    <td><%= roommate.std_fullname %></td>
+                                    <td><%= roommate.std_gender %></td>
+                                    <td><%= roommate.std_email %></td>
+                                    <td><%= roommate.std_phone %></td>
+                                    <td><%= roommate.std_year %></td>
+                                    <td><%= roommate.std_faculty %></td>
+                                    <td><%= roommate.std_state %></td>
+                                    <td><%= roommate.std_pref %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </div>
+        </div>
     </div>
 
     <!-- Edit Profile Modal -->
     <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form id="editProfileForm" action="/edit-profile" method="post" enctype="multipart/form-data">
-              <input type="hidden" name="std_id" value="<%= student.std_id %>">
-
-              <div class="form-group">
-                <label for="profile_pic">Profile Picture</label>
-                <input type="file" class="form-control" id="profile_pic" name="profile_pic">
-              </div>
-
-              <div class="form-group">
-                <label for="std_email">Email</label>
-                <input type="email" class="form-control" id="std_email" name="std_email" value="<%= student.std_email %>" required>
-              </div>
-
-              <div class="form-group">
-                <label for="std_phone">Phone</label>
-                <input type="text" class="form-control" id="std_phone" name="std_phone" value="<%= student.std_phone %>" required>
-              </div>
-
-              <div class="form-group">
-                <label for="std_faculty">Faculty</label>
-                <select class="form-control" id="std_faculty" name="std_faculty" required>
-                  <option value="Faculty of Law (FOL)" <%= student.std_faculty === 'Faculty of Law (FOL)' ? 'selected' : '' %>>Faculty of Law (FOL)</option>
-                  <option value="Faculty of Engineering & Technology (FET)" <%= student.std_faculty === 'Faculty of Engineering & Technology (FET)' ? 'selected' : '' %>>Faculty of Engineering & Technology (FET)</option>
-                  <option value="Faculty of Computing & Informatics (FCI)" <%= student.std_faculty === 'Faculty of Computing & Informatics (FCI)' ? 'selected' : '' %>>Faculty of Computing & Informatics (FCI)</option>
-                  <option value="Faculty of Information & Technology (FIST)" <%= student.std_faculty === 'Faculty of Information & Technology (FIST)' ? 'selected' : '' %>>Faculty of Information & Technology (FIST)</option>
-                  <option value="Faculty of Management (FCM)" <%= student.std_faculty === 'Faculty of Management (FCM)' ? 'selected' : '' %>>Faculty of Management (FCM)</option>
-                  <option value="Faculty of Business (FOB)" <%= student.std_faculty === 'Faculty of Business (FOB)' ? 'selected' : '' %>>Faculty of Business (FOB)</option>
-                  <option value="Faculty of Creative Multimedia (FCM)" <%= student.std_faculty === 'Faculty of Creative Multimedia (FCM)' ? 'selected' : '' %>>Faculty of Creative Multimedia (FCM)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="std_year">Year of Study</label>
-                <select class="form-control" id="std_year" name="std_year" required>
-                  <option value="FIRST" <%= student.std_year === 'FIRST' ? 'selected' : '' %>>FIRST</option>
-                  <option value="SECOND" <%= student.std_year === 'SECOND' ? 'selected' : '' %>>SECOND</option>
-                  <option value="THIRD" <%= student.std_year === 'THIRD' ? 'selected' : '' %>>THIRD</option>
-                  <option value="FORTH" <%= student.std_year === 'FORTH' ? 'selected' : '' %>>FORTH</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="std_state">State of Residence</label>
-                <select class="form-control" id="std_state" name="std_state" required>
-                  <option value="JOHOR" <%= student.std_state === 'JOHOR' ? 'selected' : '' %>>JOHOR</option>
-                  <option value="KEDAH" <%= student.std_state === 'KEDAH' ? 'selected' : '' %>>KEDAH</option>
-                  <option value="KELANTAN" <%= student.std_state === 'KELANTAN' ? 'selected' : '' %>>KELANTAN</option>
-                  <option value="MELAKA" <%= student.std_state === 'MELAKA' ? 'selected' : '' %>>MELAKA</option>
-                  <option value="NEGERI SEMBILAN" <%= student.std_state === 'NEGERI SEMBILAN' ? 'selected' : '' %>>NEGERI SEMBILAN</option>
-                  <option value="PAHANG" <%= student.std_state === 'PAHANG' ? 'selected' : '' %>>PAHANG</option>
-                  <option value="PULAU PINANG" <%= student.std_state === 'PULAU PINANG' ? 'selected' : '' %>>PULAU PINANG</option>
-                  <option value="PERAK" <%= student.std_state === 'PERAK' ? 'selected' : '' %>>PERAK</option>
-                  <option value="PERLIS" <%= student.std_state === 'PERLIS' ? 'selected' : '' %>>PERLIS</option>
-                  <option value="SABAH" <%= student.std_state === 'SABAH' ? 'selected' : '' %>>SABAH</option>
-                  <option value="SARAWAK" <%= student.std_state === 'SARAWAK' ? 'selected' : '' %>>SARAWAK</option>
-                  <option value="SELANGOR" <%= student.std_state === 'SELANGOR' ? 'selected' : '' %>>SELANGOR</option>
-                  <option value="TERENGGANU" <%= student.std_state === 'TERENGGANU' ? 'selected' : '' %>>TERENGGANU</option>
-                  <option value="KUALA LUMPUR" <%= student.std_state === 'KUALA LUMPUR' ? 'selected' : '' %>>KUALA LUMPUR</option>
-                  <option value="LABUAN" <%= student.std_state === 'LABUAN' ? 'selected' : '' %>>LABUAN</option>
-                  <option value="PUTRAJAYA" <%= student.std_state === 'PUTRAJAYA' ? 'selected' : '' %>>PUTRAJAYA</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="std_pref">Room Environment Preference</label>
-                <select class="form-control" id="std_pref" name="std_pref" required>
-                  <option value="QUIET" <%= student.std_pref === 'QUIET' ? 'selected' : '' %>>QUIET</option>
-                  <option value="SOCIAL" <%= student.std_pref === 'SOCIAL' ? 'selected' : '' %>>SOCIAL</option>
-                  <option value="FLEXIBLE" <%= student.std_pref === 'FLEXIBLE' ? 'selected' : '' %>>FLEXIBLE</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="std_password">New Password</label>
-                <input type="password" class="form-control" id="std_password" name="std_password">
-              </div>
-
-              <button type="submit" class="btn btn-primary">Update</button>
-            </form>
-          </div>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProfileForm" action="/edit-profile" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="std_id" value="<%= student.std_id %>">
+                        <div class="form-group">
+                            <label for="profile_pic">Profile Picture</label>
+                            <input type="file" class="form-control" id="profile_pic" name="profile_pic">
+                        </div>
+                        <div class="form-group">
+                            <label for="std_email">Email</label>
+                            <input type="email" class="form-control" id="std_email" name="std_email" value="<%= student.std_email %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="std_phone">Phone</label>
+                            <input type="text" class="form-control" id="std_phone" name="std_phone" value="<%= student.std_phone %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="std_faculty">Faculty</label>
+                            <select class="form-control" id="std_faculty" name="std_faculty" required>
+                                <option value="Faculty of Law (FOL)" <%= student.std_faculty === 'Faculty of Law (FOL)' ? 'selected' : '' %>>Faculty of Law (FOL)</option>
+                                <option value="Faculty of Engineering & Technology (FET)" <%= student.std_faculty === 'Faculty of Engineering & Technology (FET)' ? 'selected' : '' %>>Faculty of Engineering & Technology (FET)</option>
+                                <option value="Faculty of Computing & Informatics (FCI)" <%= student.std_faculty === 'Faculty of Computing & Informatics (FCI)' ? 'selected' : '' %>>Faculty of Computing & Informatics (FCI)</option>
+                                <option value="Faculty of Information & Technology (FIST)" <%= student.std_faculty === 'Faculty of Information & Technology (FIST)' ? 'selected' : '' %>>Faculty of Information & Technology (FIST)</option>
+                                <option value="Faculty of Management (FCM)" <%= student.std_faculty === 'Faculty of Management (FCM)' ? 'selected' : '' %>>Faculty of Management (FCM)</option>
+                                <option value="Faculty of Business (FOB)" <%= student.std_faculty === 'Faculty of Business (FOB)' ? 'selected' : '' %>>Faculty of Business (FOB)</option>
+                                <option value="Faculty of Creative Multimedia (FCM)" <%= student.std_faculty === 'Faculty of Creative Multimedia (FCM)' ? 'selected' : '' %>>Faculty of Creative Multimedia (FCM)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="std_year">Year of Study</label>
+                            <select class="form-control" id="std_year" name="std_year" required>
+                                <option value="FIRST" <%= student.std_year === 'FIRST' ? 'selected' : '' %>>FIRST</option>
+                                <option value="SECOND" <%= student.std_year === 'SECOND' ? 'selected' : '' %>>SECOND</option>
+                                <option value="THIRD" <%= student.std_year === 'THIRD' ? 'selected' : '' %>>THIRD</option>
+                                <option value="FORTH" <%= student.std_year === 'FORTH' ? 'selected' : '' %>>FORTH</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="std_state">State of Residence</label>
+                            <select class="form-control" id="std_state" name="std_state" required>
+                                <option value="JOHOR" <%= student.std_state === 'JOHOR' ? 'selected' : '' %>>JOHOR</option>
+                                <option value="KEDAH" <%= student.std_state === 'KEDAH' ? 'selected' : '' %>>KEDAH</option>
+                                <option value="KELANTAN" <%= student.std_state === 'KELANTAN' ? 'selected' : '' %>>KELANTAN</option>
+                                <option value="MELAKA" <%= student.std_state === 'MELAKA' ? 'selected' : '' %>>MELAKA</option>
+                                <option value="NEGERI SEMBILAN" <%= student.std_state === 'NEGERI SEMBILAN' ? 'selected' : '' %>>NEGERI SEMBILAN</option>
+                                <option value="PAHANG" <%= student.std_state === 'PAHANG' ? 'selected' : '' %>>PAHANG</option>
+                                <option value="PULAU PINANG" <%= student.std_state === 'PULAU PINANG' ? 'selected' : '' %>>PULAU PINANG</option>
+                                <option value="PERAK" <%= student.std_state === 'PERAK' ? 'selected' : '' %>>PERAK</option>
+                                <option value="PERLIS" <%= student.std_state === 'PERLIS' ? 'selected' : '' %>>PERLIS</option>
+                                <option value="SABAH" <%= student.std_state === 'SABAH' ? 'selected' : '' %>>SABAH</option>
+                                <option value="SARAWAK" <%= student.std_state === 'SARAWAK' ? 'selected' : '' %>>SARAWAK</option>
+                                <option value="SELANGOR" <%= student.std_state === 'SELANGOR' ? 'selected' : '' %>>SELANGOR</option>
+                                <option value="TERENGGANU" <%= student.std_state === 'TERENGGANU' ? 'selected' : '' %>>TERENGGANU</option>
+                                <option value="KUALA LUMPUR" <%= student.std_state === 'KUALA LUMPUR' ? 'selected' : '' %>>KUALA LUMPUR</option>
+                                <option value="LABUAN" <%= student.std_state === 'LABUAN' ? 'selected' : '' %>>LABUAN</option>
+                                <option value="PUTRAJAYA" <%= student.std_state === 'PUTRAJAYA' ? 'selected' : '' %>>PUTRAJAYA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="std_pref">Room Environment Preference</label>
+                            <select class="form-control" id="std_pref" name="std_pref" required>
+                                <option value="QUIET" <%= student.std_pref === 'QUIET' ? 'selected' : '' %>>QUIET</option>
+                                <option value="SOCIAL" <%= student.std_pref === 'SOCIAL' ? 'selected' : '' %>>SOCIAL</option>
+                                <option value="FLEXIBLE" <%= student.std_pref === 'FLEXIBLE' ? 'selected' : '' %>>FLEXIBLE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="std_password">New Password</label>
+                            <input type="password" class="form-control" id="std_password" name="std_password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <script>
