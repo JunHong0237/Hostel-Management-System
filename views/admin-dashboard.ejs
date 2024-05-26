@@ -7,8 +7,18 @@
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <style>
+          .label {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 3px #000;
+          }
+        </style>
     </head>
     <body class="bg-light">
         <!-- Bootstrap Navbar -->
@@ -86,66 +96,122 @@
           }
 
           // Gender Distribution Pie Chart
-          async function renderGenderDistributionChart() {
-            const data = await fetchChartData('/admin/gender-distribution');
-            const labels = data.map(item => item.std_gender);
-            const counts = data.map(item => item.count);
-            new Chart(document.getElementById('genderDistributionChart'), {
-              type: 'pie',
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: 'Gender Distribution',
-                  data: counts,
-                  backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-                }]
-              }
-            });
-          }
+              // Gender Distribution Pie Chart with Percentages
+              async function renderGenderDistributionChart() {
+                const data = await fetchChartData('/admin/gender-distribution');
+                const labels = data.map(item => item.std_gender);
+                const counts = data.map(item => item.count);
+                const total = counts.reduce((sum, count) => sum + count, 0);
 
-          // Students by Faculty Bar Chart
-          async function renderStudentsByFacultyChart() {
-            const data = await fetchChartData('/admin/students-by-faculty');
-            const labels = data.map(item => item.std_faculty);
-            const counts = data.map(item => item.count);
-            new Chart(document.getElementById('studentsByFacultyChart'), {
-              type: 'bar',
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: 'Number of Students',
-                  data: counts,
-                  backgroundColor: '#36A2EB',
-                }]
-              },
-              options: {
-                indexAxis: 'y',
-                scales: {
-                  x: {
-                    beginAtZero: true
-                  }
-                }
+                new Chart(document.getElementById('genderDistributionChart'), {
+                  type: 'pie',
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: 'Gender Distribution',
+                      data: counts,
+                      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                    }]
+                  },
+                  options: {
+                    plugins: {
+                      datalabels: {
+                        formatter: (value, context) => {
+                          const percentage = (value / total * 100).toFixed(1);
+                          return `${percentage}%`;
+                        },
+                        color: '#fff',
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                  },
+                  plugins: [ChartDataLabels]
+                });
               }
-            });
-          }
+
+              // Students by Faculty Bar Chart with Customizations
+              async function renderStudentsByFacultyChart() {
+                const data = await fetchChartData('/admin/students-by-faculty');
+                const labels = data.map(item => item.std_faculty);
+                const counts = data.map(item => item.count);
+                const maxCount = Math.max(...counts);
+
+                new Chart(document.getElementById('studentsByFacultyChart'), {
+                  type: 'bar',
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: 'Highest Number of Students',
+                      data: counts,
+                      backgroundColor: counts.map(count => count === maxCount ? 'red' : 'gray')
+                    }]
+                  },
+                  options: {
+                    indexAxis: 'y',
+                    scales: {
+                      x: {
+                        beginAtZero: true,
+                        grid: {
+                          display: false
+                        }
+                      },
+                      y: {
+                        grid: {
+                          display: false
+                        }
+                      }
+                    },
+                    plugins: {
+                      datalabels: {
+                        anchor: 'end',
+                        align: 'end',
+                        color: 'black',
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                  },
+                  plugins: [ChartDataLabels]
+                });
+              }
 
           // Room Environment Preference Pie Chart
-          async function renderRoomEnvironmentPreferenceChart() {
-            const data = await fetchChartData('/admin/room-environment-preference');
-            const labels = data.map(item => item.std_pref);
-            const counts = data.map(item => item.count);
-            new Chart(document.getElementById('roomEnvironmentPreferenceChart'), {
-              type: 'pie',
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: 'Room Environment Preference',
-                  data: counts,
-                  backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-                }]
+              async function renderRoomEnvironmentPreferenceChart() {
+                const data = await fetchChartData('/admin/room-environment-preference');
+                const labels = data.map(item => item.std_pref);
+                const counts = data.map(item => item.count);
+                const total = counts.reduce((sum, count) => sum + count, 0);
+
+                new Chart(document.getElementById('roomEnvironmentPreferenceChart'), {
+                  type: 'doughnut',
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: 'Room Environment Preference',
+                      data: counts,
+                      backgroundColor: ['#009596', '#06C', '#EC7A08']
+                    }]
+                  },
+                  options: {
+                    plugins: {
+                      datalabels: {
+                        formatter: (value, context) => {
+                          const percentage = (value / total * 100).toFixed(1);
+                          return `${percentage}%`;
+                        },
+                        color: '#fff',
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                  },
+                  plugins: [ChartDataLabels]
+                });
               }
-            });
-          }
 
             // Student Registration Over Time Line Chart
               async function renderStudentRegistrationOverTimeChart() {
@@ -280,7 +346,7 @@
               
 
              // state of residence Chart
-            async function renderStateOfResidenceMap() {
+              async function renderStateOfResidenceMap() {
                 const data = await fetchChartData('/admin/state-of-residence');
                 const stateData = {};
                 data.forEach(item => {
@@ -317,11 +383,19 @@
                     return { fillColor, weight: 2, opacity: 1, color: 'white', dashArray: '3', fillOpacity: 0.7 };
                   },
                   onEachFeature: (feature, layer) => {
-                    layer.bindPopup(`${feature.properties.name}: ${stateData[feature.properties.name.toUpperCase()] || 0} students`);
+                    const count = stateData[feature.properties.name.toUpperCase()] || 0;
+                    const center = layer.getBounds().getCenter();
+                    L.marker(center, {
+                      icon: L.divIcon({
+                        className: 'label',
+                        html: `<div>${count}</div>`,
+                        iconSize: [30, 30]
+                      })
+                    }).addTo(map);
+                    layer.bindPopup(`${feature.properties.name}: ${count} students`);
                   }
                 }).addTo(map);
               }
-              
 
           // Render all charts
           renderGenderDistributionChart();
