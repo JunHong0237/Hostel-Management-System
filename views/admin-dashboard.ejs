@@ -67,18 +67,26 @@
                     <h3>Student Registration Over Time</h3>
                     <canvas id="studentRegistrationOverTimeChart"></canvas>
                 </div>
-                <div class="col-md-6">
-                    <h3>Year of Degree</h3>
-                    <canvas id="yearOfDegreeChart"></canvas>
-                </div>
+              <div class="col-md-6">
+                <h3>Students by Year of Study</h3>
+                <canvas id="studentsByYearOfStudyChart"></canvas>
+              </div>
                 <div class="col-md-6">
                     <h3>Room Type Distribution</h3>
                     <canvas id="roomTypeDistributionChart"></canvas>
                 </div>
-                <div class="col-md-6">
-                    <h3>Room Occupancy</h3>
-                    <canvas id="roomOccupancyChart"></canvas>
+              <div class="col-md-6">
+                <h3>Room Occupancy</h3>
+                <canvas id="roomOccupancyChart" style="max-height: 400px;"></canvas>
+                <div style="text-align: center; margin-top: 10px;">
+                  <span style="display: inline-block; width: 16.66%;">Male</span>
+                  <span style="display: inline-block; width: 16.66%;"></span>
+                  <span style="display: inline-block; width: 16.66%;"></span>
+                  <span style="display: inline-block; width: 16.66%;">Female</span>
+                  <span style="display: inline-block; width: 16.66%;"></span>
+                  <span style="display: inline-block; width: 16.66%;"></span>
                 </div>
+              </div>
                 <div class="col-12">
                     <h3>State of Residence</h3>
                     <div id="stateOfResidenceMap" style="height: 500px;"></div>
@@ -143,7 +151,7 @@
                   data: {
                     labels: labels,
                     datasets: [{
-                      label: 'Highest Number of Students',
+                      label: 'Number of Students',
                       data: counts,
                       backgroundColor: counts.map(count => count === maxCount ? 'red' : 'gray')
                     }]
@@ -251,99 +259,230 @@
               }
 
           // Year of Degree Column Chart
-          async function renderYearOfDegreeChart() {
+          // Students by Year of Study Column Chart with Customizations
+          async function renderStudentsByYearOfStudyChart() {
             const data = await fetchChartData('/admin/year-of-degree');
-            const labels = data.map(item => item.std_year);
-            const counts = data.map(item => item.count);
-            new Chart(document.getElementById('yearOfDegreeChart'), {
+            const labels = ["FIRST", "SECOND", "THIRD", "FOURTH"];
+            const counts = labels.map(label => {
+              const item = data.find(d => d.std_year.toUpperCase() === label);
+              return item ? item.count : 0;
+            });
+
+            new Chart(document.getElementById('studentsByYearOfStudyChart'), {
               type: 'bar',
               data: {
                 labels: labels,
                 datasets: [{
                   label: 'Number of Students',
                   data: counts,
-                  backgroundColor: '#36A2EB',
+                  backgroundColor: '#519DE9'
                 }]
               },
               options: {
                 scales: {
+                  x: {
+                    grid: {
+                      display: false
+                    }
+                  },
                   y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    grid: {
+                      display: false
+                    }
+                  }
+                },
+                plugins: {
+                  datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: 'black',
+                    font: {
+                      weight: 'bold'
+                    }
                   }
                 }
-              }
+              },
+              plugins: [ChartDataLabels]
             });
           }
             // Room type distribution Chart
-              async function renderRoomTypeDistributionChart() {
-                const data = await fetchChartData('/admin/room-type-distribution');
-                const capacities = ['1', '2', '4'];
-                const genders = ['Male', 'Female'];
-                const datasets = genders.map(gender => {
-                  return {
-                    label: gender,
-                    data: capacities.map(capacity => {
-                      const item = data.find(d => d.room_capacity == capacity && d.room_gender === gender);
-                      return item ? item.count : 0;
-                    }),
-                    backgroundColor: gender === 'Male' ? '#36A2EB' : '#FF6384',
-                  };
-                });
-                new Chart(document.getElementById('roomTypeDistributionChart'), {
-                  type: 'bar',
-                  data: {
-                    labels: capacities,
-                    datasets: datasets,
+          async function renderRoomTypeDistributionChart() {
+            const data = await fetchChartData('/admin/room-type-distribution');
+            const labels = ['Single Room', 'Double Room', 'Quad Room'];
+            const maleCounts = labels.map(label => {
+              const roomCapacity = label === 'Single Room' ? 1 : label === 'Double Room' ? 2 : 4;
+              const item = data.find(d => d.room_capacity == roomCapacity && d.room_gender === 'Male');
+              return item ? item.count : 0;
+            });
+            const femaleCounts = labels.map(label => {
+              const roomCapacity = label === 'Single Room' ? 1 : label === 'Double Room' ? 2 : 4;
+              const item = data.find(d => d.room_capacity == roomCapacity && d.room_gender === 'Female');
+              return item ? item.count : 0;
+            });
+
+            const totalCounts = labels.map((label, index) => maleCounts[index] + femaleCounts[index]);
+
+            new Chart(document.getElementById('roomTypeDistributionChart'), {
+              type: 'bar',
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: 'Male',
+                    data: maleCounts,
+                    backgroundColor: '#36A2EB',
                   },
-                  options: {
-                    scales: {
-                      x: { stacked: true },
-                      y: { stacked: true },
+                  {
+                    label: 'Female',
+                    data: femaleCounts,
+                    backgroundColor: '#FF6384',
+                  }
+                ]
+              },
+              options: {
+                scales: {
+                  x: {
+                    grid: {
+                      display: false
+                    }
+                  },
+                  y: {
+                    beginAtZero: true,
+                    grid: {
+                      display: false
+                    },
+                    stacked: true
+                  },
+                  x: {
+                    stacked: true
+                  }
+                },
+                plugins: {
+                  datalabels: {
+                    display: function(context) {
+                      return context.datasetIndex === context.chart.data.datasets.length - 1;
+                    },
+                    anchor: 'end',
+                    align: 'end',
+                    color: 'black',
+                    font: {
+                      weight: 'bold'
+                    },
+                    formatter: function(value, context) {
+                      const index = context.dataIndex;
+                      return totalCounts[index];
                     }
                   }
-                });
-              }
-
+                }
+              },
+              plugins: [ChartDataLabels]
+            });
+          }
+          
             // Room occupancy Chart
-              async function renderRoomOccupancyChart() {
-                const data = await fetchChartData('/admin/room-occupancy');
-                const labels = data.map(item => `${item.room_capacity} Beds (${item.room_gender})`);
-                const totalCapacity = data.map(item => item.total_capacity);
-                const totalOccupancy = data.map(item => item.total_occupancy);
-                const bedAvail = data.map(item => item.bed_avail);
+          async function renderRoomOccupancyChart() {
+            const data = await fetchChartData('/admin/room-occupancy');
+            const labels = ['Single Room', 'Double Room', 'Quad Room'];
 
-                new Chart(document.getElementById('roomOccupancyChart'), {
-                  type: 'bar',
-                  data: {
-                    labels: labels,
-                    datasets: [
-                      {
-                        label: 'Total Capacity',
-                        data: totalCapacity,
-                        backgroundColor: '#FF6384',
-                      },
-                      {
-                        label: 'Total Occupancy',
-                        data: totalOccupancy,
-                        backgroundColor: '#36A2EB',
-                      },
-                      {
-                        label: 'Available Beds',
-                        data: bedAvail,
-                        backgroundColor: '#FFCE56',
-                      }
-                    ]
+            const maleData = {
+              'Single Room': { total_occupancy: 0, bed_avail: 0 },
+              'Double Room': { total_occupancy: 0, bed_avail: 0 },
+              'Quad Room': { total_occupancy: 0, bed_avail: 0 }
+            };
+
+            const femaleData = {
+              'Single Room': { total_occupancy: 0, bed_avail: 0 },
+              'Double Room': { total_occupancy: 0, bed_avail: 0 },
+              'Quad Room': { total_occupancy: 0, bed_avail: 0 }
+            };
+
+            data.forEach(item => {
+              const roomType = item.room_capacity === 1 ? 'Single Room' : item.room_capacity === 2 ? 'Double Room' : 'Quad Room';
+              if (item.room_gender === 'Male') {
+                maleData[roomType].total_occupancy = item.total_occupancy;
+                maleData[roomType].bed_avail = item.bed_avail;
+              } else {
+                femaleData[roomType].total_occupancy = item.total_occupancy;
+                femaleData[roomType].bed_avail = item.bed_avail;
+              }
+            });
+
+            const labelsExpanded = [
+              'Single Room', 
+              'Double Room', 
+              'Quad Room', 
+              'Single Room', 
+              'Double Room', 
+              'Quad Room'
+            ];
+            const totalOccupancy = [
+              maleData['Single Room'].total_occupancy,
+              maleData['Double Room'].total_occupancy,
+              maleData['Quad Room'].total_occupancy,
+              femaleData['Single Room'].total_occupancy,
+              femaleData['Double Room'].total_occupancy,
+              femaleData['Quad Room'].total_occupancy
+            ];
+            const bedAvail = [
+              maleData['Single Room'].bed_avail,
+              maleData['Double Room'].bed_avail,
+              maleData['Quad Room'].bed_avail,
+              femaleData['Single Room'].bed_avail,
+              femaleData['Double Room'].bed_avail,
+              femaleData['Quad Room'].bed_avail
+            ];
+
+            new Chart(document.getElementById('roomOccupancyChart'), {
+              type: 'bar',
+              data: {
+                labels: labelsExpanded,
+                datasets: [
+                  {
+                    label: 'Total Occupancy',
+                    data: totalOccupancy,
+                    backgroundColor: '#36A2EB',
                   },
-                  options: {
-                    scales: {
-                      y: {
-                        beginAtZero: true
-                      }
+                  {
+                    label: 'Available Beds',
+                    data: bedAvail,
+                    backgroundColor: '#F5DEB3',
+                  }
+                ]
+              },
+              options: {
+                scales: {
+                  x: {
+                    grid: {
+                      display: true
+                    }
+                  },
+                  y: {
+                    beginAtZero: true,
+                    grid: {
+                      display: false
                     }
                   }
-                });
-              }
-              
+                },
+                plugins: {
+                  datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: 'black',
+                    font: {
+                      weight: 'bold'
+                    },
+                    formatter: function(value, context) {
+                      return value;
+                    }
+                  }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+              },
+              plugins: [ChartDataLabels]
+            });
+          }
 
              // state of residence Chart
               async function renderStateOfResidenceMap() {
@@ -402,7 +541,7 @@
           renderStudentsByFacultyChart();
           renderRoomEnvironmentPreferenceChart();
           renderStudentRegistrationOverTimeChart();
-          renderYearOfDegreeChart();
+          renderStudentsByYearOfStudyChart();
           renderRoomTypeDistributionChart();
           renderRoomOccupancyChart();
           renderStateOfResidenceMap();
