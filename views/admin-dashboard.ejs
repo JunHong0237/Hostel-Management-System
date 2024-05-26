@@ -6,6 +6,9 @@
         <title>Admin Dashboard</title>
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     </head>
     <body class="bg-light">
         <!-- Bootstrap Navbar -->
@@ -35,213 +38,302 @@
             </div>
         </nav>
 
-    <div class="container mt-4">
-        <h1 class="text-primary text-center mb-4">Admin Dashboard</h1>
-
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Room Occupancy</h5>
-                        <canvas id="roomOccupancyChart"></canvas>
-                    </div>
+        <!-- Charts Grid -->
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Gender Distribution</h3>
+                    <canvas id="genderDistributionChart"></canvas>
                 </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Gender Distribution</h5>
-                        <canvas id="genderDistributionChart"></canvas>
-                    </div>
+                <div class="col-md-6">
+                    <h3>Students by Faculty</h3>
+                    <canvas id="studentsByFacultyChart"></canvas>
                 </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Students by Faculty</h5>
-                        <canvas id="studentsByFacultyChart"></canvas>
-                    </div>
+                <div class="col-md-6">
+                    <h3>Room Environment Preference</h3>
+                    <canvas id="roomEnvironmentPreferenceChart"></canvas>
                 </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Room Preference</h5>
-                        <canvas id="roomPreferenceChart"></canvas>
-                    </div>
+                <div class="col-md-6">
+                    <h3>Student Registration Over Time</h3>
+                    <canvas id="studentRegistrationOverTimeChart"></canvas>
                 </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Student Registration Over Time</h5>
-                        <canvas id="studentRegistrationChart"></canvas>
-                    </div>
+                <div class="col-md-6">
+                    <h3>Year of Degree</h3>
+                    <canvas id="yearOfDegreeChart"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <h3>Room Type Distribution</h3>
+                    <canvas id="roomTypeDistributionChart"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <h3>Room Occupancy</h3>
+                    <canvas id="roomOccupancyChart"></canvas>
+                </div>
+                <div class="col-12">
+                    <h3>State of Residence</h3>
+                    <div id="stateOfResidenceMap" style="height: 500px;"></div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Room Type Distribution</h5>
-                        <canvas id="roomTypeChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        async function fetchDashboardData() {
-            try {
-                const response = await fetch('/admin/dashboard-data');
-                const data = await response.json();
 
-                // Populate Room Occupancy Chart
-                const roomOccupancyLabels = data.roomOccupancy.map(room => room.room_no);
-                const roomOccupancyData = data.roomOccupancy.map(room => room.room_occupancy);
-                const roomCapacityData = data.roomOccupancy.map(room => room.room_capacity);
+        
+        <script>
+          async function fetchChartData(url) {
+            const response = await fetch(url);
+            return await response.json();
+          }
+
+          // Gender Distribution Pie Chart
+          async function renderGenderDistributionChart() {
+            const data = await fetchChartData('/admin/gender-distribution');
+            const labels = data.map(item => item.std_gender);
+            const counts = data.map(item => item.count);
+            new Chart(document.getElementById('genderDistributionChart'), {
+              type: 'pie',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Gender Distribution',
+                  data: counts,
+                  backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                }]
+              }
+            });
+          }
+
+          // Students by Faculty Bar Chart
+          async function renderStudentsByFacultyChart() {
+            const data = await fetchChartData('/admin/students-by-faculty');
+            const labels = data.map(item => item.std_faculty);
+            const counts = data.map(item => item.count);
+            new Chart(document.getElementById('studentsByFacultyChart'), {
+              type: 'bar',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Number of Students',
+                  data: counts,
+                  backgroundColor: '#36A2EB',
+                }]
+              },
+              options: {
+                indexAxis: 'y',
+                scales: {
+                  x: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          }
+
+          // Room Environment Preference Pie Chart
+          async function renderRoomEnvironmentPreferenceChart() {
+            const data = await fetchChartData('/admin/room-environment-preference');
+            const labels = data.map(item => item.std_pref);
+            const counts = data.map(item => item.count);
+            new Chart(document.getElementById('roomEnvironmentPreferenceChart'), {
+              type: 'pie',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Room Environment Preference',
+                  data: counts,
+                  backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                }]
+              }
+            });
+          }
+
+            // Student Registration Over Time Line Chart
+              async function renderStudentRegistrationOverTimeChart() {
+                const data = await fetchChartData('/admin/student-registration-over-time');
+                const labels = data.map(item => item.date);
+                const counts = data.map(item => item.count);
+                new Chart(document.getElementById('studentRegistrationOverTimeChart'), {
+                  type: 'line',
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: 'Registrations',
+                      data: counts,
+                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                      borderColor: 'rgba(75, 192, 192, 1)',
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    scales: {
+                      x: {
+                        type: 'time',
+                        time: {
+                          unit: 'day',
+                          tooltipFormat: 'yyyy-MM-dd',
+                          displayFormats: {
+                            day: 'yyyy-MM-dd'
+                          }
+                        }
+                      },
+                      y: {
+                        beginAtZero: true
+                      }
+                    }
+                  }
+                });
+              }
+
+          // Year of Degree Column Chart
+          async function renderYearOfDegreeChart() {
+            const data = await fetchChartData('/admin/year-of-degree');
+            const labels = data.map(item => item.std_year);
+            const counts = data.map(item => item.count);
+            new Chart(document.getElementById('yearOfDegreeChart'), {
+              type: 'bar',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Number of Students',
+                  data: counts,
+                  backgroundColor: '#36A2EB',
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          }
+            // Room type distribution Chart
+              async function renderRoomTypeDistributionChart() {
+                const data = await fetchChartData('/admin/room-type-distribution');
+                const capacities = ['1', '2', '4'];
+                const genders = ['Male', 'Female'];
+                const datasets = genders.map(gender => {
+                  return {
+                    label: gender,
+                    data: capacities.map(capacity => {
+                      const item = data.find(d => d.room_capacity == capacity && d.room_gender === gender);
+                      return item ? item.count : 0;
+                    }),
+                    backgroundColor: gender === 'Male' ? '#36A2EB' : '#FF6384',
+                  };
+                });
+                new Chart(document.getElementById('roomTypeDistributionChart'), {
+                  type: 'bar',
+                  data: {
+                    labels: capacities,
+                    datasets: datasets,
+                  },
+                  options: {
+                    scales: {
+                      x: { stacked: true },
+                      y: { stacked: true },
+                    }
+                  }
+                });
+              }
+
+            // Room occupancy Chart
+              async function renderRoomOccupancyChart() {
+                const data = await fetchChartData('/admin/room-occupancy');
+                const labels = data.map(item => `${item.room_capacity} Beds (${item.room_gender})`);
+                const totalCapacity = data.map(item => item.total_capacity);
+                const totalOccupancy = data.map(item => item.total_occupancy);
+                const bedAvail = data.map(item => item.bed_avail);
 
                 new Chart(document.getElementById('roomOccupancyChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: roomOccupancyLabels,
-                        datasets: [{
-                            label: 'Occupancy',
-                            data: roomOccupancyData,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }, {
-                            label: 'Capacity',
-                            data: roomCapacityData,
-                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
+                  type: 'bar',
+                  data: {
+                    labels: labels,
+                    datasets: [
+                      {
+                        label: 'Total Capacity',
+                        data: totalCapacity,
+                        backgroundColor: '#FF6384',
+                      },
+                      {
+                        label: 'Total Occupancy',
+                        data: totalOccupancy,
+                        backgroundColor: '#36A2EB',
+                      },
+                      {
+                        label: 'Available Beds',
+                        data: bedAvail,
+                        backgroundColor: '#FFCE56',
+                      }
+                    ]
+                  },
+                  options: {
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
                     }
+                  }
+                });
+              }
+              
+
+             // state of residence Chart
+            async function renderStateOfResidenceMap() {
+                const data = await fetchChartData('/admin/state-of-residence');
+                const stateData = {};
+                data.forEach(item => {
+                  stateData[item.std_state.toUpperCase()] = item.count;
                 });
 
-                // Populate Gender Distribution Chart
-                const genderLabels = data.genderDistribution.map(gender => gender.std_gender);
-                const genderData = data.genderDistribution.map(gender => gender.count);
+                // Fetch Malaysia GeoJSON data
+                const response = await fetch('/malaysia-states.json');
+                const statesGeoJSON = await response.json();
 
-                new Chart(document.getElementById('genderDistributionChart'), {
-                    type: 'pie',
-                    data: {
-                        labels: genderLabels,
-                        datasets: [{
-                            label: 'Gender Distribution',
-                            data: genderData,
-                            backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                            borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
-                            borderWidth: 1
-                        }]
-                    }
-                });
+                // Filter the GeoJSON to include only the specified states
+                const filteredGeoJSON = {
+                  type: 'FeatureCollection',
+                  features: statesGeoJSON.features.filter(feature =>
+                    ['JOHOR', 'KEDAH', 'KELANTAN', 'MELAKA', 'NEGERI SEMBILAN', 'PAHANG', 'PULAU PINANG', 'PERAK', 'PERLIS', 'SABAH', 'SARAWAK', 'SELANGOR', 'TERENGGANU', 'KUALA LUMPUR', 'LABUAN', 'PUTRAJAYA']
+                    .includes(feature.properties.name.toUpperCase())
+                  )
+                };
 
-                // Populate Students by Faculty Chart
-                const facultyLabels = data.studentsByFaculty.map(faculty => faculty.std_faculty);
-                const facultyData = data.studentsByFaculty.map(faculty => faculty.count);
+                const map = L.map('stateOfResidenceMap').setView([4.2105, 101.9758], 6); // Centered on Malaysia
 
-                new Chart(document.getElementById('studentsByFacultyChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: facultyLabels,
-                        datasets: [{
-                            label: 'Number of Students',
-                            data: facultyData,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  maxZoom: 18,
+                }).addTo(map);
 
-                // Populate Room Preference Chart
-                const prefLabels = data.roomPreference.map(pref => pref.std_pref);
-                const prefData = data.roomPreference.map(pref => pref.count);
+                L.geoJSON(filteredGeoJSON, {
+                  style: feature => {
+                    const count = stateData[feature.properties.name.toUpperCase()] || 0;
+                    const fillColor = count > 50 ? '#800026' :
+                                      count > 20 ? '#BD0026' :
+                                      count > 10 ? '#E31A1C' :
+                                      count > 5  ? '#FC4E2A' :
+                                      count > 0  ? '#FD8D3C' : '#FFEDA0';
+                    return { fillColor, weight: 2, opacity: 1, color: 'white', dashArray: '3', fillOpacity: 0.7 };
+                  },
+                  onEachFeature: (feature, layer) => {
+                    layer.bindPopup(`${feature.properties.name}: ${stateData[feature.properties.name.toUpperCase()] || 0} students`);
+                  }
+                }).addTo(map);
+              }
+              
 
-                new Chart(document.getElementById('roomPreferenceChart'), {
-                    type: 'pie',
-                    data: {
-                        labels: prefLabels,
-                        datasets: [{
-                            label: 'Room Preference',
-                            data: prefData,
-                            backgroundColor: ['rgba(255, 206, 86, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                            borderColor: ['rgba(255, 206, 86, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
-                            borderWidth: 1
-                        }]
-                    }
-                });
+          // Render all charts
+          renderGenderDistributionChart();
+          renderStudentsByFacultyChart();
+          renderRoomEnvironmentPreferenceChart();
+          renderStudentRegistrationOverTimeChart();
+          renderYearOfDegreeChart();
+          renderRoomTypeDistributionChart();
+          renderRoomOccupancyChart();
+          renderStateOfResidenceMap();
+        </script>
 
-                // Populate Student Registration Over Time Chart
-                const regDateLabels = data.studentRegistration.map(reg => reg.reg_date);
-                const regDateData = data.studentRegistration.map(reg => reg.count);
-
-                new Chart(document.getElementById('studentRegistrationChart'), {
-                    type: 'line',
-                    data: {
-                        labels: regDateLabels,
-                        datasets: [{
-                            label: 'Registrations',
-                            data: regDateData,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-
-                // Populate Room Type Distribution Chart
-                const roomTypeLabels = data.roomType.map(room => room.room_gender);
-                const roomTypeData = data.roomType.map(room => room.count);
-
-                new Chart(document.getElementById('roomTypeChart'), {
-                    type: 'pie',
-                    data: {
-                        labels: roomTypeLabels,
-                        datasets: [{
-                            label: 'Room Type Distribution',
-                            data: roomTypeData,
-                            backgroundColor: ['rgba(153, 102, 255, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                            borderColor: ['rgba(153, 102, 255, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
-                            borderWidth: 1
-                        }]
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-            }
-        }
 
         // Fetch and render the dashboard data when the page loads
         fetchDashboardData();

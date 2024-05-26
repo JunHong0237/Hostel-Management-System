@@ -815,60 +815,149 @@ app.post("/admin/rooms/delete/:room_id", async (req, res) => {
   }
 });
 
-app.get("/admin/dashboard-data", async (req, res) => {
-  try {
-    // Fetch data for room occupancy
-    const [roomOccupancy] = await db
-      .promise()
-      .query("SELECT room_no, room_capacity, room_occupancy FROM Room_Details");
-
-    // Fetch data for gender distribution
-    const [genderDistribution] = await db
-      .promise()
-      .query(
-        "SELECT std_gender, COUNT(*) as count FROM Student_Details GROUP BY std_gender",
+// Fetch gender distribution data from the database
+app.get("/admin/gender-distribution", (req, res) => {
+  const query =
+    "SELECT std_gender, COUNT(*) as count FROM Student_Details GROUP BY std_gender";
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error("Error fetching gender distribution data:", error);
+      res
+        .status(500)
+        .send("An error occurred while fetching gender distribution data.");
+      return;
+    }
+    res.json(results);
+  });
+});
+// Fetch students by faculty data from the database
+app.get("/admin/students-by-faculty", (req, res) => {
+  const query =
+    "SELECT std_faculty, COUNT(*) as count FROM Student_Details GROUP BY std_faculty";
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error("Error fetching students by faculty data:", error);
+      res
+        .status(500)
+        .send("An error occurred while fetching students by faculty data.");
+      return;
+    }
+    res.json(results);
+  });
+});
+// Fetch room environment preference data from the database
+app.get("/admin/room-environment-preference", (req, res) => {
+  const query =
+    "SELECT std_pref, COUNT(*) as count FROM Student_Details GROUP BY std_pref";
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error("Error fetching room environment preference data:", error);
+      res
+        .status(500)
+        .send(
+          "An error occurred while fetching room environment preference data.",
+        );
+      return;
+    }
+    res.json(results);
+  });
+});
+// Fetch student registration over time data from the database
+app.get("/admin/student-registration-over-time", (req, res) => {
+  const query =
+    "SELECT DATE_FORMAT(reg_date, '%Y-%m-%d') as date, COUNT(*) as count FROM Student_Details GROUP BY DATE(reg_date)";
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error(
+        "Error fetching student registration over time data:",
+        error,
       );
+      res
+        .status(500)
+        .send(
+          "An error occurred while fetching student registration over time data.",
+        );
+      return;
+    }
+    res.json(results);
+  });
+});
 
-    // Fetch data for students by faculty
-    const [studentsByFaculty] = await db
-      .promise()
-      .query(
-        "SELECT std_faculty, COUNT(*) as count FROM Student_Details GROUP BY std_faculty",
-      );
+// Fetch year of degree data from the database
+app.get("/admin/year-of-degree", (req, res) => {
+  const query =
+    "SELECT std_year, COUNT(*) as count FROM Student_Details GROUP BY std_year";
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error("Error fetching year of degree data:", error);
+      res
+        .status(500)
+        .send("An error occurred while fetching year of degree data.");
+      return;
+    }
+    res.json(results);
+  });
+});
+// Fetch room type distribution data from the database
+app.get("/admin/room-type-distribution", (req, res) => {
+  const query = `
+    SELECT room_capacity, room_gender, COUNT(*) as count 
+    FROM Room_Details 
+    GROUP BY room_capacity, room_gender
+  `;
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error("Error fetching room type distribution data:", error);
+      res
+        .status(500)
+        .send("An error occurred while fetching room type distribution data.");
+      return;
+    }
+    res.json(results);
+  });
+});
+// Fetch room occupancy data from the database
+app.get("/admin/room-occupancy", (req, res) => {
+  const query = `
+    SELECT room_gender, room_capacity, SUM(room_capacity) as total_capacity, 
+           SUM(room_occupancy) as total_occupancy, 
+           SUM(room_capacity - room_occupancy) as bed_avail
+    FROM Room_Details 
+    GROUP BY room_capacity, room_gender
+  `;
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error("Error fetching room occupancy data:", error);
+      res
+        .status(500)
+        .send("An error occurred while fetching room occupancy data.");
+      return;
+    }
+    res.json(results);
+  });
+});
 
-    // Fetch data for room preference
-    const [roomPreference] = await db
-      .promise()
-      .query(
-        "SELECT std_pref, COUNT(*) as count FROM Student_Details GROUP BY std_pref",
-      );
+// Serve static files
+app.use(express.static('public'));
 
-    // Fetch data for student registration over time
-    const [studentRegistration] = await db
-      .promise()
-      .query(
-        "SELECT DATE(reg_date) as reg_date, COUNT(*) as count FROM Student_Details GROUP BY DATE(reg_date)",
-      );
-
-    // Fetch data for room type distribution
-    const [roomType] = await db
-      .promise()
-      .query(
-        "SELECT room_gender, COUNT(*) as count FROM Room_Details GROUP BY room_gender",
-      );
-
-    res.json({
-      roomOccupancy,
-      genderDistribution,
-      studentsByFaculty,
-      roomPreference,
-      studentRegistration,
-      roomType,
-    });
-  } catch (error) {
-    console.error("Error fetching dashboard data:", error);
-    res.status(500).send("An error occurred while fetching dashboard data.");
-  }
+// Fetch state of residence data from the database
+app.get("/admin/state-of-residence", (req, res) => {
+  const query = `
+    SELECT std_state, COUNT(*) as count 
+    FROM Student_Details 
+    WHERE std_state IN ('JOHOR', 'KEDAH', 'KELANTAN', 'MELAKA', 'NEGERI SEMBILAN', 'PAHANG', 'PULAU PINANG', 'PERAK', 'PERLIS', 'SABAH', 'SARAWAK', 'SELANGOR', 'TERENGGANU', 'KUALA LUMPUR', 'LABUAN', 'PUTRAJAYA')
+    GROUP BY std_state
+  `;
+  db.query(query, (error, results) => {
+    if (error) {
+      console.error("Error fetching state of residence data:", error);
+      res
+        .status(500)
+        .send("An error occurred while fetching state of residence data.");
+      return;
+    }
+    res.json(results);
+  });
 });
 
 // Existing code...
