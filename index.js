@@ -862,10 +862,24 @@ app.get("/admin/room-environment-preference", (req, res) => {
     res.json(results);
   });
 });
+
 // Fetch student registration over time data from the database
 app.get("/admin/student-registration-over-time", (req, res) => {
-  const query =
-    "SELECT DATE_FORMAT(reg_date, '%Y-%m-%d') as date, COUNT(*) as count FROM Student_Details GROUP BY DATE(reg_date)";
+  let { year } = req.query;
+  let query =
+    "SELECT DATE_FORMAT(reg_date, '%Y-%m-01') as date, COUNT(*) as count FROM Student_Details";
+  let conditions = [];
+
+  if (year && year !== "all") {
+    conditions.push(`YEAR(reg_date) = ${year}`);
+  }
+
+  if (conditions.length > 0) {
+    query += " WHERE " + conditions.join(" AND ");
+  }
+
+  query += " GROUP BY DATE_FORMAT(reg_date, '%Y-%m')";
+
   db.query(query, (error, results) => {
     if (error) {
       console.error(
@@ -938,7 +952,7 @@ app.get("/admin/room-occupancy", (req, res) => {
 });
 
 // Serve static files
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 // Fetch state of residence data from the database
 app.get("/admin/state-of-residence", (req, res) => {
