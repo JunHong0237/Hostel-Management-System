@@ -211,7 +211,7 @@
                     datasets: [{
                       label: 'Room Environment Preference',
                       data: counts,
-                      backgroundColor: ['#009596', '#06C', '#EC7A08']
+                      backgroundColor: ['#009596', '#06C', '#EC7A08','grey']
                     }]
                   },
                   options: {
@@ -317,11 +317,18 @@
                 ]
               },
               options: {
+                layout: {
+                  padding: {
+                    top: 20,
+                    bottom: 20
+                  }
+                },
                 scales: {
                   x: {
                     grid: {
                       display: false
-                    }
+                    },
+                    stacked: true
                   },
                   y: {
                     beginAtZero: true,
@@ -329,19 +336,20 @@
                       display: false
                     },
                     stacked: true
-                  },
-                  x: {
-                    stacked: true
                   }
                 },
                 plugins: {
+                  legend: {
+                    position: 'bottom',
+                  },
                   datalabels: {
+                    color: 'black',
                     display: function(context) {
                       return context.datasetIndex === context.chart.data.datasets.length - 1;
                     },
                     anchor: 'end',
-                    align: 'end',
-                    color: 'black',
+                    align: 'top',
+                    offset: 6,
                     font: {
                       weight: 'bold'
                     },
@@ -355,6 +363,9 @@
               plugins: [ChartDataLabels]
             });
           }
+
+
+
           
             // Room occupancy Chart
           async function renderRoomOccupancyChart() {
