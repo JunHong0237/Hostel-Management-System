@@ -63,15 +63,16 @@
                     <h3>Room Environment Preference</h3>
                     <canvas id="roomEnvironmentPreferenceChart"></canvas>
                 </div>
-              <div>
+              <div class="col-md-6">
                 <h3>Student Registration Over Time</h3>
                 <label for="yearFilter">Year:</label>
                 <select id="yearFilter" onchange="updateChart()">
-                  <option value="all">All</option>
-                  <option value="2024">2024</option>
-                  <option value="2023">2023</option>
-                  <!-- Add more years as needed -->
+                  <!-- Year options will be populated dynamically by JavaScript -->
                 </select>
+
+                <canvas id="studentRegistrationOverTimeChart"></canvas>
+              </div>
+
 
                 <canvas id="studentRegistrationOverTimeChart"></canvas>
               </div>
@@ -532,11 +533,27 @@
 
           let registrationChart;
 
+          function getMonthLabels(year) {
+            const months = [];
+            for (let month = 0; month < 12; month++) {
+              months.push(new Date(year, month, 1).toISOString().split('T')[0]);
+            }
+            return months;
+          }
+
           async function updateChart() {
             const year = document.getElementById('yearFilter').value;
             const data = await fetchFilteredData(year);
-            const labels = data.map(item => item.date);
-            const counts = data.map(item => item.count);
+
+            // Initialize an array of months with zero counts
+            const monthLabels = getMonthLabels(year);
+            const counts = Array(12).fill(0);
+
+            // Populate the counts array with actual data
+            data.forEach(item => {
+              const monthIndex = new Date(item.date).getMonth();
+              counts[monthIndex] = item.count;
+            });
 
             if (registrationChart) {
               registrationChart.destroy();
@@ -545,7 +562,7 @@
             registrationChart = new Chart(document.getElementById('studentRegistrationOverTimeChart'), {
               type: 'line',
               data: {
-                labels: labels,
+                labels: monthLabels,
                 datasets: [{
                   label: 'Registrations',
                   data: counts,
@@ -586,11 +603,26 @@
                   }
                 }
               },
-              //plugins: [ChartDataLabels]
+              plugins: [ChartDataLabels]
             });
           }
 
-          document.addEventListener('DOMContentLoaded', updateChart);
+          function populateYearOptions() {
+            const currentYear = new Date().getFullYear();
+            const yearFilter = document.getElementById('yearFilter');
+            for (let year = currentYear; year >= 2000; year--) {
+              const option = document.createElement('option');
+              option.value = year;
+              option.text = year;
+              yearFilter.add(option);
+            }
+            yearFilter.value = currentYear; // Set the default value to the current year
+          }
+
+          document.addEventListener('DOMContentLoaded', () => {
+            populateYearOptions();
+            updateChart();
+          });
 
           renderStudentRegistrationOverTimeChart();
         </script>
