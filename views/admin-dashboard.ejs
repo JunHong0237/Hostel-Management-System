@@ -545,14 +545,19 @@
             const year = document.getElementById('yearFilter').value;
             const data = await fetchFilteredData(year);
 
-            // Initialize an array of months with zero counts
+            // Initialize arrays of months with zero counts for males and females
             const monthLabels = getMonthLabels(year);
-            const counts = Array(12).fill(0);
+            const maleCounts = Array(12).fill(0);
+            const femaleCounts = Array(12).fill(0);
 
-            // Populate the counts array with actual data
+            // Populate the counts arrays with actual data
             data.forEach(item => {
               const monthIndex = new Date(item.date).getMonth();
-              counts[monthIndex] = item.count;
+              if (item.std_gender === 'Male') {
+                maleCounts[monthIndex] = item.count;
+              } else if (item.std_gender === 'Female') {
+                femaleCounts[monthIndex] = item.count;
+              }
             });
 
             if (registrationChart) {
@@ -563,14 +568,24 @@
               type: 'line',
               data: {
                 labels: monthLabels,
-                datasets: [{
-                  label: 'Registrations',
-                  data: counts,
-                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                  borderColor: 'rgba(75, 192, 192, 1)',
-                  borderWidth: 1,
-                  fill: false
-                }]
+                datasets: [
+                  {
+                    label: 'Male Registrations',
+                    data: maleCounts,
+                    backgroundColor: 'rgba(54, 162, 235, 1)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    fill: false
+                  },
+                  {
+                    label: 'Female Registrations',
+                    data: femaleCounts,
+                    backgroundColor: 'rgba(255, 99, 132, 1)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    fill: false
+                  }
+                ]
               },
               options: {
                 scales: {
@@ -603,7 +618,7 @@
                   }
                 }
               },
-              plugins: [ChartDataLabels]
+             // plugins: [ChartDataLabels]
             });
           }
 

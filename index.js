@@ -864,10 +864,14 @@ app.get("/admin/room-environment-preference", (req, res) => {
 });
 
 // Fetch student registration over time data from the database
+// Fetch student registration over time data from the database
+// Fetch student registration over time data from the database
 app.get("/admin/student-registration-over-time", (req, res) => {
   let { year } = req.query;
-  let query =
-    "SELECT DATE_FORMAT(reg_date, '%Y-%m-01') as date, COUNT(*) as count FROM Student_Details";
+  let query = `
+    SELECT DATE_FORMAT(reg_date, '%Y-%m') as date, std_gender, COUNT(*) as count 
+    FROM Student_Details
+  `;
   let conditions = [];
 
   if (year && year !== "all") {
@@ -878,7 +882,7 @@ app.get("/admin/student-registration-over-time", (req, res) => {
     query += " WHERE " + conditions.join(" AND ");
   }
 
-  query += " GROUP BY DATE_FORMAT(reg_date, '%Y-%m')";
+  query += " GROUP BY DATE_FORMAT(reg_date, '%Y-%m'), std_gender";
 
   db.query(query, (error, results) => {
     if (error) {
