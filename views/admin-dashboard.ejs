@@ -18,6 +18,36 @@
             color: white;
             text-shadow: 0 0 3px #000;
           }
+
+       
+            .summary-cards {
+              display: flex;
+              justify-content: space-around;
+              margin-bottom: 20px;
+            }
+
+            .summary-card {
+              background: #fff;
+              border-radius: 8px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              padding: 20px;
+              text-align: center;
+              width: 30%;
+            }
+
+            .summary-card h3 {
+              margin-bottom: 10px;
+              font-size: 18px;
+              color: #333;
+            }
+
+            .summary-number {
+              font-size: 24px;
+              font-weight: bold;
+              color: #007bff; /* Blue color */
+            }
+       
+
         </style>
     </head>
     <body class="bg-light">
@@ -47,6 +77,22 @@
                 </div>
             </div>
         </nav>
+
+
+      <div class="summary-cards">
+        <div class="summary-card">
+          <h3>Total Students</h3>
+          <p id="totalStudents" class="summary-number"></p>
+        </div>
+        <div class="summary-card">
+          <h3>Available Beds</h3>
+          <p id="availableBeds" class="summary-number"></p>
+        </div>
+        <div class="summary-card">
+          <h3>Total Rooms</h3>
+          <p id="totalRooms" class="summary-number"></p>
+        </div>
+      </div>
 
         <!-- Charts Grid -->
         <div class="container mt-4">
@@ -104,6 +150,21 @@
         </div>
 
 
+      <script>
+        async function fetchSummaryData() {
+          const response = await fetch('/admin/summary-data');
+          return await response.json();
+        }
+
+        async function displaySummaryData() {
+          const data = await fetchSummaryData();
+          document.getElementById('totalStudents').textContent = data.totalStudents;
+          document.getElementById('availableBeds').textContent = data.availableBeds;
+          document.getElementById('totalRooms').textContent = data.totalRooms;
+        }
+
+        document.addEventListener('DOMContentLoaded', displaySummaryData);
+      </script>
 
         
         <script>

@@ -815,6 +815,47 @@ app.post("/admin/rooms/delete/:room_id", async (req, res) => {
   }
 });
 
+// Fetch summary data from the database
+app.get("/admin/summary-data", (req, res) => {
+  const queries = {
+    totalStudents: "SELECT COUNT(*) as count FROM Student_Details",
+    availableBeds: "SELECT SUM(bedAvail) as count FROM Room_Details",
+    totalRooms: "SELECT COUNT(*) as count FROM Room_Details",
+  };
+
+  db.query(queries.totalStudents, (error, totalStudentsResults) => {
+    if (error) {
+      console.error("Error fetching total students:", error);
+      res.status(500).send("An error occurred while fetching total students.");
+      return;
+    }
+
+    db.query(queries.availableBeds, (error, availableBedsResults) => {
+      if (error) {
+        console.error("Error fetching available beds:", error);
+        res
+          .status(500)
+          .send("An error occurred while fetching available beds.");
+        return;
+      }
+
+      db.query(queries.totalRooms, (error, totalRoomsResults) => {
+        if (error) {
+          console.error("Error fetching total rooms:", error);
+          res.status(500).send("An error occurred while fetching total rooms.");
+          return;
+        }
+
+        res.json({
+          totalStudents: totalStudentsResults[0].count,
+          availableBeds: availableBedsResults[0].count,
+          totalRooms: totalRoomsResults[0].count,
+        });
+      });
+    });
+  });
+});
+
 // Fetch gender distribution data from the database
 app.get("/admin/gender-distribution", (req, res) => {
   const query =
