@@ -36,6 +36,10 @@ const db = mysql.createConnection({
   database: process.env.DB_DATABASE,
 });
 
+app.use(express.json());
+
+const openaiApiKey = process.env.OPENAI_API_KEY;
+
 db.connect((err) => {
   if (err) {
     console.error("Error connecting: " + err.stack);
@@ -812,6 +816,48 @@ app.post("/admin/rooms/delete/:room_id", async (req, res) => {
     await db.promise().rollback();
     console.error("Error deleting room: ", error);
     res.status(500).json({ success: false, message: "Failed to delete room." });
+  }
+});
+
+//analyse data with api
+app.post("/api/analyze-data", async (req, res) => {
+  const data = req.body;
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${openaiApiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are an AI that analyzes data and generates reports with descriptive, prescriptive, and predictive insights.",
+          },
+          {
+            role: "user",
+            content: `Analyze the following data and provide a report with descriptive, prescriptive, and predictive insights:\n\n${JSON.stringify(data)}`,
+          },
+        ],
+        max_tokens: 1500,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (result.choices && result.choices.length > 0) {
+      res.json(result.choices[0].message.content);
+    } else {
+      console.error("Unexpected API response:", result);
+      res.status(500).json({ error: "Unexpected API response" });
+    }
+  } catch (error) {
+    console.error("Error calling OpenAI API:", error);
+    res.status(500).json({ error: "Error calling OpenAI API" });
   }
 });
 

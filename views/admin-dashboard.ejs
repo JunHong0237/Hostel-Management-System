@@ -10,6 +10,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
         <style>
           .label {
             text-align: center;
@@ -77,6 +78,7 @@
                 </div>
             </div>
         </nav>
+
 
 
       <div class="summary-cards">
@@ -714,6 +716,149 @@
           renderStudentRegistrationOverTimeChart();
         </script>
 
+      <script>
+        async function fetchAllChartData() {
+          const genderDistribution = await fetchChartData('/admin/gender-distribution');
+          const studentsByFaculty = await fetchChartData('/admin/students-by-faculty');
+          const roomEnvironmentPreference = await fetchChartData('/admin/room-environment-preference');
+          const yearOfDegree = await fetchChartData('/admin/year-of-degree');
+          const roomTypeDistribution = await fetchChartData('/admin/room-type-distribution');
+          const roomOccupancy = await fetchChartData('/admin/room-occupancy');
+          const stateOfResidence = await fetchChartData('/admin/state-of-residence');
+          const studentRegistrationOverTime = await fetchChartData(`/admin/student-registration-over-time?year=${new Date().getFullYear()}`);
+
+          return {
+            genderDistribution,
+            studentsByFaculty,
+            roomEnvironmentPreference,
+            yearOfDegree,
+            roomTypeDistribution,
+            roomOccupancy,
+            stateOfResidence,
+            studentRegistrationOverTime
+          };
+        }
+      </script>
+      <script>
+        function getChartImages() {
+          const charts = document.querySelectorAll('canvas');
+          const images = [];
+          charts.forEach(chart => {
+            images.push(chart.toDataURL('image/png'));
+          });
+          return images;
+        }
+
+        async function analyzeDataWithAI(data) {
+          const response = await fetch('/api/analyze-data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            return result;
+          } else {
+            const error = await response.json();
+            throw new Error(error.error || 'Unknown error');
+          }
+        }
+
+        async function generateReport() {
+          try {
+            // Fetch data from your system
+            const data = await fetchAllChartData();
+
+            // Analyze data with the secure API endpoint
+            const analysis = await analyzeDataWithAI(data);
+
+            // Display the analysis report in modal
+            const reportContainer = document.getElementById('reportContainer');
+            reportContainer.textContent = analysis;
+
+            // Show the modal
+            $('#reportModal').modal('show');
+          } catch (error) {
+            console.error('Error generating report:', error);
+            alert('Failed to generate report: ' + error.message);
+          }
+        }
+
+        function downloadReport() {
+          try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Add analysis report to PDF
+            const analysis = document.getElementById('reportContainer').textContent;
+            doc.setFontSize(12);
+            doc.text('Analysis Report', 10, 10);
+            doc.setFontSize(10);
+            doc.text(analysis, 10, 20);
+
+            // Export PDF
+            doc.save('report.pdf');
+          } catch (error) {
+            console.error('Error downloading report:', error);
+            alert('Failed to download report: ' + error.message);
+          }
+        }
+
+        async function displayAndDownloadCharts() {
+          try {
+            // Get chart images
+            const images = getChartImages();
+            const chartContainer = document.getElementById('chartContainer');
+            chartContainer.innerHTML = ''; // Clear any existing images
+
+            images.forEach((imageSrc, index) => {
+              const img = document.createElement('img');
+              img.src = imageSrc;
+              img.style.width = '100%';
+              img.style.marginBottom = '20px';
+              chartContainer.appendChild(img);
+            });
+
+            // Show the modal
+            $('#chartModal').modal('show');
+          } catch (error) {
+            console.error('Error displaying charts:', error);
+            alert('Failed to display charts: ' + error.message);
+          }
+        }
+
+        function downloadCharts() {
+          try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const images = getChartImages();
+
+            // Add chart images to PDF
+            images.forEach((image, index) => {
+              if (index > 0) doc.addPage();
+              doc.addImage(image, 'PNG', 10, 30, 180, 100);
+            });
+
+            // Export PDF
+            doc.save('charts.pdf');
+          } catch (error) {
+            console.error('Error downloading charts:', error);
+            alert('Failed to download charts: ' + error.message);
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+          document.getElementById('generateReportButton').addEventListener('click', generateReport);
+          document.getElementById('displayChartsButton').addEventListener('click', displayAndDownloadCharts);
+          document.getElementById('downloadReportButton').addEventListener('click', downloadReport);
+          document.getElementById('downloadChartsButton').addEventListener('click', downloadCharts);
+        });
+      </script>
+
+
 
  
     </script>
@@ -725,6 +870,56 @@
                 window.location.href = '/admin-login.html';
             }
         </script>
+      <!-- Button to trigger report generation -->
+      <button id="generateReportButton" class="btn btn-primary">Generate Report</button>
+
+      <!-- Report Modal -->
+      <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="reportModalLabel">Generated Report</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="reportContainer" style="white-space: pre-wrap;"></div>
+            </div>
+            <div class="modal-footer">
+              <button id="downloadReportButton" class="btn btn-success">Download Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Button to trigger chart display -->
+      <button id="displayChartsButton" class="btn btn-primary" style="margin-top: 20px;">Display Charts</button>
+
+      <!-- Charts Modal -->
+      <div class="modal fade" id="chartModal" tabindex="-1" role="dialog" aria-labelledby="chartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="chartModalLabel">Charts</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="chartContainer"></div>
+            </div>
+            <div class="modal-footer">
+              <button id="downloadChartsButton" class="btn btn-success">Download Charts</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Include jQuery and Bootstrap JS for modal functionality -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
