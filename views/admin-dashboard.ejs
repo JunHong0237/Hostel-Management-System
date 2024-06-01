@@ -769,6 +769,12 @@
 
         async function generateReport() {
           try {
+            // Show the spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+
+            // Show the modal
+            $('#reportModal').modal('show');
+
             // Fetch data from your system
             const data = await fetchAllChartData();
 
@@ -779,8 +785,9 @@
             const reportContainer = document.getElementById('reportContainer');
             reportContainer.textContent = analysis;
 
-            // Show the modal
-            $('#reportModal').modal('show');
+            // Hide the spinner
+            document.getElementById('loadingSpinner').style.display = 'none';
+
           } catch (error) {
             console.error('Error generating report:', error);
             alert('Failed to generate report: ' + error.message);
@@ -809,6 +816,12 @@
 
         async function displayAndDownloadCharts() {
           try {
+            // Show the spinner
+            document.getElementById('loadingSpinnerCharts').style.display = 'block';
+
+            // Show the modal
+            $('#chartModal').modal('show');
+
             // Get chart images
             const images = getChartImages();
             const chartContainer = document.getElementById('chartContainer');
@@ -822,8 +835,9 @@
               chartContainer.appendChild(img);
             });
 
-            // Show the modal
-            $('#chartModal').modal('show');
+            // Hide the spinner
+            document.getElementById('loadingSpinnerCharts').style.display = 'none';
+
           } catch (error) {
             console.error('Error displaying charts:', error);
             alert('Failed to display charts: ' + error.message);
@@ -860,6 +874,7 @@
 
 
 
+
  
     </script>
         <script>
@@ -884,6 +899,11 @@
               </button>
             </div>
             <div class="modal-body">
+              <div id="loadingSpinner" class="text-center" style="display: none;">
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
               <div id="reportContainer" style="white-space: pre-wrap;"></div>
             </div>
             <div class="modal-footer">
@@ -907,6 +927,11 @@
               </button>
             </div>
             <div class="modal-body">
+              <div id="loadingSpinnerCharts" class="text-center" style="display: none;">
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
               <div id="chartContainer"></div>
             </div>
             <div class="modal-footer">
@@ -916,10 +941,8 @@
         </div>
       </div>
 
-      <!-- Include jQuery and Bootstrap JS for modal functionality -->
-      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
