@@ -1,63 +1,93 @@
-                                <!DOCTYPE html>
-                                <html lang="en">
-                                <head>
-                                    <meta charset="UTF-8">
-                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                    <title>Room Details</title>
-                                    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-                                </head>
-                                <body class="bg-light">
-                                    <div class="container mt-5">
-                                        <h1 class="text-primary mb-4">Room Information</h1>
-                                        <div class="card shadow-sm mb-4">
-                                            <div class="card-body">
-                                                <p><strong>Room Number:</strong> <%= room.room_no %></p>
-                                                <p><strong>Room Capacity:</strong> <%= room.room_capacity %></p>
-                                                <p><strong>Room Occupancy:</strong> <%= room.room_occupancy %></p>
-                                                <p><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
-                                                <p><strong>Room Type:</strong> <%= room.room_gender %></p>
-                                            </div>
-                                        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="text-primary mb-4">Room Information</h1>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <p><strong>Room Number:</strong> <%= room.room_no %></p>
+                <p><strong>Room Capacity:</strong> <%= room.room_capacity %></p>
+                <p><strong>Room Occupancy:</strong> <%= room.room_occupancy %></p>
+                <p><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
+                <p><strong>Room Type:</strong> <%= room.room_gender %></p>
+            </div>
+        </div>
 
-                                        <h2 class="text-primary mb-4">Students in Room</h2>
-                                        <div class="table-responsive mb-4">
-                                            <table class="table table-bordered">
-                                                <thead class="thead-dark">
-                                                    <tr>
-                                                        <th>Full Name</th>
-                                                        <th>Student ID</th>
-                                                        <th>Faculty</th>
-                                                        <th>Year of Degree</th>
-                                                        <th>State</th>
-                                                        <th>Room Environment Preference</th>
-                                                        <th>Email</th>
-                                                        <th>Phone</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <% students.forEach(student => { %>
-                                                        <tr>
-                                                            <td><%= student.std_fullname %></td>
-                                                            <td><%= student.std_id %></td>
-                                                            <td><%= student.std_faculty %></td>
-                                                            <td><%= student.std_year %></td>
-                                                            <td><%= student.std_state %></td>
-                                                            <td><%= student.std_pref %></td>
-                                                            <td><%= student.std_email %></td>
-                                                            <td><%= student.std_phone %></td>
-                                                            <td>
-                                                                <a href="/admin/room/unassign/<%= student.std_id %>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to unassign this student?');">Unassign</a>
-                                                            </td>
-                                                        </tr>
-                                                    <% }); %>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+        <h2 class="text-primary mb-4">Students in Room</h2>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Student ID</th>
+                        <th>Faculty</th>
+                        <th>Year of Degree</th>
+                        <th>State</th>
+                        <th>Room Environment Preference</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% students.forEach(student => { %>
+                        <tr>
+                            <td><%= student.std_fullname %></td>
+                            <td><%= student.std_id %></td>
+                            <td><%= student.std_faculty %></td>
+                            <td><%= student.std_year %></td>
+                            <td><%= student.std_state %></td>
+                            <td><%= student.std_pref %></td>
+                            <td><%= student.std_email %></td>
+                            <td><%= student.std_phone %></td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmUnassignModal" data-student-id="<%= student.std_id %>">Unassign</button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <a href="/admin/rooms" class="btn btn-primary">Back to Room Details</a>
+    </div>
 
-                                    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-                                    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-                                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-                                </body>
-                                </html>
+    <!-- Unassign Confirmation Modal -->
+    <div class="modal fade" id="confirmUnassignModal" tabindex="-1" role="dialog" aria-labelledby="confirmUnassignModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmUnassignModalLabel">Confirm Unassign</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to unassign this student?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <a id="confirmUnassignButton" href="#" class="btn btn-danger">Unassign</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $('#confirmUnassignModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var studentId = button.data('student-id');
+            var unassignUrl = '/admin/room/unassign/' + studentId;
+            $('#confirmUnassignButton').attr('href', unassignUrl);
+        });
+    </script>
+</body>
+</html>
