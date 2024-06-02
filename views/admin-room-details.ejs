@@ -159,45 +159,46 @@
     </div>
 
     <!-- Edit Room Modal -->
-    <div class="modal fade" id="editRoomModal" tabindex="-1" role="dialog" aria-labelledby="editRoomModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="editRoomModalLabel">Edit Room</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form id="editRoomForm" action="/admin/rooms/edit" method="post">
-              <input type="hidden" id="edit_room_id" name="room_id">
-              <div class="form-group">
-                <label for="edit_room_no">Room Number:</label>
-                <input type="text" id="edit_room_no" name="room_no" class="form-control" required>
+            <div class="modal fade" id="editRoomModal" tabindex="-1" role="dialog" aria-labelledby="editRoomModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editRoomModalLabel">Edit Room</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="editRoomForm" action="/admin/rooms/edit" method="post">
+                      <input type="hidden" id="edit_room_id" name="room_id">
+                      <div class="form-group">
+                        <label for="edit_room_no">Room Number:</label>
+                        <input type="text" id="edit_room_no" name="room_no" class="form-control" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit_room_capacity">Room Capacity:</label>
+                        <select id="edit_room_capacity" name="room_capacity" class="form-control" required>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="4">4</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="edit_room_gender">Room Gender:</label>
+                        <select id="edit_room_gender" name="room_gender" class="form-control" required>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Mixed">Mixed</option>
+                        </select>
+                      </div>
+                      <button type="submit" id="updateRoomButton" class="btn btn-success">Update Room</button>
+                    </form>
+                    <div id="editRoomError" class="alert alert-danger mt-3" style="display: none;"></div>
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="edit_room_capacity">Room Capacity:</label>
-                <select id="edit_room_capacity" name="room_capacity" class="form-control" required>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="4">4</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="edit_room_gender">Room Gender:</label>
-                <select id="edit_room_gender" name="room_gender" class="form-control" required>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Mixed">Mixed</option>
-                </select>
-              </div>
-              <button type="submit" class="btn btn-success">Update Room</button>
-            </form>
-            <div id="editRoomError" class="alert alert-danger mt-3" style="display: none;"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </div>
+
   </main>
 
   <!-- Footer -->
@@ -230,19 +231,28 @@
       });
     }
 
-    function openEditModal(roomId, roomNo, roomCapacity, roomGender, roomOccupancy, bedAvail) {
-      if (roomOccupancy > 0) {
-        document.getElementById('editRoomError').style.display = 'block';
-        document.getElementById('editRoomError').textContent = 'Cannot edit room details as there are students assigned to this room.';
-      } else {
-        document.getElementById('editRoomError').style.display = 'none';
-        document.getElementById('edit_room_id').value = roomId;
-        document.getElementById('edit_room_no').value = roomNo;
-        document.getElementById('edit_room_capacity').value = roomCapacity;
-        document.getElementById('edit_room_gender').value = roomGender;
+      function openEditModal(roomId, roomNo, roomCapacity, roomGender, roomOccupancy, bedAvail) {
+        document.getElementById('editRoomError').style.display = 'none'; // Hide error message initially
+        document.getElementById('edit_room_no').disabled = false;
+        document.getElementById('edit_room_capacity').disabled = false;
+        document.getElementById('edit_room_gender').disabled = false;
+        document.getElementById('updateRoomButton').disabled = false;
+
+        if (roomOccupancy > 0) {
+          document.getElementById('editRoomError').style.display = 'block';
+          document.getElementById('editRoomError').textContent = 'Cannot edit room details as there are students assigned to this room.';
+          document.getElementById('edit_room_no').disabled = true;
+          document.getElementById('edit_room_capacity').disabled = true;
+          document.getElementById('edit_room_gender').disabled = true;
+          document.getElementById('updateRoomButton').disabled = true;
+        } else {
+          document.getElementById('edit_room_id').value = roomId;
+          document.getElementById('edit_room_no').value = roomNo;
+          document.getElementById('edit_room_capacity').value = roomCapacity;
+          document.getElementById('edit_room_gender').value = roomGender;
+        }
         $('#editRoomModal').modal('show');
       }
-    }
 
     function openDeleteModal(roomId, roomNo) {
       fetch(`/admin/rooms/check-students/${roomId}`)

@@ -1085,6 +1085,8 @@ app.get("/admin/state-of-residence", (req, res) => {
 // Existing code...
 
 // Route to handle room update
+// Route to handle room update
+// Route to handle room update
 app.post("/admin/rooms/edit", (req, res) => {
   const { room_id, room_no, room_capacity, room_gender } = req.body;
 
@@ -1101,17 +1103,18 @@ app.post("/admin/rooms/edit", (req, res) => {
     if (results.length > 0 && results[0].room_occupancy > 0) {
       res
         .status(400)
-        .send(
-          "Cannot edit room details as there are students assigned to this room.",
-        );
+        .json({
+          error:
+            "Cannot edit room details as there are students assigned to this room.",
+        });
       return;
     }
 
     const updateRoomQuery = `
-            UPDATE Room_Details 
-            SET room_no = ?, room_capacity = ?, room_gender = ?, room_occupancy = ?, bedAvail = ?
-            WHERE room_id = ?
-        `;
+      UPDATE Room_Details 
+      SET room_no = ?, room_capacity = ?, room_gender = ?, room_occupancy = ?, bedAvail = ?
+      WHERE room_id = ?
+    `;
 
     const newBedAvail = room_capacity - results[0].room_occupancy;
 
