@@ -569,26 +569,82 @@ const formatDate = (date) => {
 };
 
 // Example usage in a route:
+//admin-stdeunt-details route
 app.get("/admin/students", (req, res) => {
-  // Fetch student details from the database
-  const query = "SELECT * FROM Student_Details";
-  db.query(query, (error, results) => {
+  const { gender, faculty, year, state, pref, search } = req.query;
+
+  let query = "SELECT * FROM Student_Details WHERE 1=1";
+  const queryParams = [];
+
+  if (gender && gender !== "All") {
+    query += " AND std_gender = ?";
+    queryParams.push(gender);
+  }
+
+  if (faculty && faculty !== "All") {
+    query += " AND std_faculty = ?";
+    queryParams.push(faculty);
+  }
+
+  if (year && year !== "All") {
+    query += " AND std_year = ?";
+    queryParams.push(year);
+  }
+
+  if (state && state !== "All") {
+    query += " AND std_state = ?";
+    queryParams.push(state);
+  }
+
+  if (pref && pref !== "All") {
+    query += " AND std_pref = ?";
+    queryParams.push(pref);
+  }
+
+  if (search) {
+    query += ` AND (
+      LOWER(std_id) LIKE ? OR 
+      LOWER(std_fullname) LIKE ? OR 
+      LOWER(std_gender) LIKE ? OR 
+      LOWER(std_email) LIKE ? OR 
+      LOWER(std_phone) LIKE ? OR 
+      LOWER(std_faculty) LIKE ? OR 
+      LOWER(std_year) LIKE ? OR 
+      LOWER(std_state) LIKE ? OR 
+      LOWER(std_pref) LIKE ? OR 
+      LOWER(reg_date) LIKE ?
+    )`;
+    const searchQuery = `%${search.toLowerCase()}%`;
+    queryParams.push(
+      searchQuery,
+      searchQuery,
+      searchQuery,
+      searchQuery,
+      searchQuery,
+      searchQuery,
+      searchQuery,
+      searchQuery,
+      searchQuery,
+      searchQuery,
+    );
+  }
+
+  db.query(query, queryParams, (error, results) => {
     if (error) {
       console.error("Error fetching student details: ", error);
       res.status(500).send("An error occurred while fetching student details.");
       return;
     }
 
-    // Format the registration date
     results.forEach((student) => {
       student.reg_date = formatDate(student.reg_date);
     });
 
-    // Render the admin-student-details view, passing the student data
     res.render("admin-student-details", { students: results });
   });
 });
 
+//admin-room-details route
 app.get("/admin/rooms", (req, res) => {
   const { capacity, gender } = req.query;
 

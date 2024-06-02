@@ -47,6 +47,76 @@
         <!-- Register New Student Button -->
         <button class="btn btn-success mb-3" data-toggle="modal" data-target="#registerStudentModal">Register New Student</button>
 
+        <!-- Filter and Search Options -->
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <label for="filterGender">Gender</label>
+                <select id="filterGender" class="form-control" onchange="filterAndSearchStudents()">
+                    <option value="All">All</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterFaculty">Faculty</label>
+                <select id="filterFaculty" class="form-control" onchange="filterAndSearchStudents()">
+                    <option value="All">All</option>
+                    <option value="Faculty of Law (FOL)">Faculty of Law (FOL)</option>
+                    <option value="Faculty of Engineering & Technology (FET)">Faculty of Engineering & Technology (FET)</option>
+                    <option value="Faculty of Computing & Informatics (FCI)">Faculty of Computing & Informatics (FCI)</option>
+                    <option value="Faculty of Information & Technology (FIST)">Faculty of Information & Technology (FIST)</option>
+                    <option value="Faculty of Management (FCM)">Faculty of Management (FCM)</option>
+                    <option value="Faculty of Business (FOB)">Faculty of Business (FOB)</option>
+                    <option value="Faculty of Creative Multimedia (FCM)">Faculty of Creative Multimedia (FCM)</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterYear">Year of Degree</label>
+                <select id="filterYear" class="form-control" onchange="filterAndSearchStudents()">
+                    <option value="All">All</option>
+                    <option value="FIRST">FIRST</option>
+                    <option value="SECOND">SECOND</option>
+                    <option value="THIRD">THIRD</option>
+                    <option value="FOURTH">FOURTH</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterState">State of Residence</label>
+                <select id="filterState" class="form-control" onchange="filterAndSearchStudents()">
+                    <option value="All">All</option>
+                    <option value="JOHOR">JOHOR</option>
+                    <option value="KEDAH">KEDAH</option>
+                    <option value="KELANTAN">KELANTAN</option>
+                    <option value="MELAKA">MELAKA</option>
+                    <option value="NEGERI SEMBILAN">NEGERI SEMBILAN</option>
+                    <option value="PAHANG">PAHANG</option>
+                    <option value="PULAU PINANG">PULAU PINANG</option>
+                    <option value="PERAK">PERAK</option>
+                    <option value="PERLIS">PERLIS</option>
+                    <option value="SABAH">SABAH</option>
+                    <option value="SARAWAK">SARAWAK</option>
+                    <option value="SELANGOR">SELANGOR</option>
+                    <option value="TERENGGANU">TERENGGANU</option>
+                    <option value="KUALA LUMPUR">KUALA LUMPUR</option>
+                    <option value="LABUAN">LABUAN</option>
+                    <option value="PUTRAJAYA">PUTRAJAYA</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterPref">Room Preference</label>
+                <select id="filterPref" class="form-control" onchange="filterAndSearchStudents()">
+                    <option value="All">All</option>
+                    <option value="QUIET">QUIET</option>
+                    <option value="SOCIAL">SOCIAL</option>
+                    <option value="FLEXIBLE">FLEXIBLE</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="searchInput">Search</label>
+                <input type="text" id="searchInput" class="form-control" onkeyup="filterAndSearchStudents()" placeholder="Search...">
+            </div>
+        </div>
+
         <!-- Student Details Table -->
         <div class="table-responsive">
             <table class="table table-striped table-bordered">
@@ -65,7 +135,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="studentTableBody">
                     <% students.forEach(function(student) { %>
                     <tr>
                         <td><%= student.std_id %></td>
@@ -192,6 +262,38 @@
     <script>
         function logout() {
             window.location.href = '/admin-login.html';
+        }
+
+        function filterAndSearchStudents() {
+            const filterGender = document.getElementById('filterGender').value;
+            const filterFaculty = document.getElementById('filterFaculty').value;
+            const filterYear = document.getElementById('filterYear').value;
+            const filterState = document.getElementById('filterState').value;
+            const filterPref = document.getElementById('filterPref').value;
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const students = document.querySelectorAll('#studentTableBody tr');
+
+            students.forEach(student => {
+                const studentGender = student.children[2].textContent;
+                const studentFaculty = student.children[5].textContent;
+                const studentYear = student.children[6].textContent;
+                const studentState = student.children[7].textContent;
+                const studentPref = student.children[8].textContent;
+                const studentText = student.textContent.toLowerCase();
+
+                const matchGender = (filterGender === 'All' || filterGender === studentGender);
+                const matchFaculty = (filterFaculty === 'All' || filterFaculty === studentFaculty);
+                const matchYear = (filterYear === 'All' || filterYear === studentYear);
+                const matchState = (filterState === 'All' || filterState === studentState);
+                const matchPref = (filterPref === 'All' || filterPref === studentPref);
+                const matchSearch = studentText.includes(searchInput);
+
+                if (matchGender && matchFaculty && matchYear && matchState && matchPref && matchSearch) {
+                    student.style.display = '';
+                } else {
+                    student.style.display = 'none';
+                }
+            });
         }
 
         function openEditModal(std_id, std_fullname, std_gender) {
