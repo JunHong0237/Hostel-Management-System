@@ -53,27 +53,27 @@
                     </tr>
                     <tr>
                         <th>Student Email</th>
-                        <td><%= student.std_email %></td>
+                        <td id="std_email"><%= student.std_email %></td>
                     </tr>
                     <tr>
                         <th>Phone Number</th>
-                        <td><%= student.std_phone %></td>
-                    </tr>
-                    <tr>
-                        <th>Year of Degree</th>
-                        <td><%= student.std_year %></td>
+                        <td id="std_phone"><%= student.std_phone %></td>
                     </tr>
                     <tr>
                         <th>Faculty</th>
-                        <td><%= student.std_faculty %></td>
+                        <td id="std_faculty"><%= student.std_faculty %></td>
+                    </tr>
+                    <tr>
+                        <th>Year of Degree</th>
+                        <td id="std_year"><%= student.std_year %></td>
                     </tr>
                     <tr>
                         <th>State of Residence</th>
-                        <td><%= student.std_state %></td>
+                        <td id="std_state"><%= student.std_state %></td>
                     </tr>
                     <tr>
                         <th>Room Environment Preference</th>
-                        <td><%= student.std_pref %></td>
+                        <td id="std_pref"><%= student.std_pref %></td>
                     </tr>
                     <tr>
                         <th>Student Registration Date</th>
@@ -92,8 +92,10 @@
                 <% if (!student.room_id) { %>
                     <p class="text-center">No record</p>
                     <div class="text-center">
-                        <a href="/select-room?std_id=<%= student.std_id %>" class="btn btn-success">Add Room</a>
+                        <a href="/select-room?std_id=<%= student.std_id %>" class="btn btn-success disabled">Add Room</a>
                     </div>
+            
+
                 <% } else { %>
                     <table class="table">
                         <tr>
@@ -244,7 +246,25 @@
             </div>
         </div>
     </div>
+            <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const fields = ['std_email', 'std_phone', 'std_faculty', 'std_year', 'std_state', 'std_pref'];
+                        const addRoomButton = document.querySelector('a[href^="/select-room"]');
 
+                        function checkFields() {
+                            let allFieldsFilled = true;
+                            fields.forEach(field => {
+                                const fieldValue = document.getElementById(field).textContent.trim();
+                                if (!fieldValue) {
+                                    allFieldsFilled = false;
+                                }
+                            });
+                            addRoomButton.disabled = !allFieldsFilled;
+                        }
+
+                        checkFields();
+                    });
+         </script>
     <script>
         function logout() {
             // If using localStorage to store logged-in state
@@ -256,5 +276,25 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const fields = ['std_email', 'std_phone', 'std_faculty', 'std_year', 'std_state', 'std_pref'];
+                                const addRoomButton = document.querySelector('a[href^="/select-room"]');
+
+                                function checkFields() {
+                                    let allFieldsFilled = true;
+                                    fields.forEach(field => {
+                                        const fieldValue = document.getElementById(field).textContent.trim();
+                                        if (!fieldValue) {
+                                            allFieldsFilled = false;
+                                        }
+                                    });
+                                    addRoomButton.classList.toggle('disabled', !allFieldsFilled);
+                                }
+
+                                checkFields();
+                            });
+
+                     </script>
 </body>
 </html>
