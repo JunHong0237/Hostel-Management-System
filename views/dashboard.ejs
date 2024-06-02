@@ -93,9 +93,9 @@
                     <p class="text-center">No record</p>
                     <div class="text-center">
                         <a href="/select-room?std_id=<%= student.std_id %>" class="btn btn-success disabled">Add Room</a>
+                        <p id="reminder-message" class="text-danger" style="display: none;">Please complete your information before proceeding to add a room.</p>
                     </div>
             
-
                 <% } else { %>
                     <table class="table">
                         <tr>
@@ -280,6 +280,7 @@
                             document.addEventListener('DOMContentLoaded', function() {
                                 const fields = ['std_email', 'std_phone', 'std_faculty', 'std_year', 'std_state', 'std_pref'];
                                 const addRoomButton = document.querySelector('a[href^="/select-room"]');
+                                const reminderMessage = document.getElementById('reminder-message');
 
                                 function checkFields() {
                                     let allFieldsFilled = true;
@@ -290,10 +291,12 @@
                                         }
                                     });
                                     addRoomButton.classList.toggle('disabled', !allFieldsFilled);
+                                    reminderMessage.style.display = allFieldsFilled ? 'none' : 'block';
                                 }
 
                                 checkFields();
                             });
+
 
                      </script>
 </body>
