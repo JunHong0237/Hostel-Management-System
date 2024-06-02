@@ -590,19 +590,34 @@ app.get("/admin/students", (req, res) => {
 });
 
 app.get("/admin/rooms", (req, res) => {
-  // Query to select all room details
-  const query =
-    "SELECT room_id, room_no, room_capacity, room_occupancy, (room_capacity - room_occupancy) AS bedAvail, room_gender FROM Room_Details";
+  const { capacity, gender } = req.query;
 
-  db.query(query, (error, results) => {
+  let query =
+    "SELECT room_id, room_no, room_capacity, room_occupancy, (room_capacity - room_occupancy) AS bedAvail, room_gender FROM Room_Details";
+  const queryParams = [];
+
+  if (capacity && capacity !== "All") {
+    query += " WHERE room_capacity = ?";
+    queryParams.push(capacity);
+  }
+
+  if (gender && gender !== "All") {
+    if (queryParams.length > 0) {
+      query += " AND";
+    } else {
+      query += " WHERE";
+    }
+    query += " room_gender = ?";
+    queryParams.push(gender);
+  }
+
+  db.query(query, queryParams, (error, results) => {
     if (error) {
-      // Handle any errors that occur during the query
       console.error("Error fetching room details: ", error);
       res.status(500).send("An error occurred while fetching room details.");
       return;
     }
 
-    // Render the admin-room-details view, passing the room data
     res.render("admin-room-details", { rooms: results });
   });
 });

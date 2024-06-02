@@ -40,6 +40,32 @@
     <!-- Add New Room Button -->
     <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addRoomModal">Add New Room</button>
 
+    <!-- Filter and Search Options -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="filterCapacity">Filter by Room Capacity</label>
+        <select id="filterCapacity" class="form-control" onchange="filterAndSearchRooms()">
+          <option value="All">All</option>
+          <option value="1">Single</option>
+          <option value="2">Double</option>
+          <option value="4">Quad</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="filterGender">Filter by Room Gender</label>
+        <select id="filterGender" class="form-control" onchange="filterAndSearchRooms()">
+          <option value="All">All</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Mixed">Mixed</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="searchInput">Search</label>
+        <input type="text" id="searchInput" class="form-control" onkeyup="filterAndSearchRooms()" placeholder="Search...">
+      </div>
+    </div>
+
     <!-- Room Details Table -->
     <div class="table-responsive">
       <table class="table table-striped">
@@ -49,13 +75,13 @@
             <th>Capacity</th>
             <th>Occupancy</th>
             <th>Available Beds</th>
-            <th>Room Type</th>
+            <th>Room Gender</th>
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="roomTableBody">
           <% rooms.forEach(function(room) { %>
-          <tr>
+          <tr data-capacity="<%= room.room_capacity %>" data-gender="<%= room.room_gender %>">
             <td><%= room.room_no %></td>
             <td><%= room.room_capacity %></td>
             <td><%= room.room_occupancy %></td>
@@ -180,6 +206,30 @@
   </footer>
 
   <script>
+    function filterAndSearchRooms() {
+      const filterCapacity = document.getElementById('filterCapacity').value;
+      const filterGender = document.getElementById('filterGender').value;
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      const rooms = document.querySelectorAll('#roomTableBody tr');
+
+      rooms.forEach(room => {
+        const roomCapacity = room.getAttribute('data-capacity');
+        const roomGender = room.getAttribute('data-gender');
+
+        const matchCapacity = (filterCapacity === 'All' || filterCapacity == roomCapacity);
+        const matchGender = (filterGender === 'All' || filterGender === roomGender);
+
+        const roomText = room.textContent.toLowerCase();
+        const matchSearch = roomText.includes(searchInput);
+
+        if (matchCapacity && matchGender && matchSearch) {
+          room.style.display = '';
+        } else {
+          room.style.display = 'none';
+        }
+      });
+    }
+
     function openEditModal(roomId, roomNo, roomCapacity, roomGender, roomOccupancy, bedAvail) {
       if (roomOccupancy > 0) {
         document.getElementById('editRoomError').style.display = 'block';
