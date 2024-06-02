@@ -18,11 +18,21 @@
         <li><strong>Year of Study:</strong> Matches your year of study</li>
         <li><strong>State of Residence:</strong> Matches your state of residence</li>
       </ul>
+      <!-- Filter Dropdown -->
+      <div class="mb-4">
+        <label for="roomTypeFilter"><strong>Filter by Room Type:</strong></label>
+        <select id="roomTypeFilter" class="form-control" onchange="filterRooms()">
+          <option value="All">All</option>
+          <option value="1">Single</option>
+          <option value="2">Double</option>
+          <option value="4">Quad</option>
+        </select>
+      </div>
     </div>
 
     <% if (rooms.length > 0) { %>
       <% rooms.forEach(room => { %>
-        <div class="card mb-4 shadow-sm">
+        <div class="card mb-4 shadow-sm room-card" data-room-type="<%= room.room_capacity %>">
           <div class="card-header">
             <h5 class="mb-0">Room Number: <%= room.room_no %></h5>
           </div>
@@ -48,5 +58,19 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    function filterRooms() {
+      const filter = document.getElementById('roomTypeFilter').value;
+      const rooms = document.querySelectorAll('.room-card');
+      rooms.forEach(room => {
+        const roomType = room.getAttribute('data-room-type');
+        if (filter === 'All' || roomType === filter) {
+          room.style.display = 'block';
+        } else {
+          room.style.display = 'none';
+        }
+      });
+    }
+  </script>
 </body>
 </html>
