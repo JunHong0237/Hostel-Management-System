@@ -389,77 +389,21 @@ app.post("/select-room/:room_id", (req, res) => {
 
   db.beginTransaction((err) => {
     if (err) {
-      res.status(500).send("An error occurred.");
-      return;
-    }
-
-    const updateRoomQuery = `
-            UPDATE Room_Details 
-            SET room_occupancy = room_occupancy + 1, 
-                bedAvail = bedAvail - 1 
-            WHERE room_id = ? AND room_capacity > room_occupancy`;
-
-    db.query(updateRoomQuery, [room_id], (err, result) => {
-      if (err || result.affectedRows === 0) {
-        db.rollback(() => {
-          res.status(409).send("No available beds or room does not exist.");
-        });
-        return;
-      }
-
-      const updateStudentQuery =
-        "UPDATE Student_Details SET room_id = ? WHERE std_id = ?";
-      db.query(updateStudentQuery, [room_id, std_id], (err) => {
-        if (err) {
-          db.rollback(() => {
-            res
-              .status(500)
-              .send("An error occurred while updating student details.");
-          });
-          return;
-        }
-
-        db.commit((err) => {
-          if (err) {
-            db.rollback(() => {
-              res
-                .status(500)
-                .send("An error occurred during transaction commit.");
-            });
-            return;
-          }
-          res.redirect(
-            `/view-room-details/${room_id}?std_id=${std_id}&success=true`,
-          );
-        });
-      });
-    });
-  });
-});
-
-// Route to handle room selection
-app.post("/select-room/:room_id", (req, res) => {
-  const { room_id } = req.params;
-  const { std_id } = req.body; // Getting student's ID from the body
-
-  db.beginTransaction((err) => {
-    if (err) {
       console.error("Error starting transaction: ", err);
       res.status(500).send("An error occurred.");
       return;
     }
 
-    // Query to increment room occupancy and decrement available beds
     const updateRoomQuery = `
       UPDATE Room_Details 
       SET room_occupancy = room_occupancy + 1, 
           bedAvail = bedAvail - 1 
       WHERE room_id = ? AND room_capacity > room_occupancy`;
 
-    db.query(updateRoomQuery, [room_id], (error, result) => {
-      if (error) {
+    db.query(updateRoomQuery, [room_id], (err, result) => {
+      if (err) {
         db.rollback(() => {
-          console.error("Error updating room details: ", error);
+          console.error("Error updating room details: ", err);
           res
             .status(500)
             .send("An error occurred while updating room details.");
@@ -477,10 +421,10 @@ app.post("/select-room/:room_id", (req, res) => {
 
       const updateStudentQuery =
         "UPDATE Student_Details SET room_id = ? WHERE std_id = ?";
-      db.query(updateStudentQuery, [room_id, std_id], (error, result) => {
-        if (error) {
+      db.query(updateStudentQuery, [room_id, std_id], (err) => {
+        if (err) {
           db.rollback(() => {
-            console.error("Error updating student details: ", error);
+            console.error("Error updating student details: ", err);
             res
               .status(500)
               .send("An error occurred while updating student details.");
@@ -499,7 +443,9 @@ app.post("/select-room/:room_id", (req, res) => {
             return;
           }
           console.log("Transaction Complete.");
-          res.redirect(`/dashboard?std_id=${std_id}`);
+          res.redirect(
+            `/view-room-details/${room_id}?std_id=${std_id}&success=true`,
+          );
         });
       });
     });
