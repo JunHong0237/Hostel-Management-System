@@ -19,7 +19,7 @@
                     <% } %>
                     <span class="ml-2"><%= student.std_fullname %></span>
                     <button class="btn btn-link dropdown-toggle" type="button" id="settingsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="/images/setting.png" alt="Settings" width="5" height="20">
+                        <img src="/images/setting.png" alt="Settings" width="20" height="20">
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="settingsDropdown">
                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editProfileModal">Edit Profile</a>
@@ -113,37 +113,47 @@
                             <td><%= roomDetails.room_capacity - roomDetails.room_occupancy %></td>
                         </tr>
                     </table>
-                    <h5 class="card-title mt-4">Roommates</h5>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Student ID</th>
-                                <th>Student Name</th>
-                                <th>Gender</th>
-                                <th>Student Email</th>
-                                <th>Phone Number</th>
-                                <th>Year of Degree</th>
-                                <th>Faculty</th>
-                                <th>State of Residence</th>
-                                <th>Room Environment Preference</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% roommates.forEach(function(roommate) { %>
-                                <tr>
-                                    <td><%= roommate.std_id %></td>
-                                    <td><%= roommate.std_fullname %></td>
-                                    <td><%= roommate.std_gender %></td>
-                                    <td><%= roommate.std_email %></td>
-                                    <td><%= roommate.std_phone %></td>
-                                    <td><%= roommate.std_year %></td>
-                                    <td><%= roommate.std_faculty %></td>
-                                    <td><%= roommate.std_state %></td>
-                                    <td><%= roommate.std_pref %></td>
-                                </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
+                                <!-- Add the collapse trigger button -->
+                                <h5 class="card-title mt-4">Roommates
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#roommatesCollapse" aria-expanded="false" aria-controls="roommatesCollapse">
+                                        <img src="/images/noun-drop-down-arrow.png" alt="Expand" width="20" height="20">
+                                    </button>
+                                </h5>
+
+                                <!-- Add the collapse container for the roommates information -->
+                                <div class="collapse" id="roommatesCollapse">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Student ID</th>
+                                                <th>Student Name</th>
+                                                <th>Gender</th>
+                                                <th>Student Email</th>
+                                                <th>Phone Number</th>
+                                                <th>Year of Degree</th>
+                                                <th>Faculty</th>
+                                                <th>State of Residence</th>
+                                                <th>Room Environment Preference</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% roommates.forEach(function(roommate) { %>
+                                                <tr>
+                                                    <td><%= roommate.std_id %></td>
+                                                    <td><%= roommate.std_fullname %></td>
+                                                    <td><%= roommate.std_gender %></td>
+                                                    <td><%= roommate.std_email %></td>
+                                                    <td><%= roommate.std_phone %></td>
+                                                    <td><%= roommate.std_year %></td>
+                                                    <td><%= roommate.std_faculty %></td>
+                                                    <td><%= roommate.std_state %></td>
+                                                    <td><%= roommate.std_pref %></td>
+                                                </tr>
+                                            <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+
                 <% } %>
             </div>
         </div>
@@ -192,7 +202,7 @@
                                 <option value="FIRST" <%= student.std_year === 'FIRST' ? 'selected' : '' %>>FIRST</option>
                                 <option value="SECOND" <%= student.std_year === 'SECOND' ? 'selected' : '' %>>SECOND</option>
                                 <option value="THIRD" <%= student.std_year === 'THIRD' ? 'selected' : '' %>>THIRD</option>
-                                <option value="FORTH" <%= student.std_year === 'FORTH' ? 'selected' : '' %>>FORTH</option>
+                                <option value="FOURTH" <%= student.std_year === 'FOURTH' ? 'selected' : '' %>>FOURTH</option>
                             </select>
                         </div>
                         <div class="form-group">

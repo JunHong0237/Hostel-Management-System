@@ -73,7 +73,7 @@ app.post("/login", (req, res) => {
             WHERE s.std_id = ?
           `;
           const roommatesQuery = `
-            SELECT std_faculty, std_year, std_state, std_pref, std_email, std_phone
+            SELECT std_id, std_fullname, std_gender, std_faculty, std_year, std_state, std_pref, std_email, std_phone
             FROM Student_Details
             WHERE room_id = ? AND std_id != ?
           `;
@@ -540,7 +540,7 @@ app.get("/dashboard", (req, res) => {
       // Check if the student has a room and get roommates details
       if (student.room_id) {
         const roommatesQuery = `
-          SELECT std_fullname, std_faculty, std_year, std_state, std_pref, std_email, std_phone
+          SELECT std_id, std_gender, std_fullname, std_faculty, std_year, std_state, std_pref, std_email, std_phone
           FROM Student_Details
           WHERE room_id = ? AND std_id != ?
         `;
