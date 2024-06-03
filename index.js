@@ -857,7 +857,7 @@ app.post("/api/analyze-data", async (req, res) => {
           },
           {
             role: "user",
-            content: `Analyze the following data and provide a report with descriptive, prescriptive, and predictive insights:\n\n${JSON.stringify(data)}`,
+            content: `Analyze the following data and provide a report with valuable descriptive, prescriptive, and predictive insights:\n\n${JSON.stringify(data)}`,
           },
         ],
         max_tokens: 1500,
@@ -1101,12 +1101,10 @@ app.post("/admin/rooms/edit", (req, res) => {
     }
 
     if (results.length > 0 && results[0].room_occupancy > 0) {
-      res
-        .status(400)
-        .json({
-          error:
-            "Cannot edit room details as there are students assigned to this room.",
-        });
+      res.status(400).json({
+        error:
+          "Cannot edit room details as there are students assigned to this room.",
+      });
       return;
     }
 

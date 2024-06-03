@@ -805,14 +805,29 @@
         function downloadReport() {
           try {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait, 'mm' for millimeters, 'a4' for A4 size
 
             // Add analysis report to PDF
             const analysis = document.getElementById('reportContainer').textContent;
+            const pageHeight = doc.internal.pageSize.height;
+            const margin = 10;
+            const textHeight = doc.getTextDimensions(analysis).h;
+            let y = 20;
+            const lineHeight = 10;
+
             doc.setFontSize(12);
             doc.text('Analysis Report', 10, 10);
             doc.setFontSize(10);
-            doc.text(analysis, 10, 20);
+
+            const splitText = doc.splitTextToSize(analysis, 180); // Split text into lines that fit the width
+            splitText.forEach((line, index) => {
+              if (y + lineHeight > pageHeight - margin) {
+                doc.addPage(); // Add a new page if text exceeds page height
+                y = margin; // Reset y coordinate for new page
+              }
+              doc.text(line, margin, y);
+              y += lineHeight;
+            });
 
             // Export PDF
             doc.save('report.pdf');
@@ -821,6 +836,7 @@
             alert('Failed to download report: ' + error.message);
           }
         }
+
 
         async function displayAndDownloadCharts() {
           try {
@@ -855,13 +871,24 @@
         function downloadCharts() {
           try {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait, 'mm' for millimeters, 'a4' for A4 size
             const images = getChartImages();
+
+            const pageWidth = doc.internal.pageSize.width;
+            const pageHeight = doc.internal.pageSize.height;
+            const margin = 10;
+            const usableWidth = pageWidth - 2 * margin;
+            const usableHeight = pageHeight - 2 * margin;
+            const chartHeight = usableHeight / 2 - margin; // Divide the height to fit 2 charts per page
 
             // Add chart images to PDF
             images.forEach((image, index) => {
-              if (index > 0) doc.addPage();
-              doc.addImage(image, 'PNG', 10, 30, 180, 100);
+              if (index > 0 && index % 2 === 0) doc.addPage(); // Add a new page every two images
+
+              const x = margin;
+              const y = margin + (index % 2) * (chartHeight + margin); // Position the second image lower on the same page
+
+              doc.addImage(image, 'PNG', x, y, usableWidth, chartHeight);
             });
 
             // Export PDF
@@ -871,6 +898,7 @@
             alert('Failed to download charts: ' + error.message);
           }
         }
+
 
         document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('generateReportButton').addEventListener('click', generateReport);
