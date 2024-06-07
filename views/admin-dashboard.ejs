@@ -11,6 +11,11 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/html2canvas/dist/html2canvas.min.js"></script>
+      
+
+
         <style>
           .label {
             text-align: center;
@@ -86,9 +91,6 @@
       </nav>
 
 
-
-
-
       <div class="summary-cards">
         <div class="summary-card">
           <h3>Total Students</h3>
@@ -106,6 +108,7 @@
 
         <!-- Charts Grid -->
         <div class="container mt-4">
+
             <div class="row">
                 <div class="col-md-6">
                     <h3>Gender Distribution</h3>
@@ -156,6 +159,7 @@
                     <h3>State of Residence</h3>
                     <div id="stateOfResidenceMap" style="height: 500px;"></div>
                 </div>
+          
             </div>
         </div>
 
@@ -724,7 +728,14 @@
           renderStudentRegistrationOverTimeChart();
         </script>
 
+      <!-- Download message -->
+       <div id="downloadingMessage" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index: 1000; background-color: white; padding: 10px; border: 1px solid #ccc;">
+           Downloading report...
+       </div>
+
+
       <script>
+        // Function to fetch all chart data
         async function fetchAllChartData() {
           const genderDistribution = await fetchChartData('/admin/gender-distribution');
           const studentsByFaculty = await fetchChartData('/admin/students-by-faculty');
@@ -746,17 +757,8 @@
             studentRegistrationOverTime
           };
         }
-      </script>
-      <script>
-        function getChartImages() {
-          const charts = document.querySelectorAll('canvas');
-          const images = [];
-          charts.forEach(chart => {
-            images.push(chart.toDataURL('image/png'));
-          });
-          return images;
-        }
 
+        // Function to analyze data with AI
         async function analyzeDataWithAI(data) {
           const response = await fetch('/api/analyze-data', {
             method: 'POST',
@@ -768,13 +770,14 @@
 
           if (response.ok) {
             const result = await response.json();
-            return result;
+            return result.message || result;
           } else {
             const error = await response.json();
             throw new Error(error.error || 'Unknown error');
           }
         }
 
+        // Function to generate the report
         async function generateReport() {
           try {
             // Show the spinner
@@ -786,12 +789,29 @@
             // Fetch data from your system
             const data = await fetchAllChartData();
 
-            // Analyze data with the secure API endpoint
-            const analysis = await analyzeDataWithAI(data);
+            // Perform descriptive analysis
+            const descriptiveAnalysis = await analyzeDataWithAI({ stage: 'descriptive', data });
+
+            // Perform predictive and prescriptive analysis based on descriptive analysis
+            const fullAnalysis = await analyzeDataWithAI({ stage: 'predictive_prescriptive', data: { descriptiveAnalysis, originalData: data } });
+
+            // Convert Markdown to HTML
+            const descriptiveHTML = marked.parse(descriptiveAnalysis);
+            const predictivePrescriptiveHTML = marked.parse(fullAnalysis);
+
+            // Format the report
+            const formattedReport = `
+              <h2>Analysis Report</h2>
+              <p>Date: ${new Date().toLocaleDateString()}</p>
+              <h3>Descriptive Analysis</h3>
+              <div>${descriptiveHTML}</div>
+              <h3>Predictive and Prescriptive Analysis</h3>
+              <div>${predictivePrescriptiveHTML}</div>
+            `;
 
             // Display the analysis report in modal
             const reportContainer = document.getElementById('reportContainer');
-            reportContainer.textContent = analysis;
+            reportContainer.innerHTML = formattedReport;
 
             // Hide the spinner
             document.getElementById('loadingSpinner').style.display = 'none';
@@ -802,40 +822,71 @@
           }
         }
 
-        function downloadReport() {
-          try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4'); // 'p' for portrait, 'mm' for millimeters, 'a4' for A4 size
+        // Function to download the report as PDF
+        async function downloadReport() {
+           try {
+             const { jsPDF } = window.jspdf;
+             const reportContainer = document.getElementById('reportContainer');
 
-            // Add analysis report to PDF
-            const analysis = document.getElementById('reportContainer').textContent;
-            const pageHeight = doc.internal.pageSize.height;
-            const margin = 10;
-            const textHeight = doc.getTextDimensions(analysis).h;
-            let y = 20;
-            const lineHeight = 10;
+             // Show the download message
+             const downloadingMessage = document.getElementById('downloadingMessage');
+             downloadingMessage.style.display = 'block';
 
-            doc.setFontSize(12);
-            doc.text('Analysis Report', 10, 10);
-            doc.setFontSize(10);
+             // Force a reflow/repaint before starting the PDF generation
+             await new Promise(resolve => requestAnimationFrame(resolve));
 
-            const splitText = doc.splitTextToSize(analysis, 180); // Split text into lines that fit the width
-            splitText.forEach((line, index) => {
-              if (y + lineHeight > pageHeight - margin) {
-                doc.addPage(); // Add a new page if text exceeds page height
-                y = margin; // Reset y coordinate for new page
-              }
-              doc.text(line, margin, y);
-              y += lineHeight;
-            });
+             // Use html2canvas to convert the HTML content to a canvas
+             const canvas = await html2canvas(reportContainer, { scale: 2 });
+             const imgData = canvas.toDataURL('image/png');
 
-            // Export PDF
-            doc.save('report.pdf');
-          } catch (error) {
-            console.error('Error downloading report:', error);
-            alert('Failed to download report: ' + error.message);
-          }
+             const pdf = new jsPDF('p', 'mm', 'a4');
+             const pdfWidth = pdf.internal.pageSize.getWidth();
+             const pdfHeight = pdf.internal.pageSize.getHeight();
+             const imgProps = pdf.getImageProperties(imgData);
+             const imgWidth = pdfWidth - 20; // Reduce width for margin
+             const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+             let heightLeft = imgHeight;
+             let position = 10; // Start with a margin of 10mm
+
+             pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+             heightLeft -= pdfHeight - 20;
+
+             while (heightLeft > 0) {
+               position = heightLeft - imgHeight + 10; // Add margin at the top
+               pdf.addPage();
+               pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+               heightLeft -= pdfHeight - 20;
+             }
+
+             pdf.save('report.pdf');
+
+             // Hide the download message after download
+             downloadingMessage.style.display = 'none';
+           } catch (error) {
+             console.error('Error downloading report:', error);
+             alert('Failed to download report: ' + error.message);
+
+             // Hide the download message if there's an error
+             downloadingMessage.style.display = 'none';
+           }
+         }
+
+         document.addEventListener('DOMContentLoaded', () => {
+           document.getElementById('generateReportButton').addEventListener('click', generateReport);
+           document.getElementById('downloadReportButton').addEventListener('click', downloadReport);
+         });
+
+        function getChartImages() {
+          const charts = document.querySelectorAll('canvas');
+          const images = [];
+          charts.forEach(chart => {
+            images.push(chart.toDataURL('image/png'));
+          });
+          return images;
         }
+
+ 
 
 
         async function displayAndDownloadCharts() {
@@ -901,9 +952,9 @@
 
 
         document.addEventListener('DOMContentLoaded', () => {
-          document.getElementById('generateReportButton').addEventListener('click', generateReport);
+          //document.getElementById('generateReportButton').addEventListener('click', generateReport);
           document.getElementById('displayChartsButton').addEventListener('click', displayAndDownloadCharts);
-          document.getElementById('downloadReportButton').addEventListener('click', downloadReport);
+        //  document.getElementById('downloadReportButton').addEventListener('click', downloadReport);
           document.getElementById('downloadChartsButton').addEventListener('click', downloadCharts);
         });
       </script>
@@ -948,6 +999,7 @@
           </div>
         </div>
       </div>
+
 
       <!-- Button to trigger chart display -->
       <button id="displayChartsButton" class="btn btn-primary" style="margin-top: 20px;">Display Charts</button>

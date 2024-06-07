@@ -837,15 +837,28 @@ app.post("/admin/rooms/delete/:room_id", async (req, res) => {
 });
 
 //analyse data with api
+// Route to analyze data
+// Route to analyze data
+// Route to analyze data
 app.post("/api/analyze-data", async (req, res) => {
-  const data = req.body;
+  const { stage, data } = req.body;
+
+  let prompt;
+  if (stage === "descriptive") {
+    prompt = `Perform a detailed descriptive analysis on the following data. Provide clear and specific insights based on patterns and anomalies found in the data:\n\n${JSON.stringify(data, null, 2)}`;
+  } else if (stage === "predictive_prescriptive") {
+    prompt = `Based on the following descriptive analysis and original data, perform predictive and prescriptive analysis. Predict specific trends and provide actionable recommendations to optimize operations and resource allocation. Make sure to avoid generic statements and focus on practical, data-driven suggestions:\n\nDescriptive Analysis:\n${JSON.stringify(data.descriptiveAnalysis, null, 2)}\n\nOriginal Data:\n${JSON.stringify(data.originalData, null, 2)}`;
+  } else {
+    res.status(400).json({ error: "Invalid analysis stage" });
+    return;
+  }
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${openaiApiKey}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
@@ -853,11 +866,11 @@ app.post("/api/analyze-data", async (req, res) => {
           {
             role: "system",
             content:
-              "You are an AI that analyzes data and generates reports with descriptive, prescriptive, and predictive insights.",
+              "You are an AI that analyzes data and generates reports with detailed descriptive, predictive, and prescriptive insights.",
           },
           {
             role: "user",
-            content: `Analyze the following data and provide a report with valuable descriptive, prescriptive, and predictive insights:\n\n${JSON.stringify(data)}`,
+            content: prompt,
           },
         ],
         max_tokens: 1500,
@@ -867,7 +880,7 @@ app.post("/api/analyze-data", async (req, res) => {
     const result = await response.json();
 
     if (result.choices && result.choices.length > 0) {
-      res.json(result.choices[0].message.content);
+      res.json({ message: result.choices[0].message.content });
     } else {
       console.error("Unexpected API response:", result);
       res.status(500).json({ error: "Unexpected API response" });
