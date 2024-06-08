@@ -142,6 +142,16 @@
                     <span style="display: inline-block; width: 16.66%;"></span>
                 </div>
             </div>
+          <div class="chart-card">
+            <h3>Student Registration Over Time</h3>
+            <label for="yearFilter">Year:</label>
+            <select id="yearFilter" onchange="updateChart()">
+              <!-- Year options will be populated dynamically by JavaScript -->
+            </select>
+
+            <canvas id="studentRegistrationOverTimeChart"></canvas>
+          </div>
+
             <div class="chart-card" style="width: 100%;">
                 <h3>State of Residence</h3>
                 <div id="stateOfResidenceMap" style="height: 500px;"></div>
