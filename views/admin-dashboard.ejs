@@ -824,58 +824,65 @@
 
         // Function to download the report as PDF
         async function downloadReport() {
-           try {
-             const { jsPDF } = window.jspdf;
-             const reportContainer = document.getElementById('reportContainer');
+          try {
+            const { jsPDF } = window.jspdf;
+            const reportContainer = document.getElementById('reportContainer');
 
-             // Show the download message
-             const downloadingMessage = document.getElementById('downloadingMessage');
-             downloadingMessage.style.display = 'block';
+            // Show the download message
+            const downloadingMessage = document.getElementById('downloadingMessage');
+            downloadingMessage.style.display = 'block';
 
-             // Force a reflow/repaint before starting the PDF generation
-             await new Promise(resolve => requestAnimationFrame(resolve));
+            // Hide the report modal
+            $('#reportModal').modal('hide');
 
-             // Use html2canvas to convert the HTML content to a canvas
-             const canvas = await html2canvas(reportContainer, { scale: 2 });
-             const imgData = canvas.toDataURL('image/png');
+            // Force a reflow/repaint before starting the PDF generation
+            await new Promise(resolve => requestAnimationFrame(resolve));
 
-             const pdf = new jsPDF('p', 'mm', 'a4');
-             const pdfWidth = pdf.internal.pageSize.getWidth();
-             const pdfHeight = pdf.internal.pageSize.getHeight();
-             const imgProps = pdf.getImageProperties(imgData);
-             const imgWidth = pdfWidth - 20; // Reduce width for margin
-             const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+            // Use html2canvas to convert the HTML content to a canvas
+            const canvas = await html2canvas(reportContainer, { scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
 
-             let heightLeft = imgHeight;
-             let position = 10; // Start with a margin of 10mm
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgWidth = pdfWidth - 20; // Reduce width for margin
+            const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
 
-             pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-             heightLeft -= pdfHeight - 20;
+            let heightLeft = imgHeight;
+            let position = 10; // Start with a margin of 10mm
 
-             while (heightLeft > 0) {
-               position = heightLeft - imgHeight + 10; // Add margin at the top
-               pdf.addPage();
-               pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-               heightLeft -= pdfHeight - 20;
-             }
+            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight - 20;
 
-             pdf.save('report.pdf');
+            while (heightLeft > 0) {
+              position = heightLeft - imgHeight + 10; // Add margin at the top
+              pdf.addPage();
+              pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+              heightLeft -= pdfHeight - 20;
+            }
 
-             // Hide the download message after download
-             downloadingMessage.style.display = 'none';
-           } catch (error) {
-             console.error('Error downloading report:', error);
-             alert('Failed to download report: ' + error.message);
+            pdf.save('report.pdf');
 
-             // Hide the download message if there's an error
-             downloadingMessage.style.display = 'none';
-           }
-         }
+            // Hide the download message after download
+            downloadingMessage.style.display = 'none';
 
-         document.addEventListener('DOMContentLoaded', () => {
-           document.getElementById('generateReportButton').addEventListener('click', generateReport);
-           document.getElementById('downloadReportButton').addEventListener('click', downloadReport);
-         });
+            // Show the success modal
+            $('#successModal').modal('show');
+          } catch (error) {
+            console.error('Error downloading report:', error);
+            alert('Failed to download report: ' + error.message);
+
+            // Hide the download message if there's an error
+            downloadingMessage.style.display = 'none';
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+          document.getElementById('generateReportButton').addEventListener('click', generateReport);
+          document.getElementById('downloadReportButton').addEventListener('click', downloadReport);
+        });
+
 
         function getChartImages() {
           const charts = document.querySelectorAll('canvas');
@@ -972,6 +979,11 @@
                 window.location.href = '/admin-login.html';
             }
         </script>
+      <!-- Fixed position downloading message -->
+      <div id="downloadingMessage" class="fixed-top text-center" style="display: none; background: rgba(0,0,0,0.8); color: white; padding: 10px;">
+        Downloading report...
+      </div>
+
       <!-- Button to trigger report generation -->
       <button id="generateReportButton" class="btn btn-primary">Generate Report</button>
 
@@ -995,6 +1007,26 @@
             </div>
             <div class="modal-footer">
               <button id="downloadReportButton" class="btn btn-success">Download Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Modal -->
+      <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="successModalLabel">Success</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Report downloaded successfully!
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
             </div>
           </div>
         </div>
