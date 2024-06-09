@@ -1,0 +1,27 @@
+/* styles.css */
+
+/* Body background color for full height */
+body {
+  background-color: rgb(0, 244, 255);
+}
+
+/* Card border radius */
+.card {
+  border-radius: 1rem;
+}
+
+/* Image styling */
+.card img {
+  border-radius: 1rem 0 0 1rem;
+}
+
+/* Button styling */
+.btn {
+  background-color: #393f81;
+  color: #fff;
+}
+
+.btn:hover {
+  background-color: #282c6b;
+  color: #fff;
+}
