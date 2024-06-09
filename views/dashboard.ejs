@@ -20,47 +20,53 @@
     }
 
     tr:hover {background-color: #D6EEEE;}
-        .tbl-header{
-          background-color: #D6EEEE;
-         }
-        .tbl-content{
-          height:300px;
-          overflow-x:auto;
-          margin-top: 0px;
-          border: 1px solid rgba(255,255,255,0.3);
-        }
+        
+    .tbl-header{
+      background-color: #D6EEEE;
+     }
+    .tbl-content{
+      height:300px;
+      overflow-x:auto;
+      margin-top: 0px;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+  
+
     </style>
 </head>
 <body class="bg-light" >
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container" >
-            <a class="navbar-brand" href="#">Dashboard</a><div class="ml-auto dropdown">
-                <div class="d-flex align-items-center">
-                    <% if (student.profile_pic) { %>
-                        <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" class="rounded-circle" width="40" height="40">
-                    <% } else { %>
-                        <img src="/images/profile.jpg" alt="Profile Picture" class="rounded-circle" width="40" height="40">
-                    <% } %>
-                    <span class="ml-2"><%= student.std_fullname %></span>
-                    <button class="btn btn-link dropdown-toggle" type="button" id="settingsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="/images/setting.png" alt="Settings" width="20" height="20">
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="settingsDropdown">
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editProfileModal">Edit Profile</a>
-                        <a class="dropdown-item" href="#" onclick="logout()">Logout</a>
-                    </div>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container mt-0>
+            <a class="navbar-brand">Dashboard</a>
+            <div style="display: flex; align-items: center; ">
+                <% if (student.profile_pic) { %>
+                    <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+                <% } else { %>
+                    <img src="/images/profile.jpg" alt="Profile Picture" class="rounded-circle" width="40" height="40">
+                <% } %>
+                <span class="ml-2"><%= student.std_fullname %></span>
+                    <div class="dropdown">
+                <button class="btn btn-link" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="/images/setting.png" alt="Settings" width="20" height="20">
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" style="position: absolute;">
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editProfileModal">Edit Profile</a>
+                    <a class="dropdown-item" href="#" onclick="logout()">Logout</a>
                 </div>
+                    </div>
             </div>
         </div>
     </nav>
+
+
 
     <div class="container mt-4" style="background-color: #D6EEEE">
         <div class="card mb-4">
             <div class="card-body text-center">
                 <% if (student.profile_pic) { %>
-                    <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" class="rounded" width="150" height="150">
+                    <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" width="150" height="180">
                 <% } else { %>
-                    <img src="/images/profile.jpg" alt="Profile Picture" class="rounded" width="150" height="150">
+                    <img src="/images/profile.jpg" alt="Profile Picture" width="150" height="160">
                 <% } %>
                 <table class="table mt-3">
                     <tr>
@@ -166,6 +172,7 @@
                                       <div class="tbl-content">
                                         <table cellpadding="0" cellspacing="0" border="0">
                                         <tbody>
+                                            <% if (roommates.length > 0) { %>
                                             <% roommates.forEach(function(roommate) { %>
                                                 <tr>
                                                     <td><%= roommate.std_id %></td>
@@ -179,6 +186,11 @@
                                                     <td><%= roommate.std_pref %></td>
                                                 </tr>
                                             <% }); %>
+                                                <% } else { %>
+                                                    <tr>
+                                                      <td colspan="9" class="text-center">Currently no roomates</td>
+                                                    </tr>
+                                                  <% } %>
                                         </tbody>
                                     </table>
                                 </div>

@@ -6,9 +6,8 @@
   <title>Select Room</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body {
-      background-color: #7CFC00; /* Light gray background color */
-    }
+
+
     /* Card Container */
     .card {
       background-color: #fff;
@@ -59,34 +58,28 @@
     }
 
   </style>
-
-<body class="bg-light">
+<body class>
   <div class="container mt-5">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container">
+    <nav style="display: flex; justify-content: space-between; align-items: center;">
         <!-- Return Button as Navbar Brand for better alignment and navigation usage -->
         <a class="navbar-brand" href="/dashboard?std_id=<%= studentId %>">
-          <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
-          Return
+            <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
+            
         </a>
 
-        <!-- Toggler for Mobile View -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <!-- Centered Title -->
+        <span style="position: absolute; left: 50%; transform: translateX(-50%);">
+            <h1>Room Selection</h1>
+        </span>
 
-        <!-- Navbar content that could include more links or actions -->
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item active">
-              <h1 class="nav-link mb-0">Room Selection</h1>
-            </li>
-          </ul>
-        </div>
-
-      </div>
+        <!-- Placeholder for balance -->
+        <div></div>
     </nav>
 
+
+      
+   
+<br>
 
     <div class="mb-4">
       <div class="container d-flex align-items-center">       
@@ -133,13 +126,14 @@
               </div>
             </div>
           </div>
+        
         <% }) %>
       <% } else { %>
         <p class="text-center">No rooms available.</p>
       <% } %>
     </div>
   </div>
-
+      </div>
   <script>
   function filterRooms() {
     const filter = document.getElementById('roomTypeFilter').value;
