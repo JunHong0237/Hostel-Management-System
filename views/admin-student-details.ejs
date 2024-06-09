@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Student Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+       <style>
+        table {
+          border-collapse: collapse;
+          width: 100%;
+          table-layout: fixed;
+
+        }
+
+        th, td {
+          padding: 8px;
+          text-align: centre;
+          border-bottom: 1px solid #DDD;
+        }
+
+        tr:hover {background-color: #D6EEEE;}
+            .tbl-header{
+              background-color: #D6EEEE;
+             }
+            .tbl-content{
+              height:300px;
+              overflow-x:auto;
+              margin-top: 0px;
+              border: 1px solid rgba(255,255,255,0.3);
+            }
+        </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -121,8 +146,8 @@
 
         <!-- Student Details Table -->
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
-                <thead class="thead-dark">
+            <table class="table tbl-header">
+                <thead>
                     <tr>
                         <th>ID</th>
                         <th>Full Name</th>
@@ -137,28 +162,34 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="studentTableBody">
-                    <% students.forEach(function(student) { %>
-                    <tr>
-                        <td><%= student.std_id %></td>
-                        <td><%= student.std_fullname %></td>
-                        <td><%= student.std_gender %></td>
-                        <td><%= student.std_email %></td>
-                        <td><%= student.std_phone %></td>
-                        <td><%= student.std_faculty %></td>
-                        <td><%= student.std_year %></td>
-                        <td><%= student.std_state %></td>
-                        <td><%= student.std_pref %></td>
-                        <td><%= new Date(student.reg_date).toLocaleString('en-GB', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '') %></td>
-                        <td class="text-center">
-                            <button class="btn btn-success btn-sm" onclick="openEditModal('<%= student.std_id %>', '<%= student.std_fullname %>', '<%= student.std_gender %>')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<%= student.std_id %>', '<%= student.std_fullname %>')">Delete</button>
-                        </td>
-                    </tr>
-                    <% }); %>
-                </tbody>
             </table>
+            <div class="table-responsive">
+                <table class="table table-striped tbl-content">
+                    <tbody id="studentTableBody">
+                        <% students.forEach(function(student) { %>
+                        <tr>
+                            <td><%= student.std_id %></td>
+                            <td><%= student.std_fullname %></td>
+                            <td><%= student.std_gender %></td>
+                            <td><%= student.std_email %></td>
+                            <td><%= student.std_phone %></td>
+                            <td><%= student.std_faculty %></td>
+                            <td><%= student.std_year %></td>
+                            <td><%= student.std_state %></td>
+                            <td><%= student.std_pref %></td>
+                            <td><%= new Date(student.reg_date).toLocaleString('en-GB', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '') %></td>
+                            <td class="text-center">
+                                <button class="btn btn-success btn-sm" onclick="openEditModal('<%= student.std_id %>', '<%= student.std_fullname %>', '<%= student.std_gender %>')">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<%= student.std_id %>', '<%= student.std_fullname %>')">Delete</button>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+                    
 
         <!-- Register New Student Modal -->
         <div class="modal fade" id="registerStudentModal" tabindex="-1" role="dialog" aria-labelledby="registerStudentModalLabel" aria-hidden="true">

@@ -5,6 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Room Details</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+   <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: centre;
+      border-bottom: 1px solid #DDD;
+    }
+
+    tr:hover {background-color: #D6EEEE;}
+        .tbl-header{
+          background-color: #D6EEEE;
+         }
+        .tbl-content{
+          height:300px;
+          overflow-x:auto;
+          margin-top: 0px;
+          border: 1px solid rgba(255,255,255,0.3);
+        }
+    </style>
 </head>
 <body>
 
@@ -69,7 +94,6 @@
           <option value="All">All</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
-          <option value="Mixed">Mixed</option>
         </select>
       </div>
       <div class="col-md-4">
@@ -78,37 +102,42 @@
       </div>
     </div>
 
-    <!-- Room Details Table -->
-    <div class="table-responsive">
-      <table class="table table-striped">
-        <thead class="thead-dark">
-          <tr>
-            <th>Room Number</th>
-            <th>Capacity</th>
-            <th>Occupancy</th>
-            <th>Available Beds</th>
-            <th>Room Gender</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="roomTableBody">
-          <% rooms.forEach(function(room) { %>
-          <tr data-capacity="<%= room.room_capacity %>" data-gender="<%= room.room_gender %>">
-            <td><%= room.room_no %></td>
-            <td><%= room.room_capacity %></td>
-            <td><%= room.room_occupancy %></td>
-            <td><%= room.bedAvail %></td>
-            <td><%= room.room_gender %></td>
-            <td>
-              <button class="btn btn-success btn-sm" onclick="openEditModal('<%= room.room_id %>', '<%= room.room_no %>', <%= room.room_capacity %>, '<%= room.room_gender %>', <%= room.room_occupancy %>, <%= room.bedAvail %>)">Edit</button>
-              <a href="/admin/room/view/<%= room.room_id %>" class="btn btn-primary btn-sm">View</a>
-              <button onclick="openDeleteModal('<%= room.room_id %>', '<%= room.room_no %>')" class="btn btn-danger btn-sm">Delete</button>
-            </td>
-          </tr>
-          <% }); %>
-        </tbody>
-      </table>
-    </div>
+            <!-- Room Details Table -->
+            <div class="table-responsive">
+                <table class="table tbl-header">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Capacity</th>
+                            <th>Occupancy</th>
+                            <th>Available Beds</th>
+                            <th>Room Gender</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                </table>
+                <div class="table-responsive">
+                    <table class="table tbl-content table-striped">
+                        <tbody id="roomTableBody">
+                            <% rooms.forEach(function(room) { %>
+                            <tr data-capacity="<%= room.room_capacity %>" data-gender="<%= room.room_gender %>">
+                                <td><%= room.room_no %></td>
+                                <td><%= room.room_capacity %></td>
+                                <td><%= room.room_occupancy %></td>
+                                <td><%= room.bedAvail %></td>
+                                <td><%= room.room_gender %></td>
+                                <td>
+                                    <button class="btn btn-success btn-sm" onclick="openEditModal('<%= room.room_id %>', '<%= room.room_no %>', <%= room.room_capacity %>, '<%= room.room_gender %>', <%= room.room_occupancy %>, <%= room.bedAvail %>)">Edit</button>
+                                    <a href="/admin/room/view/<%= room.room_id %>" class="btn btn-primary btn-sm">View</a>
+                                    <button onclick="openDeleteModal('<%= room.room_id %>', '<%= room.room_no %>')" class="btn btn-danger btn-sm">Delete</button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
 
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteRoomModal" tabindex="-1" role="dialog" aria-labelledby="deleteRoomModalLabel" aria-hidden="true">
