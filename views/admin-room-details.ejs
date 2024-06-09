@@ -6,18 +6,16 @@
   <title>Admin - Room Details</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
    <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      table-layout: fixed;
+     table {
+         width: 100%;
+         table-layout: fixed;
+     }
 
-    }
-
-    th, td {
-      padding: 8px;
-      text-align: centre;
-      border-bottom: 1px solid #DDD;
-    }
+     th, td {
+         word-wrap: break-word;
+         overflow-wrap: break-word;
+         white-space: normal;
+     }
 
     tr:hover {background-color: #D6EEEE;}
         .tbl-header{
@@ -174,7 +172,7 @@
             <form action="/admin/rooms/add" method="post">
               <div class="form-group">
                 <label for="room_no">Room Number:</label>
-                <input type="text" id="room_no" name="room_no" class="form-control" required>
+                <input type="text" id="room_no" name="room_no" class="form-control" placeholder="Enter Room Number" required>
               </div>
               <div class="form-group">
                 <label for="room_capacity">Room Capacity:</label>
@@ -192,7 +190,9 @@
                   <option value="Mixed">Mixed</option>
                 </select>
               </div>
+              <div class="text-center">
               <button type="submit" class="btn btn-success">Add Room</button>
+              </div>
             </form>
           </div>
         </div>
@@ -232,7 +232,9 @@
                           <option value="Mixed">Mixed</option>
                         </select>
                       </div>
+                      <div class="text-center">
                       <button type="submit" id="updateRoomButton" class="btn btn-success">Update Room</button>
+                      </div>
                     </form>
                     <div id="editRoomError" class="alert alert-danger mt-3" style="display: none;"></div>
                   </div>

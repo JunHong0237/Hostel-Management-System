@@ -5,57 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h1 class="text-primary mb-4">Room Information</h1>
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <p><strong>Room Number:</strong> <%= room.room_no %></p>
-                <p><strong>Room Capacity:</strong> <%= room.room_capacity %></p>
-                <p><strong>Room Occupancy:</strong> <%= room.room_occupancy %></p>
-                <p><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
-                <p><strong>Room Type:</strong> <%= room.room_gender %></p>
-            </div>
-        </div>
+    <style>
+        table {
+            width: 100%;
+            table-layout: fixed;
+        }
 
-        <h2 class="text-primary mb-4">Students in Room</h2>
-        <div class="table-responsive mb-4">
-            <table class="table table-bordered">
-                <thead class="thead-dark">
+        th, td {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+        }
+
+    tr:hover {background-color: #D6EEEE;}
+        .tbl-header{
+          background-color: #D6EEEE;
+         }
+        .tbl-content{
+
+          overflow-x:auto;
+          margin-top: 0px;
+          border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+    </style>
+</head>
+<div class="container">
+    <body class="bg-light">
+        <div class="container mt-5">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container">
+                    <a class="navbar-brand" href="/admin/rooms">
+                        <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
+                    Return
+                </a>
+                    <!-- Toggler for Mobile View -->
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <!-- Navbar content that could include more links or actions -->
+                    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                      <ul class="navbar-nav">
+                        <li class="nav-item active">
+                          <h1 class="nav-link mb-0">Room Information</h1>
+                            </li>
+                              </ul>
+                            </div>
+            </nav>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                  <tbody>
                     <tr>
-                        <th>Full Name</th>
-                        <th>Student ID</th>
-                        <th>Faculty</th>
-                        <th>Year of Degree</th>
-                        <th>State</th>
-                        <th>Room Environment Preference</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Action</th>
+                      <th scope="row">Room Number:</th>
+                      <td><%= room.room_no %></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <% students.forEach(student => { %>
-                        <tr>
-                            <td><%= student.std_fullname %></td>
-                            <td><%= student.std_id %></td>
-                            <td><%= student.std_faculty %></td>
-                            <td><%= student.std_year %></td>
-                            <td><%= student.std_state %></td>
-                            <td><%= student.std_pref %></td>
-                            <td><%= student.std_email %></td>
-                            <td><%= student.std_phone %></td>
-                            <td>
-                                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmUnassignModal" data-student-id="<%= student.std_id %>">Unassign</button>
-                            </td>
-                        </tr>
-                    <% }); %>
-                </tbody>
-            </table>
+                    <tr>
+                      <th scope="row">Capacity:</th>
+                      <td><%= room.room_capacity %></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Occupancy:</th>
+                      <td><%= room.room_occupancy %></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Available Beds:</th>
+                      <td><%= room.room_capacity - room.room_occupancy %></td>
+                    </tr>
+                  </tbody>
+                </table>
+<br><br>
+                <h1 class="card-title text-left mb-4">Students in Room</h1>
+                <div class="table-responsive">
+                    <table class="table table-bordered tbl-header">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Student ID</th>
+                                <th>Faculty</th>
+                                <th>Year of Degree</th>
+                                <th>State</th>
+                                <th>Room Environment Preference</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table class="table tbl-content">
+                        <tbody>
+                             <% if (students.length > 0) { %>
+                                
+                            <% students.forEach(student => { %>
+                                <tr>
+                                    <td><%= student.std_fullname %></td>
+                                    <td><%= student.std_id %></td>
+                                    <td><%= student.std_faculty %></td>
+                                    <td><%= student.std_year %></td>
+                                    <td><%= student.std_state %></td>
+                                    <td><%= student.std_pref %></td>
+                                    <td><%= student.std_email %></td>
+                                    <td><%= student.std_phone %></td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmUnassignModal" data-student-id="<%= student.std_id %>">Unassign</button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                      <td colspan="9" class="text-center">No students assigned to this room</td>
+                                    </tr>
+                                  <% } %>
+                        </tbody>
+                    </table>
+                
         </div>
-        <a href="/admin/rooms" class="btn btn-primary">Back to Room Details</a>
-    </div>
+    </body>
+  </div>
 
     <!-- Unassign Confirmation Modal -->
     <div class="modal fade" id="confirmUnassignModal" tabindex="-1" role="dialog" aria-labelledby="confirmUnassignModalLabel" aria-hidden="true">
