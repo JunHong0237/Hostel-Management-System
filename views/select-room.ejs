@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Select Room</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  
 </head>
+  <a href="/dashboard?std_id=<%= studentId %>" class="btn  mt-4">
+    <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
+    Return to Dashboard
+  </a>
+
 <body class="bg-light">
   <div class="container mt-5">
     <h1 class="text-center mb-4">Select a Room</h1>
@@ -18,6 +24,7 @@
         <li><strong>Year of Study:</strong> Matches your year of study</li>
         <li><strong>State of Residence:</strong> Matches your state of residence</li>
       </ul>
+      
       <!-- Filter Dropdown -->
       <div class="mb-4">
         <label for="roomTypeFilter"><strong>Filter by Room Type:</strong></label>
@@ -72,5 +79,7 @@
       });
     }
   </script>
+     
+
 </body>
 </html>
