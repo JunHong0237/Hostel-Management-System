@@ -62,24 +62,41 @@
 
 <body class="bg-light">
   <div class="container mt-5">
-    <a href="/dashboard?std_id=<%= studentId %>" class="btn mt-4">
-      <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
-      Return to Dashboard
-    </a>
-    <h1 class="text-center mb-4">Select a Room</h1>
-    <div class="mb-4">
-      <p>Rooms are recommended based on how well they match your preferences and the preferences of your potential roommates. The higher the percentage, the better the match.</p>
-      <p>The recommendation is based on the following criteria:</p>
-      <ul>
-        <li><strong>Room Environment Preference:</strong> Matches your preference</li>
-        <li><strong>Faculty:</strong> Matches your faculty</li>
-        <li><strong>Year of Study:</strong> Matches your year of study</li>
-        <li><strong>State of Residence:</strong> Matches your state of residence</li>
-      </ul>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <!-- Return Button as Navbar Brand for better alignment and navigation usage -->
+        <a class="navbar-brand" href="/dashboard?std_id=<%= studentId %>">
+          <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
+          Return
+        </a>
 
-      <!-- Filter Dropdown -->
-      <div class="mb-4">
-        <label for="roomTypeFilter"><strong>Filter by Room Type:</strong></label>
+        <!-- Toggler for Mobile View -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar content that could include more links or actions -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <h1 class="nav-link mb-0">Room Selection</h1>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </nav>
+
+
+    <div class="mb-4">
+      <div class="container d-flex align-items-center">       
+        <!-- Reminder Arrow Trigger for Modal -->
+        <a href="#" data-toggle="modal" data-target="#explanationModal" class="mr-3">
+          <img src="/images/questionmarkicon.png" alt="Help" style="width: 30px; height: 30px;">
+        </a>
+        <!-- Label and Question Mark Icon -->
+        <label for="roomTypeFilter" class="mr-2"><strong>Filter by Room Type:</strong></label>
+        <!-- Filter Dropdown -->
         <select id="roomTypeFilter" class="form-control" onchange="filterRooms()">
           <option value="All">All</option>
           <option value="1">Single</option>
@@ -88,6 +105,7 @@
         </select>
       </div>
     </div>
+
 
     <div class="row">
       <% if (rooms.length > 0) { %>
@@ -104,11 +122,14 @@
                 <div class="mb-2">
                   <span class="card-text recommendation-score"><strong>Recommendation:</strong> <%= room.recommendationPercentage.toFixed(2) %>%</span>
                   <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: <%= room.recommendationPercentage %>%;" aria-valuenow="<%= room.recommendationPercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-success" role="progressbar" style="width: <%= room.recommendationPercentage %>%;" aria-valuenow="<%= room.recommendationPercentage %>" aria-valuemin="0" aria-valuemax="100" ></div>
                     <div class="progress-bar bg-secondary" role="progressbar" style="width: <%= 100 - room.recommendationPercentage %>%;" aria-valuenow="<%= 100 - room.recommendationPercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
                 </div>
-                <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>" class="btn btn-primary">View Details</a>
+                <br>
+                <div class="text-center">
+                <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>" class="btn btn-success" >View Details</a>
+                </div>
               </div>
             </div>
           </div>
@@ -133,6 +154,34 @@
     });
   }
   </script>
+        <!-- Explanation Modal -->
+        <div class="modal fade" id="explanationModal" tabindex="-1" role="dialog" aria-labelledby="explanationModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="explanationModalLabel">Understanding Room Recommendations</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Rooms are recommended based on how well they match your preferences and the preferences of your potential roommates. The higher the percentage, the better the match.</p>
+                <p>The recommendation is based on the following weighted criteria, which contribute to the overall compatibility score:</p>
+                <ul>
+                  <li><strong>Room Environment Preference:</strong> Matches your preference (40 points per match).</li>
+                  <li><strong>Faculty:</strong> Matches your faculty (20 points per match).</li>
+                  <li><strong>Year of Study:</strong> Matches your year of study (10 points per match).</li>
+                  <li><strong>State of Residence:</strong> Matches your state of residence (5 points per match).</li>
+                </ul>
+                <p>This tailored approach aims to enhance your living experience by aligning your environment with individuals who share similar academic and personal backgrounds.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
