@@ -5,10 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+        
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: centre;
+      border-bottom: 1px solid #DDD;
+    }
+
+    tr:hover {background-color: #E0FFFF;}
+        .tbl-header{
+          background-color: #D6EEEE;
+         }
+        .tbl-content{
+          height:300px;
+          overflow-x:auto;
+          margin-top: 0px;
+          border: 1px solid rgba(255,255,255,0.3);
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body class="bg-light" >
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
+        <div class="container" >
             <a class="navbar-brand" href="#">Dashboard</a>
             <div class="ml-auto dropdown">
                 <div class="d-flex align-items-center">
@@ -30,7 +55,7 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mt-4" style="background-color: #D6EEEE">
         <div class="card mb-4">
             <div class="card-body text-center">
                 <% if (student.profile_pic) { %>
@@ -124,7 +149,7 @@
 
                                 <!-- Add the collapse container for the roommates information -->
                                 <div class="collapse" id="roommatesCollapse">
-                                    <table class="table table-bordered">
+                                    <table class="tbl-header table-bordered">
                                         <thead>
                                             <tr>
                                                 <th>Student ID</th>
@@ -138,6 +163,9 @@
                                                 <th>Room Environment Preference</th>
                                             </tr>
                                         </thead>
+                                    </table>
+                                      <div class="tbl-content">
+                                        <table cellpadding="0" cellspacing="0" border="0">
                                         <tbody>
                                             <% roommates.forEach(function(roommate) { %>
                                                 <tr>
@@ -155,7 +183,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-
                 <% } %>
             </div>
         </div>
@@ -238,7 +265,7 @@
                         </div>
                         <div class="form-group">
                             <label for="std_password">New Password</label>
-                            <input type="password" class="form-control" id="std_password" name="std_password">
+                            <input type="password" class="form-control" id="std_password" name="std_password" placeholder="Reset Password">
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
