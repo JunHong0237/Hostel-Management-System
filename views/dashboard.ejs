@@ -267,31 +267,15 @@
                             <label for="std_password">New Password</label>
                             <input type="password" class="form-control" id="std_password" name="std_password" placeholder="Reset Password">
                         </div>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                         <div class="text-center">
+                        <button type="submit" class="btn btn-success" text=center>Update</button>
+                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-            <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const fields = ['std_email', 'std_phone', 'std_faculty', 'std_year', 'std_state', 'std_pref'];
-                        const addRoomButton = document.querySelector('a[href^="/select-room"]');
 
-                        function checkFields() {
-                            let allFieldsFilled = true;
-                            fields.forEach(field => {
-                                const fieldValue = document.getElementById(field).textContent.trim();
-                                if (!fieldValue) {
-                                    allFieldsFilled = false;
-                                }
-                            });
-                            addRoomButton.disabled = !allFieldsFilled;
-                        }
-
-                        checkFields();
-                    });
-         </script>
     <script>
         function logout() {
             // If using localStorage to store logged-in state

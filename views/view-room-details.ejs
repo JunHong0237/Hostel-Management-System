@@ -5,22 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: centre;
+      border-bottom: 1px solid #DDD;
+    }
+
+    tr:hover {background-color: #D6EEEE;}
+        .tbl-header{
+          background-color: #D6EEEE;
+         }
+        .tbl-content{
+          
+          overflow-x:auto;
+          margin-top: 0px;
+          border: 1px solid rgba(255,255,255,0.3);
+        }
+    </style>
 </head>
 <body class="bg-light">
     <div class="container mt-5">
         <div class="card shadow-lg">
             <div class="card-body">
                 <h1 class="card-title text-center mb-4">Room Details</h1>
-                <div class="room-info mb-4">
-                    <p><strong>Room Number:</strong> <%= room.room_no %></p>
-                    <p><strong>Capacity:</strong> <%= room.room_capacity %></p>
-                    <p><strong>Occupancy:</strong> <%= room.room_occupancy %></p>
-                    <p><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
-                </div>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Room Number:</th>
+                      <td><%= room.room_no %></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Capacity:</th>
+                      <td><%= room.room_capacity %></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Occupancy:</th>
+                      <td><%= room.room_occupancy %></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Available Beds:</th>
+                      <td><%= room.room_capacity - room.room_occupancy %></td>
+                    </tr>
+                  </tbody>
+                </table>
 
-                <h2 class="text-center mb-4">Other Students in Room</h2>
+<br><br>
+                <h2 class="text-left mb-4">Other Students in Room</h2>
                 <div class="table-responsive mb-4">
-                    <table class="table table-bordered">
+                     <table class="tbl-header table-bordered">
                         <thead class="thead-light">
                             <tr>
                                 <th>#</th>
@@ -33,6 +73,9 @@
                                 <th>Matching %</th>
                             </tr>
                         </thead>
+                     </table>
+                    <div class="tbl-content">
+                        <table>
                         <tbody>
                             <% if (students.length > 0) { %>
                                 <% students.forEach(function(student, index) { %>
@@ -55,10 +98,11 @@
                         </tbody>
                     </table>
                 </div>
+<br><br>
 
-                <h2 class="text-center mb-4">Your Information</h2>
+                <h2 class="text-left mb-4">Your Information</h2>
                 <div class="table-responsive mb-4">
-                    <table class="table table-bordered">
+                    <table class="tbl-header table-bordered">
                         <thead class="thead-light">
                             <tr>
                                 <th>Faculty</th>
@@ -69,6 +113,9 @@
                                 <th>Phone</th>
                             </tr>
                         </thead>
+                    </table>
+                    <div class="tbl-content">
+                        <table>
                         <tbody>
                             <tr>
                                 <td><%= selectedStudent.std_faculty %></td>
@@ -81,12 +128,12 @@
                         </tbody>
                     </table>
                 </div>
-
+<br><br>
                 <div class="text-center">
                     <a href="/select-room?std_id=<%= selectedStudent.std_id %>" class="btn btn-secondary">Return</a>
                     <form action="/select-room/<%= room.room_id %>" method="post" class="d-inline">
                         <input type="hidden" name="std_id" value="<%= selectedStudent.std_id %>">
-                        <button type="submit" class="btn btn-primary">Select Room</button>
+                        <button type="submit" class="btn btn-success" >Select Room</button>
                     </form>
                 </div>
             </div>
