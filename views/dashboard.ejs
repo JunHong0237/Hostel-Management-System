@@ -19,7 +19,7 @@
       border-bottom: 1px solid #DDD;
     }
 
-    tr:hover {background-color: #E0FFFF;}
+    tr:hover {background-color: #D6EEEE;}
         .tbl-header{
           background-color: #D6EEEE;
          }
@@ -34,8 +34,7 @@
 <body class="bg-light" >
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container" >
-            <a class="navbar-brand" href="#">Dashboard</a>
-            <div class="ml-auto dropdown">
+            <a class="navbar-brand" href="#">Dashboard</a><div class="ml-auto dropdown">
                 <div class="d-flex align-items-center">
                     <% if (student.profile_pic) { %>
                         <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" class="rounded-circle" width="40" height="40">
@@ -183,6 +182,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+
                 <% } %>
             </div>
         </div>

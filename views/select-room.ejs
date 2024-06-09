@@ -5,15 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Select Room</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  
-</head>
-  <a href="/dashboard?std_id=<%= studentId %>" class="btn  mt-4">
-    <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
-    Return to Dashboard
-  </a>
+  <style>
+    body {
+      background-color: #7CFC00; /* Light gray background color */
+    }
+    /* Card Container */
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin: 20px;
+      max-width: 300px;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* Card Header */
+    .card-header {
+      background-color: #f8f9fa;
+      padding: 20px;
+      font-size: 1.25em;
+      font-weight: bold;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    /* Card Body */
+    .card-body {
+      padding: 20px;
+      font-size: 1em;
+      color: #333;
+    }
+
+    /* Card Footer */
+    .card-footer {
+      background-color: #f8f9fa;
+      padding: 10px 20px;
+      text-align: right;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .card-footer a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .card-footer a:hover {
+      text-decoration: underline;
+    }
+
+  </style>
 
 <body class="bg-light">
   <div class="container mt-5">
+    <a href="/dashboard?std_id=<%= studentId %>" class="btn mt-4">
+      <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
+      Return to Dashboard
+    </a>
     <h1 class="text-center mb-4">Select a Room</h1>
     <div class="mb-4">
       <p>Rooms are recommended based on how well they match your preferences and the preferences of your potential roommates. The higher the percentage, the better the match.</p>
@@ -24,7 +76,7 @@
         <li><strong>Year of Study:</strong> Matches your year of study</li>
         <li><strong>State of Residence:</strong> Matches your state of residence</li>
       </ul>
-      
+
       <!-- Filter Dropdown -->
       <div class="mb-4">
         <label for="roomTypeFilter"><strong>Filter by Room Type:</strong></label>
@@ -37,49 +89,54 @@
       </div>
     </div>
 
-    <% if (rooms.length > 0) { %>
-      <% rooms.forEach(room => { %>
-        <div class="card mb-4 shadow-sm room-card" data-room-type="<%= room.room_capacity %>">
-          <div class="card-header">
-            <h5 class="mb-0">Room Number: <%= room.room_no %></h5>
-          </div>
-          <div class="card-body">
-            <p class="card-text"><strong>Capacity:</strong> <%= room.room_capacity %></p>
-            <p class="card-text"><strong>Occupancy:</strong> <%= room.room_occupancy %></p>
-            <p class="card-text"><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
-            <div class="mb-2">
-              <span class="card-text recommendation-score"><strong>Recommendation:</strong> <%= room.recommendationPercentage.toFixed(2) %>%</span>
-              <div class="progress">
-                <div class="progress-bar bg-success" role="progressbar" style="width: <%= room.recommendationPercentage %>%;" aria-valuenow="<%= room.recommendationPercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
-                <div class="progress-bar bg-secondary" role="progressbar" style="width: <%= 100 - room.recommendationPercentage %>%;" aria-valuenow="<%= 100 - room.recommendationPercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="row">
+      <% if (rooms.length > 0) { %>
+        <% rooms.forEach(room => { %>
+          <div class="col-md-3 mb-4 room-card" data-room-type="<%= room.room_capacity %>">
+            <div class="card shadow-sm">
+              <div class="card-header" style="background-color: #D6EEEE">
+                <h5 class="mb-0">Room Number: <%= room.room_no %></h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text"><strong>Capacity:</strong> <%= room.room_capacity %></p>
+                <p class="card-text"><strong>Occupancy:</strong> <%= room.room_occupancy %></p>
+                <p class="card-text"><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
+                <div class="mb-2">
+                  <span class="card-text recommendation-score"><strong>Recommendation:</strong> <%= room.recommendationPercentage.toFixed(2) %>%</span>
+                  <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: <%= room.recommendationPercentage %>%;" aria-valuenow="<%= room.recommendationPercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-secondary" role="progressbar" style="width: <%= 100 - room.recommendationPercentage %>%;" aria-valuenow="<%= 100 - room.recommendationPercentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+                <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>" class="btn btn-primary">View Details</a>
               </div>
             </div>
-            <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>" class="btn btn-primary">View Details</a>
           </div>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <p class="text-center">No rooms available.</p>
-    <% } %>
+        <% }) %>
+      <% } else { %>
+        <p class="text-center">No rooms available.</p>
+      <% } %>
+    </div>
   </div>
+
+  <script>
+  function filterRooms() {
+    const filter = document.getElementById('roomTypeFilter').value;
+    const rooms = document.querySelectorAll('.room-card');
+    rooms.forEach(room => {
+      const roomType = room.getAttribute('data-room-type');
+      if (filter === 'All' || roomType === filter) {
+        room.style.display = 'block';
+      } else {
+        room.style.display = 'none';
+      }
+    });
+  }
+  </script>
+
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script>
-    function filterRooms() {
-      const filter = document.getElementById('roomTypeFilter').value;
-      const rooms = document.querySelectorAll('.room-card');
-      rooms.forEach(room => {
-        const roomType = room.getAttribute('data-room-type');
-        if (filter === 'All' || roomType === filter) {
-          room.style.display = 'block';
-        } else {
-          room.style.display = 'none';
-        }
-      });
-    }
-  </script>
-     
-
+ 
 </body>
 </html>
