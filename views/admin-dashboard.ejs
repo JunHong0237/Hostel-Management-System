@@ -29,7 +29,7 @@
         .summary-card {
             background: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
             text-align: center;
             width: 30%;
@@ -52,14 +52,65 @@
         .chart-card {
             background: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: calc(50% - 10px);
         }
         .chart-card h3 {
             margin-bottom: 10px;
             font-size: 18px;
             color: #333;
+        }
+
+
+
+        /* Specific size adjustments for each card */
+        .gender-distribution-card {
+            width: calc(33% - 10px); /* One third width */
+        }
+
+        .student-registration-card {
+            width: calc(65% - 10px); /* Half width */
+
+        }
+
+        .students-by-faculty-card {
+            width: calc(63% - 25px); /* One quarter width */
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .students-by-year-card {
+            width: calc(63% - 25px); /* 40% width */
+        }
+
+        .room-environment-card {
+            width: calc(37% - 5px); /* 30% width */
+        }
+
+        .room-occupancy-card {
+            width: calc(37% - 5px); /* 45% width */
+        }
+        
+        /* Specific styles for the Room Type Distribution card */
+        .room-type-card {
+          width: 100%; /* 35% width */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+
+        .state-of-residence-card {
+            width: 100%; /* Full width */
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;    
+        }
+        .button-container .btn {
+            margin: 0 10px; /* Space between the buttons */
         }
       </style>
       </head>
@@ -90,8 +141,8 @@
 
 
 
-
-      <div class="container mt-4">
+<div class="container">
+      <div class="container mt-2">
         <!-- Summary Cards -->
         <div class="summary-cards">
             <div class="summary-card">
@@ -108,59 +159,146 @@
             </div>
         </div>
 
-        <!-- Charts Grid -->
-        <div class="charts-container">
-            <div class="chart-card">
-                <h3>Gender Distribution</h3>
-                <canvas id="genderDistributionChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>Students by Faculty</h3>
-                <canvas id="studentsByFacultyChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>Room Environment Preference</h3>
-                <canvas id="roomEnvironmentPreferenceChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>Students by Year of Study</h3>
-                <canvas id="studentsByYearOfStudyChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>Room Type Distribution</h3>
-                <canvas id="roomTypeDistributionChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>Room Occupancy</h3>
-                <canvas id="roomOccupancyChart" style="max-height: 400px;"></canvas>
-                <div style="text-align: center; margin-top: 10px;">
-                    <span style="display: inline-block; width: 16.66%;">Male</span>
-                    <span style="display: inline-block; width: 16.66%;"></span>
-                    <span style="display: inline-block; width: 16.66%;"></span>
-                    <span style="display: inline-block; width: 16.66%;">Female</span>
-                    <span style="display: inline-block; width: 16.66%;"></span>
-                    <span style="display: inline-block; width: 16.66%;"></span>
-                </div>
-            </div>
-          <div class="chart-card">
-            <h3>Student Registration Over Time</h3>
-            <label for="yearFilter">Year:</label>
-            <select id="yearFilter" onchange="updateChart()">
-              <!-- Year options will be populated dynamically by JavaScript -->
-            </select>
+  <!-- Charts Grid -->
+  <div class="charts-container">
+      <div class="chart-card gender-distribution-card">
+          <h3>Gender Distribution</h3>
+          <canvas id="genderDistributionChart"></canvas>
+      </div>
+      <div class="chart-card student-registration-card">
+          <h3>Student Registration Over Time</h3>
+          <label for="yearFilter">Year:</label>
+          <select id="yearFilter" onchange="updateChart()">
+            <!-- Year options will be populated dynamically by JavaScript -->
+          </select>
+          <canvas id="studentRegistrationOverTimeChart"></canvas>
+      </div>
+    <div class="chart-card students-by-year-card">
+        <h3>Students by Year of Study</h3>
+        <canvas id="studentsByYearOfStudyChart"></canvas>
+    </div>
 
-            <canvas id="studentRegistrationOverTimeChart"></canvas>
-          </div>
-
-            <div class="chart-card" style="width: 100%;">
-                <h3>State of Residence</h3>
-                <div id="stateOfResidenceMap" style="height: 500px;"></div>
-            </div>
+    <div class="chart-card room-environment-card">
+        <h3>Room Environment Preference</h3>
+        <canvas id="roomEnvironmentPreferenceChart"></canvas>
+    </div>
+    <div class="chart-card students-by-faculty-card">
+        <h3>Students by Faculty</h3>
+      <div class="chart-container">
+        <canvas id="studentsByFacultyChart"></canvas>
+      </div>
+        
+    </div>
+    <div class="chart-card room-occupancy-card">
+        <h3>Room Occupancy</h3>
+        <canvas id="roomOccupancyChart" style="max-height: 400px;"></canvas>
+        <div style="text-align: center; margin-top: 10px;">
+          <span style="display: inline-block; width: 16.66%;"></span>
+            <span style="display: inline-block; width: 16.66%;">Male</span>
+            <span style="display: inline-block; width: 16.66%;"></span>
+            <span style="display: inline-block; width: 16.66%;"></span>
+            <span style="display: inline-block; width: 16.66%;">Female</span>
+            <span style="display: inline-block; width: 16.66%;"></span>
+            <span style="display: inline-block; width: 16.66%;"></span>
         </div>
+    </div>
+    <div class="chart-card room-type-card">
+        <h3>Room Type Distribution</h3>
+        <div class="chart-container">
+            <canvas id="roomTypeDistributionChart"></canvas>
+        </div>
+    </div>
+      <div class="chart-card state-of-residence-card" style="width: 100%;">
+          <h3>State of Residence</h3>
+          <div id="stateOfResidenceMap" style="height: 500px;"></div>
+      </div>
+  </div>
 
+<br>
+  <div class="container button-container">
+      <!-- Button to trigger report generation -->
+      <button id="generateReportButton" class="btn btn-primary">Generate Report</button>
 
+      <!-- Button to trigger chart display -->
+      <button id="displayChartsButton" class="btn btn-primary">Display Charts</button>
+  </div>
+<br>
 
+      <!-- Report Modal -->
+      <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="reportModalLabel">Generated Report</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="loadingSpinner" class="text-center" style="display: none;">
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+              <div id="reportContainer" style="white-space: pre-wrap;"></div>
+            </div>
+            <div class="modal-footer">
+              <button id="downloadReportButton" class="btn btn-success">Download Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Download message -->
+       <div id="downloadingMessage" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index: 1000; background-color: #00ff33; padding: 10px; border: 1px solid #ccc;">
+           Downloading report...
+       </div>
+      <!-- Success Modal -->
+      <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="successModalLabel">Success</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Report downloaded successfully!
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <!-- Charts Modal -->
+      <div class="modal fade" id="chartModal" tabindex="-1" role="dialog" aria-labelledby="chartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="chartModalLabel">Charts</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="loadingSpinnerCharts" class="text-center" style="display: none;">
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+              <div id="chartContainer"></div>
+            </div>
+            <div class="modal-footer">
+              <button id="downloadChartsButton" class="btn btn-success">Download Charts</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  
       <script>
         async function fetchSummaryData() {
           const response = await fetch('/admin/summary-data');
@@ -175,18 +313,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', displaySummaryData);
-      </script>
-
-        
-        <script>
+  
           async function fetchChartData(url) {
             const response = await fetch(url);
             return await response.json();
           }
 
-
-
-          // Gender Distribution Pie Chart
               // Gender Distribution Pie Chart with Percentages
               async function renderGenderDistributionChart() {
                 const data = await fetchChartData('/admin/gender-distribution');
@@ -201,7 +333,7 @@
                     datasets: [{
                       label: 'Gender Distribution',
                       data: counts,
-                      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                      backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
                     }]
                   },
                   options: {
@@ -222,52 +354,90 @@
                 });
               }
 
-              // Students by Faculty Bar Chart with Customizations
-              async function renderStudentsByFacultyChart() {
-                const data = await fetchChartData('/admin/students-by-faculty');
-                const labels = data.map(item => item.std_faculty);
-                const counts = data.map(item => item.count);
-                const maxCount = Math.max(...counts);
+              // Students by Faculty Bar Chart 
+        async function renderStudentsByFacultyChart() {
+          const data = await fetchChartData('/admin/students-by-faculty');
+          const labels = data.map(item => item.std_faculty);
+          const counts = data.map(item => item.count);
+          const maxCount = Math.max(...counts);
 
-                new Chart(document.getElementById('studentsByFacultyChart'), {
-                  type: 'bar',
-                  data: {
-                    labels: labels,
-                    datasets: [{
-                      label: 'Number of Students',
-                      data: counts,
-                      backgroundColor: counts.map(count => count === maxCount ? 'red' : 'gray')
-                    }]
-                  },
-                  options: {
-                    indexAxis: 'y',
-                    scales: {
-                      x: {
-                        beginAtZero: true,
-                        grid: {
-                          display: false
+          new Chart(document.getElementById('studentsByFacultyChart'), {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Number of Students',
+                data: counts,
+                backgroundColor: counts.map(count => count === maxCount ? 'red' : 'gray')
+              }]
+            },
+            options: {
+              indexAxis: 'y',
+              scales: {
+                x: {
+                  beginAtZero: true,
+                  max: maxCount + 2, // Adjust the maximum value of the x-axis
+                  grid: {
+                    display: false
+                  }
+                },
+                y: {
+                  grid: {
+                    display: false
+                  }
+                }
+              },
+              plugins: {
+                legend: {
+                  labels: {
+                    generateLabels: (chart) => {
+                      const dataset = chart.data.datasets[0];
+                      return [
+                        {
+                          text: 'Number of Students',
+                          fillStyle: 'gray', // Set the legend box color to gray
+                          hidden: false,
+                          lineCap: 'butt',
+                          lineDash: [],
+                          lineDashOffset: 0,
+                          lineJoin: 'miter',
+                          strokeStyle: 'gray',
+                          pointStyle: 'rect',
+                          datasetIndex: 0
+                        },
+                        {
+                          text: 'Highest Count',
+                          fillStyle: 'red', // Set the legend box color to red
+                          hidden: false,
+                          lineCap: 'butt',
+                          lineDash: [],
+                          lineDashOffset: 0,
+                          lineJoin: 'miter',
+                          strokeStyle: 'red',
+                          pointStyle: 'rect',
+                          datasetIndex: 0
                         }
-                      },
-                      y: {
-                        grid: {
-                          display: false
-                        }
-                      }
-                    },
-                    plugins: {
-                      datalabels: {
-                        anchor: 'end',
-                        align: 'end',
-                        color: 'black',
-                        font: {
-                          weight: 'bold'
-                        }
-                      }
+                      ];
                     }
+                  }
+                },
+                datalabels: {
+                  anchor: 'end',
+                  align: 'end', // Position the label at the tip of the bar
+                  offset: 5, // Adjust this value to move the labels further out
+                  color: 'black',
+                  font: {
+                    weight: 'bold'
                   },
-                  plugins: [ChartDataLabels]
-                });
+                  formatter: function(value, context) {
+                    return value;
+                  }
+                }
               }
+            },
+            plugins: [ChartDataLabels]
+          });
+        }
 
           // Room Environment Preference Pie Chart
               async function renderRoomEnvironmentPreferenceChart() {
@@ -304,9 +474,6 @@
                 });
               }
 
-
-
-          // Year of Degree Column Chart
           // Students by Year of Study Column Chart with Customizations
           async function renderStudentsByYearOfStudyChart() {
             const data = await fetchChartData('/admin/year-of-degree');
@@ -354,6 +521,7 @@
               plugins: [ChartDataLabels]
             });
           }
+        
             // Room type distribution Chart
           async function renderRoomTypeDistributionChart() {
             const data = await fetchChartData('/admin/room-type-distribution');
@@ -435,10 +603,7 @@
               plugins: [ChartDataLabels]
             });
           }
-
-
-
-          
+        
             // Room occupancy Chart
           async function renderRoomOccupancyChart() {
             const data = await fetchChartData('/admin/room-occupancy');
@@ -552,7 +717,7 @@
                 });
 
                 // Fetch Malaysia GeoJSON data
-                const response = await fetch('/malaysia-states.json');
+                const response = await fetch('/json/malaysia-states.json');
                 const statesGeoJSON = await response.json();
 
                 // Filter the GeoJSON to include only the specified states
@@ -564,7 +729,7 @@
                   )
                 };
 
-                const map = L.map('stateOfResidenceMap').setView([4.2105, 101.9758], 6); // Centered on Malaysia
+                const map = L.map('stateOfResidenceMap').setView([4.203998, 109.170778], 6); // Centered on Malaysia
 
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                   maxZoom: 18,
@@ -595,18 +760,6 @@
                 }).addTo(map);
               }
 
-          // Render all charts
-          renderGenderDistributionChart();
-          renderStudentsByFacultyChart();
-          renderRoomEnvironmentPreferenceChart();
-          renderStudentsByYearOfStudyChart();
-          renderRoomTypeDistributionChart();
-          renderRoomOccupancyChart();
-          renderStateOfResidenceMap();
-        </script>
-
-      
-        <script>
             // Student Registration Over Time Line Chart
           async function fetchFilteredData(year) {
             // Adjust the URL and query parameters based on the filters
@@ -619,7 +772,7 @@
           function getMonthLabels(year) {
             const months = [];
             for (let month = 0; month < 12; month++) {
-              months.push(new Date(year, month, 1).toISOString().split('T')[0]);
+              months.push(new Date(year, month, 12).toISOString().split('T')[0]);
             }
             return months;
           }
@@ -684,6 +837,7 @@
                     grid: {
                       display: false
                     }
+                    
                   },
                   y: {
                     beginAtZero: true,
@@ -721,15 +875,17 @@
             populateYearOptions();
             updateChart();
           });
-
-          renderStudentRegistrationOverTimeChart();
+        
+        // Render all charts
+        renderGenderDistributionChart();
+        renderStudentsByFacultyChart();
+        renderRoomEnvironmentPreferenceChart();
+        renderStudentsByYearOfStudyChart();
+        renderRoomTypeDistributionChart();
+        renderRoomOccupancyChart();
+        renderStateOfResidenceMap();
+        renderStudentRegistrationOverTimeChart();
         </script>
-
-      <!-- Download message -->
-       <div id="downloadingMessage" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index: 1000; background-color: white; padding: 10px; border: 1px solid #ccc;">
-           Downloading report...
-       </div>
-
 
       <script>
         // Function to fetch all chart data
@@ -875,12 +1031,6 @@
           }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-          document.getElementById('generateReportButton').addEventListener('click', generateReport);
-          document.getElementById('downloadReportButton').addEventListener('click', downloadReport);
-        });
-
-
         function getChartImages() {
           const charts = document.querySelectorAll('canvas');
           const images = [];
@@ -951,110 +1101,20 @@
           }
         }
 
-
         document.addEventListener('DOMContentLoaded', () => {
-          //document.getElementById('generateReportButton').addEventListener('click', generateReport);
+          document.getElementById('generateReportButton').addEventListener('click', generateReport);
           document.getElementById('displayChartsButton').addEventListener('click', displayAndDownloadCharts);
-        //  document.getElementById('downloadReportButton').addEventListener('click', downloadReport);
+          document.getElementById('downloadReportButton').addEventListener('click', downloadReport);
           document.getElementById('downloadChartsButton').addEventListener('click', downloadCharts);
         });
       </script>
 
-
-
-
- 
-    </script>
+    
         <script>
             function logout() {
-                // Clear any client-side authentication data if necessary
-                // For example, you might want to clear cookies or localStorage items
-                // localStorage.removeItem('authToken');
                 window.location.href = '/admin-login.html';
             }
         </script>
-      <!-- Fixed position downloading message -->
-      <div id="downloadingMessage" class="fixed-top text-center" style="display: none; background: rgba(0,0,0,0.8); color: white; padding: 10px;">
-        Downloading report...
-      </div>
-
-      <!-- Button to trigger report generation -->
-      <button id="generateReportButton" class="btn btn-primary">Generate Report</button>
-
-      <!-- Report Modal -->
-      <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="reportModalLabel">Generated Report</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div id="loadingSpinner" class="text-center" style="display: none;">
-                <div class="spinner-border" role="status">
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-              <div id="reportContainer" style="white-space: pre-wrap;"></div>
-            </div>
-            <div class="modal-footer">
-              <button id="downloadReportButton" class="btn btn-success">Download Report</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Success Modal -->
-      <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="successModalLabel">Success</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              Report downloaded successfully!
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- Button to trigger chart display -->
-      <button id="displayChartsButton" class="btn btn-primary" style="margin-top: 20px;">Display Charts</button>
-
-      <!-- Charts Modal -->
-      <div class="modal fade" id="chartModal" tabindex="-1" role="dialog" aria-labelledby="chartModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="chartModalLabel">Charts</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div id="loadingSpinnerCharts" class="text-center" style="display: none;">
-                <div class="spinner-border" role="status">
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-              <div id="chartContainer"></div>
-            </div>
-            <div class="modal-footer">
-              <button id="downloadChartsButton" class="btn btn-success">Download Charts</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
   
 
 
