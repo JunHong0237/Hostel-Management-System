@@ -5,36 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Room Details</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-   <style>
-     table {
-         width: 100%;
-         table-layout: fixed;
-     }
-
-     th, td {
-         word-wrap: break-word;
-         overflow-wrap: break-word;
-         white-space: normal;
-     }
-
-    tr:hover {background-color: #D6EEEE;}
-        .tbl-header{
-          background-color: #D6EEEE;
-         }
-        .tbl-content{
-          height:300px;
-          overflow-x:auto;
-          margin-top: 0px;
-          border: 1px solid rgba(255,255,255,0.3);
-        }
-    </style>
+  <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body class="bg-light">
-
-
+  
   <!-- Navbar -->
-  <div class="container">
-  <nav class="navbar navbar-light bg-light">
+  <div class="container ">
+  <nav class="navbar common-shadow">
       <div class="container mt-0">
           <a class="nav-link" href="/admin/dashboard" style="color: black;">Dashboard</a>
           <div style="display: flex; align-items: center;">
@@ -56,11 +33,8 @@
   </nav>
   </div>
 
- 
-
-
   <!-- Main Content -->
-  <main class="container mt-4">
+  <main class="container common-shadow mt-4">
     <!-- Add New Room Button -->
     <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addRoomModal">Add New Room</button>
 
@@ -89,41 +63,41 @@
       </div>
     </div>
 
-            <!-- Room Details Table -->
-            <div class="table-responsive">
-                <table class="table tbl-header">
-                    <thead>
-                        <tr>
-                            <th>Room Number</th>
-                            <th>Capacity</th>
-                            <th>Occupancy</th>
-                            <th>Available Beds</th>
-                            <th>Room Gender</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                </table>
-                <div class="table-responsive">
-                    <table class="table tbl-content table-striped">
-                        <tbody id="roomTableBody">
-                            <% rooms.forEach(function(room) { %>
-                            <tr data-capacity="<%= room.room_capacity %>" data-gender="<%= room.room_gender %>">
-                                <td><%= room.room_no %></td>
-                                <td><%= room.room_capacity %></td>
-                                <td><%= room.room_occupancy %></td>
-                                <td><%= room.bedAvail %></td>
-                                <td><%= room.room_gender %></td>
-                                <td>
-                                    <button class="btn btn-success btn-sm" onclick="openEditModal('<%= room.room_id %>', '<%= room.room_no %>', <%= room.room_capacity %>, '<%= room.room_gender %>', <%= room.room_occupancy %>, <%= room.bedAvail %>)">Edit</button>
-                                    <a href="/admin/room/view/<%= room.room_id %>" class="btn btn-primary btn-sm">View</a>
-                                    <button onclick="openDeleteModal('<%= room.room_id %>', '<%= room.room_no %>')" class="btn btn-danger btn-sm">Delete</button>
-                                </td>
-                            </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <!-- Room Details Table -->
+    <div class="table-responsive">
+        <table class="shadow-table">
+            <thead>
+                <tr>
+                    <th>Room Number</th>
+                    <th>Capacity</th>
+                    <th>Occupancy</th>
+                    <th>Available Beds</th>
+                    <th>Room Gender</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+        </table>
+        <div class="table-responsive">
+            <table class="table tbl-content table-striped">
+                <tbody id="roomTableBody">
+                    <% rooms.forEach(function(room) { %>
+                    <tr data-capacity="<%= room.room_capacity %>" data-gender="<%= room.room_gender %>">
+                        <td><%= room.room_no %></td>
+                        <td><%= room.room_capacity %></td>
+                        <td><%= room.room_occupancy %></td>
+                        <td><%= room.bedAvail %></td>
+                        <td><%= room.room_gender %></td>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="openEditModal('<%= room.room_id %>', '<%= room.room_no %>', <%= room.room_capacity %>, '<%= room.room_gender %>', <%= room.room_occupancy %>, <%= room.bedAvail %>)">Edit</button>
+                            <a href="/admin/room/view/<%= room.room_id %>" class="btn btn-primary btn-sm">View</a>
+                            <button onclick="openDeleteModal('<%= room.room_id %>', '<%= room.room_no %>')" class="btn btn-danger btn-sm">Delete</button>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 
     <!-- Delete Confirmation Modal -->
@@ -188,55 +162,50 @@
       </div>
     </div>
 
-    <!-- Edit Room Modal -->
-            <div class="modal fade" id="editRoomModal" tabindex="-1" role="dialog" aria-labelledby="editRoomModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="editRoomModalLabel">Edit Room</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="editRoomForm" action="/admin/rooms/edit" method="post">
-                      <input type="hidden" id="edit_room_id" name="room_id">
-                      <div class="form-group">
-                        <label for="edit_room_no">Room Number:</label>
-                        <input type="text" id="edit_room_no" name="room_no" class="form-control" required>
-                      </div>
-                      <div class="form-group">
-                        <label for="edit_room_capacity">Room Capacity:</label>
-                        <select id="edit_room_capacity" name="room_capacity" class="form-control" required>
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="4">4</option>
-                        </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="edit_room_gender">Room Gender:</label>
-                        <select id="edit_room_gender" name="room_gender" class="form-control" required>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Mixed">Mixed</option>
-                        </select>
-                      </div>
-                      <div class="text-center">
-                      <button type="submit" id="updateRoomButton" class="btn btn-success">Update Room</button>
-                      </div>
-                    </form>
-                    <div id="editRoomError" class="alert alert-danger mt-3" style="display: none;"></div>
-                  </div>
-                </div>
+<!-- Edit Room Modal -->
+    <div class="modal fade" id="editRoomModal" tabindex="-1" role="dialog" aria-labelledby="editRoomModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editRoomModalLabel">Edit Room</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="editRoomForm" action="/admin/rooms/edit" method="post">
+              <input type="hidden" id="edit_room_id" name="room_id">
+              <div class="form-group">
+                <label for="edit_room_no">Room Number:</label>
+                <input type="text" id="edit_room_no" name="room_no" class="form-control" required>
               </div>
-            </div>
+              <div class="form-group">
+                <label for="edit_room_capacity">Room Capacity:</label>
+                <select id="edit_room_capacity" name="room_capacity" class="form-control" required>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="4">4</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="edit_room_gender">Room Gender:</label>
+                <select id="edit_room_gender" name="room_gender" class="form-control" required>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Mixed">Mixed</option>
+                </select>
+              </div>
+              <div class="text-center">
+              <button type="submit" id="updateRoomButton" class="btn btn-success">Update Room</button>
+              </div>
+            </form>
+            <div id="editRoomError" class="alert alert-danger mt-3" style="display: none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-primary text-white text-center py-3">
-    <!-- Footer content here -->
-  </footer>
 
   <script>
     function filterAndSearchRooms() {
@@ -320,14 +289,13 @@
         });
     });
   </script>
-            <script>
-                function logout() {
-                    // Clear any client-side authentication data if necessary
-                    // For example, you might want to clear cookies or localStorage items
-                    // localStorage.removeItem('authToken');
-                    window.location.href = '/admin-login.html';
-                }
-            </script>
+                      
+  <script>
+      function logout() {
+          window.location.href = '/admin-login.html';
+      }
+  </script>
+                      
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

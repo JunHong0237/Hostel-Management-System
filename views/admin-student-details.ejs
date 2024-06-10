@@ -5,34 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Student Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-       <style>
-           table {
-               width: 100%;
-               table-layout: fixed;
-           }
-
-           th, td {
-               word-wrap: break-word;
-               overflow-wrap: break-word;
-               white-space: normal;
-           }
-
-        tr:hover {background-color: #D6EEEE;}
-            .tbl-header{
-              background-color: #D6EEEE;
-             }
-            .tbl-content{
-              height:300px;
-              overflow-x:auto;
-              margin-top: 0px;
-              border: 1px solid rgba(255,255,255,0.3);
-            }
-        </style>
+    <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body class="bg-light">
+    
       <!-- Navbar -->
       <div class="container">
-      <nav class="navbar navbar-light bg-light">
+      <nav class="navbar common-shadow">
           <div class="container mt-0">
               <a class="nav-link" href="/admin/dashboard" style="color: black;">Dashboard</a>
               <div style="display: flex; align-items: center;">
@@ -55,9 +34,8 @@
       </nav>
       </div>
 
-
     <!-- Main Content -->
-    <main class="container mt-4">
+    <main class="container common-shadow mt-4">
         <!-- Register New Student Button -->
         <button class="btn btn-success mb-3" data-toggle="modal" data-target="#registerStudentModal">Register New Student</button>
 
@@ -134,7 +112,7 @@
 
         <!-- Student Details Table -->
         <div class="table-responsive">
-            <table class="table tbl-header">
+            <table class="shadow-table table-bordered">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -152,7 +130,7 @@
                 </thead>
             </table>
             <div class="table-responsive">
-                <table class="table table-striped tbl-content">
+                <table class="table table-striped tbl-content ">
                     <tbody id="studentTableBody">
                         <% students.forEach(function(student) { %>
                         <tr>
@@ -176,8 +154,6 @@
                 </table>
             </div>
         </div>
-
-                    
 
         <!-- Register New Student Modal -->
         <div class="modal fade" id="registerStudentModal" tabindex="-1" role="dialog" aria-labelledby="registerStudentModalLabel" aria-hidden="true">
