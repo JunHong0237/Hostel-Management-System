@@ -6,22 +6,24 @@
   <title>Select Room</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css" />
- 
+</head>
 <body class>
-  <div class="container common-shadow mt-2">
-    <nav style="display: flex; justify-content: space-between; align-items: center;">
-        <!-- Return Button as Navbar Brand for better alignment and navigation usage -->
-        <a class="navbar-brand" href="/dashboard?std_id=<%= studentId %>">
-            <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
-        </a>
-        <!-- Centered Title -->
-        <span style="position: absolute; left: 50%; transform: translateX(-50%);">
-            <h1>Room Selection</h1>
-        </span>
-        <!-- Placeholder for balance -->
-        <div></div>
-    </nav>
+  <div class="container common-shadow mt-0">
+      <nav style="display: flex; justify-content: space-between; align-items: center;">
+          <!-- Return Button as Navbar Brand for better alignment and navigation usage -->
+           <a class="navbar-brand" href="/dashboard?std_id=<%= studentId %>">
+               <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
+          </a>
+          <span style="position: absolute; left: 50%; transform: translateX(-50%);">
+              <h1>Room Selection</h1>
+          </span>
+          <div></div>
+      </nav>
+  </div>
+  
+
 <br>
+  <div class="container common-shadow mt-2">
     <div class="mb-4">
       <div class="container d-flex align-items-center">       
         <!-- Reminder Arrow Trigger for Modal -->
@@ -103,18 +105,18 @@
       </div>
         
   <script>
-      function filterRooms() {
-        const filter = document.getElementById('roomTypeFilter').value;
-        const rooms = document.querySelectorAll('.room-card');
-        rooms.forEach(room => {
-          const roomType = room.getAttribute('data-room-type');
-          if (filter === 'All' || roomType === filter) {
-            room.style.display = 'block';
-          } else {
-            room.style.display = 'none';
-          }
-        });
-      }
+    function filterRooms() {
+      const filter = document.getElementById('roomTypeFilter').value;
+      const rooms = document.querySelectorAll('.room-card');
+      rooms.forEach(room => {
+        const roomType = room.getAttribute('data-room-type');
+        if (filter === 'All' || roomType === filter) {
+          room.style.display = 'block';
+        } else {
+          room.style.display = 'none';
+        }
+      });
+    }
   </script>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -7,11 +7,22 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
+    <div class="container mt-0">
 <body class="bg-light">
-    <div class="container mt-2">
-        <div class="card common-shadow">
-            <div class="card-body common-shadow">
-                <h1 class="card-title text-center mb-4">Room Details</h1>
+    <div class="container common-shadow mt-0">
+        <nav style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Return Button as Navbar Brand for better alignment and navigation usage -->
+             <a class="navbar-brand" href="/select-room?std_id=<%= selectedStudent.std_id %>">
+                 <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
+            </a>
+            <span style="position: absolute; left: 50%; transform: translateX(-50%);">
+                <h1>Room Details</h1>
+            </span>
+            <div></div>
+        </nav>
+    </div>
+        
+            <div class="card-body">
                 <table class="table">
                   <tbody>
                     <tr>
@@ -33,8 +44,8 @@
                   </tbody>
                 </table>
 
-<br><br>
-                <h2 class="text-center mb-4">Other Students in Room</h2>
+<br>
+                <h3 class="text-center mb-4">Other Students in Room</h3>
                 <div class="table-responsive mb-4">
                      <table class="shadow-table">
                         <thead >
@@ -75,8 +86,8 @@
                     </table>
                 </div>
 
-
-                <h2 class="text-center mb-4">Your Information</h2>
+<br>
+                <h3 class="text-center mb-4">Your Information</h3>
                 <div class="table-responsive mb-4">
                     <table class="shadow-table">
                         <thead class="thead-light">
@@ -104,9 +115,8 @@
                         </tbody>
                     </table>
                 </div>
-
+<br><br>
                 <div class="text-center">
-                    <a href="/select-room?std_id=<%= selectedStudent.std_id %>" class="btn btn-secondary">Return</a>
                     <form action="/select-room/<%= room.room_id %>" method="post" class="d-inline">
                         <input type="hidden" name="std_id" value="<%= selectedStudent.std_id %>">
                         <button type="submit" class="btn btn-success" >Select Room</button>
