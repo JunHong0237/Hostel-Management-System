@@ -146,10 +146,11 @@
       </div>
   
       <!-- Download message -->
-       <div id="downloadingMessage" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index: 1000; background-color: #00ff33; padding: 10px; border: 1px solid #ccc;">
-           Downloading report...
-       </div>
-        
+      <div id="downloadingMessage">
+          <div class="spinner"></div>
+          <p>Downloading...</p>
+      </div>
+  
       <!-- Success Modal -->
       <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
