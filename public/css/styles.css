@@ -1,8 +1,4 @@
 /* styles.css */
-
-/* Body background color for full height */
-
-
 /* Card border radius */
 .card {
   border-radius: 1rem;
@@ -13,7 +9,6 @@
   border-radius: 1rem;
 }
 
-
 /* Common styles for elements needing shadow and rounded corners */
 .common-shadow {
   background: #fff;
@@ -21,7 +16,6 @@
   box-shadow: 0 20px 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
 }
-
 
 /* Table styles */
 table {
@@ -36,6 +30,13 @@ td {
   border-bottom: 1px solid #DDD;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+thead {
+  color: #007bff;
+  /* Sets the text color */
+  font-weight: bold;
+  /* Makes the text bold */
 }
 
 tr:hover {
@@ -80,6 +81,12 @@ tr:hover {
   box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
 }
 
+.room-selection-card-header h5 {
+  color: #007bff;
+  font-weight: bold;
+  text-align: center;
+}
+
 /* Card Body */
 .room-selection-card-body {
   padding: 20px;
@@ -119,7 +126,7 @@ tr:hover {
 
 .summary-card {
   background: #fff;
-  border-radius: 8px;
+  border-radius: 1px;
   box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   text-align: center;
@@ -146,8 +153,8 @@ tr:hover {
 
 .chart-card {
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 1px;
+  box-shadow: 0 15px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
 }
 
@@ -203,4 +210,8 @@ tr:hover {
 
 .button-container .btn {
   margin: 0 10px;
+}
+
+.all-btn {
+  box-shadow: 0 15px 10px rgba(0, 0, 0, 0.1);
 }

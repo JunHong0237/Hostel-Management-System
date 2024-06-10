@@ -7,7 +7,7 @@
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
-<body class>
+<body class="bg-light">
   <div class="container common-shadow mt-0">
       <nav style="display: flex; justify-content: space-between; align-items: center;">
           <!-- Return Button as Navbar Brand for better alignment and navigation usage -->
@@ -15,7 +15,7 @@
                <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
           </a>
           <span style="position: absolute; left: 50%; transform: translateX(-50%);">
-              <h1>Room Selection</h1>
+              <h1 style="color: #007bff; font-weight: bold;">Room Selection</h1>
           </span>
           <div></div>
       </nav>
@@ -48,7 +48,7 @@
           <div class="col-md-3 mb-4 room-card" data-room-type="<%= room.room_capacity %>">
             <div class="room-selection-card">
               <div class="room-selection-card-header">
-                <h5 class="mb-0">Room Number: <%= room.room_no %></h5>
+                <h5 class="mb-0" >Room Number: <%= room.room_no %></h5>
               </div>
               <div class="room-selection-card-body">
                 <p class="card-text"><strong>Capacity:</strong> <%= room.room_capacity %></p>
@@ -63,7 +63,7 @@
                 </div>
                 <br>
                 <div class="text-center">
-                <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>" class="btn btn-success" >View Details</a>
+                <a href="/view-room-details/<%= room.room_id %>?std_id=<%= studentId %>" class="btn all-btn btn-success" >View Details</a>
                 </div>
               </div>
             </div>

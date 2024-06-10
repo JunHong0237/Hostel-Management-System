@@ -16,7 +16,7 @@
                  <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
             </a>
             <span style="position: absolute; left: 50%; transform: translateX(-50%);">
-                <h1>Room Details</h1>
+                <h1 style="color: #007bff; font-weight: bold;">Room Details</h1>
             </span>
             <div></div>
         </nav>
@@ -45,7 +45,7 @@
                 </table>
 
 <br>
-                <h3 class="text-center mb-4">Other Students in Room</h3>
+                <h3 class="text-center mb-4" style="color: #666e6e; font-weight: bold;"">Other Students in Room</h3>
                 <div class="table-responsive mb-4">
                      <table class="shadow-table">
                         <thead >
@@ -87,7 +87,7 @@
                 </div>
 
 <br>
-                <h3 class="text-center mb-4">Your Information</h3>
+                <h3 class="text-center mb-4" style="color: #666e6e; font-weight: bold;">Your Information</h3>
                 <div class="table-responsive mb-4">
                     <table class="shadow-table">
                         <thead class="thead-light">
@@ -119,7 +119,7 @@
                 <div class="text-center">
                     <form action="/select-room/<%= room.room_id %>" method="post" class="d-inline">
                         <input type="hidden" name="std_id" value="<%= selectedStudent.std_id %>">
-                        <button type="submit" class="btn btn-success" >Select Room</button>
+                        <button type="submit" class="btn all-btn btn-success" >Select Room</button>
                     </form>
                 </div>
             </div>
@@ -140,7 +140,7 @@
                     You have successfully selected the room!
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="redirectToDashboard()">Return to Dashboard</button>
+                    <button type="button" class="btn all-btn btn-primary" onclick="redirectToDashboard()">Return to Dashboard</button>
                 </div>
             </div>
         </div>

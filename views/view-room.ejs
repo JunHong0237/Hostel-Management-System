@@ -16,7 +16,7 @@
                      <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
                 </a>
                 <span style="position: absolute; left: 50%; transform: translateX(-50%);">
-                    <h1>Room Information</h1>
+                    <h1 style="color: #007bff; font-weight: bold; ">Room Information</h1>
                 </span>
                 <div></div>
             </nav>
@@ -45,7 +45,7 @@
                 </table>
                 
 <br>
-                <h3 class="card-title text-center mb-4">Students in Room</h3>
+                <h3 class="card-title text-center mb-4" style="color: #666e6e; font-weight: bold;">Students in Room</h3>
                 <div class="table-responsive">
                     <table class="shadow-table">
                         <thead>
@@ -77,7 +77,7 @@
                                     <td><%= student.std_email %></td>
                                     <td><%= student.std_phone %></td>
                                     <td>
-                                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmUnassignModal" data-student-id="<%= student.std_id %>">Unassign</button>
+                                    <button class="btn all-btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmUnassignModal" data-student-id="<%= student.std_id %>">Unassign</button>
                                     </td>
                                 </tr>
                             <% }); %>
@@ -106,8 +106,8 @@
                     Are you sure you want to unassign this student?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <a id="confirmUnassignButton" href="#" class="btn btn-danger">Unassign</a>
+                    <button type="button" class="btn all-btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <a id="confirmUnassignButton" href="#" class="btn all-btn btn-danger">Unassign</a>
                 </div>
             </div>
         </div>

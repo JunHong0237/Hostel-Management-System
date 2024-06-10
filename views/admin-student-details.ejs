@@ -15,7 +15,7 @@
           <div class="container mt-0">
               <a class="nav-link" href="/admin/dashboard" style="color: black;">Dashboard</a>
               <div style="display: flex; align-items: center;">
-                  <a class="navbar-brand" href="/admin/students" style="color: black; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Student Details</a>
+                  <a class="navbar-brand" href="/admin/students" style="color: #007bff; font-weight: bold;">Student Details</a>
                   <a class="nav-link" href="/admin/rooms" style="color: black;">Room Details</a>
 
               </div>
@@ -37,7 +37,7 @@
     <!-- Main Content -->
     <main class="container common-shadow mt-4">
         <!-- Register New Student Button -->
-        <button class="btn btn-success mb-3" data-toggle="modal" data-target="#registerStudentModal">Register New Student</button>
+        <button class="btn all-btn btn-success mb-3" data-toggle="modal" data-target="#registerStudentModal">Register New Student</button>
 
         <!-- Filter and Search Options -->
         <div class="row mb-3">
@@ -113,7 +113,7 @@
         <!-- Student Details Table -->
         <div class="table-responsive">
             <table class="shadow-table table-bordered">
-                <thead>
+                <thead >
                     <tr>
                         <th>ID</th>
                         <th>Full Name</th>
@@ -145,8 +145,8 @@
                             <td><%= student.std_pref %></td>
                             <td><%= new Date(student.reg_date).toLocaleString('en-GB', { timeZone: 'UTC', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '') %></td>
                             <td class="text-center">
-                                <button class="btn btn-success btn-sm" onclick="openEditModal('<%= student.std_id %>', '<%= student.std_fullname %>', '<%= student.std_gender %>')">Edit</button>
-                                <button class="btn btn-danger btn-sm" onclick="openDeleteModal('<%= student.std_id %>', '<%= student.std_fullname %>')">Delete</button>
+                                <button class="btn all-btn btn-success btn-sm" onclick="openEditModal('<%= student.std_id %>', '<%= student.std_fullname %>', '<%= student.std_gender %>')">Edit</button>
+                                <button class="btn all-btn btn-danger btn-sm" onclick="openDeleteModal('<%= student.std_id %>', '<%= student.std_fullname %>')">Delete</button>
                             </td>
                         </tr>
                         <% }); %>
@@ -187,7 +187,7 @@
                                 <input type="password" id="std_password" name="std_password" class="form-control" placeholder="Enter Initial Password" required>
                             </div>
                             <div class="text-center">
-                            <button type="submit" class="btn btn-success" >Register</button>
+                            <button type="submit" class="btn all-btn btn-success" >Register</button>
                             </div>
                         </form>
                     </div>
@@ -224,7 +224,7 @@
                                 <input type="password" id="edit_std_password" name="std_password" class="form-control" placeholder="Enter New Password">
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-success">Update Student</button>
+                                <button type="submit" class="btn all-btn btn-success">Update Student</button>
                             </div>
                         </form>
                     </div>
@@ -247,8 +247,8 @@
                         <form id="deleteStudentForm" action="/admin/students/delete" method="post">
                             <input type="hidden" id="delete_std_id" name="std_id">
                             <div class="text-right">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="button" class="btn all-btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn all-btn btn-danger">Delete</button>
                             </div>
                         </form>
                     </div>
