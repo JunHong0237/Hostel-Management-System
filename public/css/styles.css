@@ -1,4 +1,30 @@
 /* styles.css */
+login-body {
+  font-family: "Arial", sans-serif;
+  background-image: url("/images/background-image.jpg");
+  background-attachment: fixed;
+  background-size: cover;
+  height: 100vh; /* Optional: May help cover the full viewport height */
+  width: 100vw; /* Optional: May help cover the full viewport width */
+  margin: 0;
+}
+
+.login-container {
+  max-width: 300px;
+  width: 100%;
+  padding: 2em;
+  border-radius: 1px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  margin-left: 600px;
+}
+.login-container h2 {
+  color: #333;
+  margin-bottom: 1em;
+}
+.login-container .btn {
+  font-size: 1.1em;
+}
+
 /* Card border radius */
 .card {
   border-radius: 1rem;
@@ -6,7 +32,7 @@
 
 /* Image styling */
 .card img {
-  border-radius: 1rem;
+  border-radius: 1pix;
 }
 
 /* Common styles for elements needing shadow and rounded corners */
@@ -213,5 +239,5 @@ tr:hover {
 }
 
 .all-btn {
-  box-shadow: 0 15px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 10px rgba(0, 0, 0, 0.1);
 }

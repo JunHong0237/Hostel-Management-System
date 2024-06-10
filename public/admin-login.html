@@ -8,90 +8,40 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/public/css/styles.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
-  <body>
-    <section class="vh-100" style="background-color: rgb(0, 206, 255)">
-      <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-          <div class="col col-xl-10">
-            <div class="card" style="border-radius: 1rem">
-              <div class="row g-0">
-                <div class="col-md-6 col-lg-5 d-none d-md-block">
-                  <img
-                    src="/images/hms_logo.png"
-                    alt="login form"
-                    class="img-fluid"
-                    style="border-radius: 1rem 0 0 1rem"
-                    width="800"
-                    height="800"
-                    positiion="centre"
-                  />
-                </div>
-                <div class="col-md-6 col-lg-7 d-flex align-items-center">
-                  <div class="card-body p-4 p-lg-5 text-black">
-                    <form action="/admin/login" method="post">
-                      <div class="d-flex align-items-center mb-3 pb-1">
-                        <i
-                          class="fas fa-cubes fa-2x me-3"
-                          style="color: #ff6219"
-                        ></i>
-                      </div>
-                      <h5
-                        class="fw-normal mb-3 pb-3"
-                        style="letter-spacing: 1px"
-                      >
-                        Admin Login
-                      </h5>
-                      <div data-mdb-input-init class="form-outline mb-4">
-                        <label class="form-label form-label-top" for="admin_id"
-                          >Admin ID</label
-                        >
-                        <input
-                          type="text"
-                          id="admin_id"
-                          name="admin_id"
-                          class="form-control form-control-lg"
-                          placeholder="Enter Admin ID"
-                          required
-                        />
-                      </div>
-                      <div data-mdb-input-init class="form-outline mb-4">
-                        <label
-                          class="form-label form-label-top"
-                          for="admin_password"
-                          >Password</label
-                        >
-                        <input
-                          type="password"
-                          id="admin_password"
-                          name="admin_password"
-                          class="form-control form-control-lg"
-                          placeholder="Enter Password"
-                          required
-                        />
-                      </div>
-                      <div class="pt-1 mb-4">
-                        <button
-                          class="btn btn-success btn-lg btn-block"
-                          type="submit"
-                        >
-                          Login
-                        </button>
-                      </div>
-
-                      <p class="mb-5 pb-lg-2" style="color: #393f81">
-                        Are you a student?<a href="/login.html"> Login Here</a>
-                      </p>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+  <login-body class="d-flex align-items-center justify-content-center">
+    <div class="login-container bg-white">
+      <h2 class="text-center mb-4">Admin Login</h2>
+      <form action="/admin/login" method="post">
+        <div class="form-group">
+          <label for="admin_id">Admin ID</label>
+          <input
+            type="text"
+            class="form-control"
+            id="admin_id"
+            name="admin_id"
+            placeholder="Enter Admin ID"
+            required
+          />
         </div>
-      </div>
-    </section>
+        <div class="form-group">
+          <label for="admin_password">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="admin_password"
+            name="admin_password"
+            placeholder="Enter Password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-success btn-block">Login</button>
+        <div class="text-center mt-3">
+          <a href="/login.html">Student login</a>
+        </div>
+      </form>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

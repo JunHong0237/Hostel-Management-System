@@ -7,6 +7,22 @@
         "version": 920,
         "index": 0
       }
+    ],
+    "public/login.html": [
+      {
+        "id": "42d1733d-d377-4f49-bcf3-fa81298eb3e5",
+        "line": 1,
+        "version": 665,
+        "index": 0
+      }
+    ],
+    "views/view-room-details.ejs": [
+      {
+        "id": "3071b65b-8cc2-4dd8-8792-b322bd18895f",
+        "line": 43,
+        "version": 562,
+        "index": 1860
+      }
     ]
   }
 }
