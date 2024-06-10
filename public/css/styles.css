@@ -14,17 +14,29 @@ login-body {
   width: 100%;
   padding: 2em;
   border-radius: 1px;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 30px 30px rgba(0, 0, 0, 0.1);
   margin-left: 600px;
 }
 .login-container h2 {
-  color: #333;
+  font-family: "Times New Roman", Times, serif;
   margin-bottom: 1em;
+  color: #007bff;
+  font-weight: bold;
 }
 .login-container .btn {
   font-size: 1.1em;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
 }
 
+body {
+  font-family: "Arial", sans-serif;
+  background-image: url("/images/background-image.jpg");
+  background-attachment: fixed;
+  background-size: cover;
+  height: 100vh; /* Optional: May help cover the full viewport height */
+  width: 100vw; /* Optional: May help cover the full viewport width */
+  margin: 0;
+}
 /* Card border radius */
 .card {
   border-radius: 1rem;
@@ -39,7 +51,7 @@ login-body {
 .common-shadow {
   background: #fff;
   border-radius: 1px;
-  box-shadow: 0 20px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 30px 30px rgba(0, 0, 0, 0.1);
   padding: 20px;
 }
 

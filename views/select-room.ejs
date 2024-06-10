@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body class="bg-light">
-  <div class="container common-shadow mt-0">
+  <nav class="navbar common-shadow">
+    <div class="container mt-0">
       <nav style="display: flex; justify-content: space-between; align-items: center;">
           <!-- Return Button as Navbar Brand for better alignment and navigation usage -->
            <a class="navbar-brand" href="/dashboard?std_id=<%= studentId %>">
@@ -20,7 +21,8 @@
           <div></div>
       </nav>
   </div>
-  
+  </nav>
+
 
 <br>
   <div class="container common-shadow mt-2">
@@ -41,7 +43,8 @@
         </select>
       </div>
     </div>
-
+  </div>
+  <div class="container">
     <div class="row">
       <% if (rooms.length > 0) { %>
         <% rooms.forEach(room => { %>
@@ -75,6 +78,8 @@
       <% } %>
     </div>
   </div>
+      </div>
+
       </div>
       <!-- Explanation Modal -->
       <div class="modal fade" id="explanationModal" tabindex="-1" role="dialog" aria-labelledby="explanationModalLabel" aria-hidden="true">

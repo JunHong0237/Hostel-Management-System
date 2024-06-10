@@ -7,9 +7,10 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
-    <div class="container mt-0">
+    
 <body class="bg-light">
-    <div class="container common-shadow mt-0">
+        <nav class="navbar common-shadow">
+            <div class="container mt-0">
         <nav style="display: flex; justify-content: space-between; align-items: center;">
             <!-- Return Button as Navbar Brand for better alignment and navigation usage -->
              <a class="navbar-brand" href="/select-room?std_id=<%= selectedStudent.std_id %>">
@@ -21,8 +22,10 @@
             <div></div>
         </nav>
     </div>
+        </nav>
+    
         
-            <div class="card-body">
+            <div class="container common-shadow mt-2">
                 <table class="table">
                   <tbody>
                     <tr>
@@ -43,8 +46,9 @@
                     </tr>
                   </tbody>
                 </table>
-
+            </div>
 <br>
+    <div class="container common-shadow">
                 <h3 class="text-center mb-4" style="color: #666e6e; font-weight: bold;"">Other Students in Room</h3>
                 <div class="table-responsive mb-4">
                      <table class="shadow-table">
@@ -85,8 +89,10 @@
                         </tbody>
                     </table>
                 </div>
-
+                            </div>
+                            </div>
 <br>
+ <div class="container common-shadow">
                 <h3 class="text-center mb-4" style="color: #666e6e; font-weight: bold;">Your Information</h3>
                 <div class="table-responsive mb-4">
                     <table class="shadow-table">
@@ -125,7 +131,8 @@
             </div>
         </div>
     </div>
-                            
+ </div>    
+                                      
     <!-- Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">

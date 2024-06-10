@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
 
-<body class="bg-light">
-    <div class="container">
+<body >
+    
         <nav class="navbar common-shadow">
             <div class="container mt-0">
                 <h4 style="color: #007bff; font-weight: bold;"">Dashboard</h4>
@@ -33,17 +33,17 @@
                 </div>
             </div>
         </nav>
-        </div>
+        
   
-    <div class="container common-shadow mt-4">
-        <div class="card mb-4">
-            <div class="card-body common-shadow text-center">
+    
+        
+            <div class="container common-shadow text-center mt-5">
                 <% if (student.profile_pic) { %>
                     <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" width="150" height="180">
                 <% } else { %>
                     <img src="/images/profile.jpg" alt="Profile Picture" width="150" height="160">
                 <% } %>
-                <table class="shadow-table text-justified mt-3">
+                <table class="table text-justified mt-3">
                     <tr>
                         <th>Student ID</th>
                         <td><%= student.std_id %></td>
@@ -90,9 +90,9 @@
                     </tr>
                 </table>
             </div>
-        </div>
-        <div class="card mb-4">
-            <div class="card-body common-shadow">
+     
+        
+            <div class="container common-shadow mt-4">
                 <h4 class="card-title text-center" style="color: #007bff; font-weight: bold;">Room Summary</h4>
                 <% if (!student.room_id) { %>
                     <p class="text-center">No record</p>
@@ -173,7 +173,7 @@
             </div>
         </div>
     </div>
- </div>
+
 <br>
     <!-- Edit Profile Modal -->
     <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
