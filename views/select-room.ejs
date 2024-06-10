@@ -5,82 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Select Room</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-
-
-    /* Card Container */
-    .card {
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      margin: 20px;
-      max-width: 300px;
-      transition: transform 0.2s ease-in-out;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    /* Card Header */
-    .card-header {
-      background-color: #f8f9fa;
-      padding: 20px;
-      font-size: 1.25em;
-      font-weight: bold;
-      border-bottom: 1px solid #e9ecef;
-    }
-
-    /* Card Body */
-    .card-body {
-      padding: 20px;
-      font-size: 1em;
-      color: #333;
-    }
-
-    /* Card Footer */
-    .card-footer {
-      background-color: #f8f9fa;
-      padding: 10px 20px;
-      text-align: right;
-      border-top: 1px solid #e9ecef;
-    }
-
-    .card-footer a {
-      color: #007bff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .card-footer a:hover {
-      text-decoration: underline;
-    }
-
-  </style>
+  <link rel="stylesheet" href="/css/styles.css" />
+ 
 <body class>
-  <div class="container mt-5">
+  <div class="container common-shadow mt-2">
     <nav style="display: flex; justify-content: space-between; align-items: center;">
         <!-- Return Button as Navbar Brand for better alignment and navigation usage -->
         <a class="navbar-brand" href="/dashboard?std_id=<%= studentId %>">
             <img src="/images/returnicon.jpg" alt="Return Arrow" style="width: 20px; height: 20px; margin-right: 10px;">
-            
         </a>
-
         <!-- Centered Title -->
         <span style="position: absolute; left: 50%; transform: translateX(-50%);">
             <h1>Room Selection</h1>
         </span>
-
         <!-- Placeholder for balance -->
         <div></div>
     </nav>
-
-
-      
-   
 <br>
-
     <div class="mb-4">
       <div class="container d-flex align-items-center">       
         <!-- Reminder Arrow Trigger for Modal -->
@@ -99,16 +40,15 @@
       </div>
     </div>
 
-
     <div class="row">
       <% if (rooms.length > 0) { %>
         <% rooms.forEach(room => { %>
           <div class="col-md-3 mb-4 room-card" data-room-type="<%= room.room_capacity %>">
-            <div class="card shadow-sm">
-              <div class="card-header" style="background-color: #D6EEEE">
+            <div class="room-selection-card">
+              <div class="room-selection-card-header">
                 <h5 class="mb-0">Room Number: <%= room.room_no %></h5>
               </div>
-              <div class="card-body">
+              <div class="room-selection-card-body">
                 <p class="card-text"><strong>Capacity:</strong> <%= room.room_capacity %></p>
                 <p class="card-text"><strong>Occupancy:</strong> <%= room.room_occupancy %></p>
                 <p class="card-text"><strong>Available Beds:</strong> <%= room.room_capacity - room.room_occupancy %></p>
@@ -134,48 +74,48 @@
     </div>
   </div>
       </div>
-  <script>
-  function filterRooms() {
-    const filter = document.getElementById('roomTypeFilter').value;
-    const rooms = document.querySelectorAll('.room-card');
-    rooms.forEach(room => {
-      const roomType = room.getAttribute('data-room-type');
-      if (filter === 'All' || roomType === filter) {
-        room.style.display = 'block';
-      } else {
-        room.style.display = 'none';
-      }
-    });
-  }
-  </script>
-        <!-- Explanation Modal -->
-        <div class="modal fade" id="explanationModal" tabindex="-1" role="dialog" aria-labelledby="explanationModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="explanationModalLabel">Understanding Room Recommendations</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <p>Rooms are recommended based on how well they match your preferences and the preferences of your potential roommates. The higher the percentage, the better the match.</p>
-                <p>The recommendation is based on the following weighted criteria, which contribute to the overall compatibility score:</p>
-                <ul>
-                  <li><strong>Room Environment Preference:</strong> Matches your preference (40 points per match).</li>
-                  <li><strong>Faculty:</strong> Matches your faculty (20 points per match).</li>
-                  <li><strong>Year of Study:</strong> Matches your year of study (10 points per match).</li>
-                  <li><strong>State of Residence:</strong> Matches your state of residence (5 points per match).</li>
-                </ul>
-                <p>This tailored approach aims to enhance your living experience by aligning your environment with individuals who share similar academic and personal backgrounds.</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
+      <!-- Explanation Modal -->
+      <div class="modal fade" id="explanationModal" tabindex="-1" role="dialog" aria-labelledby="explanationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="explanationModalLabel">Understanding Room Recommendations</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Rooms are recommended based on how well they match your preferences and the preferences of your potential roommates. The higher the percentage, the better the match.</p>
+              <p>The recommendation is based on the following weighted criteria, which contribute to the overall compatibility score:</p>
+              <ul>
+                <li><strong>Room Environment Preference:</strong> Matches your preference (40 points per match).</li>
+                <li><strong>Faculty:</strong> Matches your faculty (20 points per match).</li>
+                <li><strong>Year of Study:</strong> Matches your year of study (10 points per match).</li>
+                <li><strong>State of Residence:</strong> Matches your state of residence (5 points per match).</li>
+              </ul>
+              <p>This tailored approach aims to enhance your living experience by aligning your environment with individuals who share similar academic and personal backgrounds.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
-
+      </div>
+        
+  <script>
+      function filterRooms() {
+        const filter = document.getElementById('roomTypeFilter').value;
+        const rooms = document.querySelectorAll('.room-card');
+        rooms.forEach(room => {
+          const roomType = room.getAttribute('data-room-type');
+          if (filter === 'All' || roomType === filter) {
+            room.style.display = 'block';
+          } else {
+            room.style.display = 'none';
+          }
+        });
+      }
+  </script>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

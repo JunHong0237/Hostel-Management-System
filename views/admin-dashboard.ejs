@@ -60,62 +60,51 @@
             font-size: 18px;
             color: #333;
         }
-
-
-
-        /* Specific size adjustments for each card */
         .gender-distribution-card {
-            width: calc(33% - 10px); /* One third width */
+            width: calc(33% - 10px); 
         }
 
         .student-registration-card {
-            width: calc(65% - 10px); /* Half width */
+            width: calc(65% - 10px); 
 
         }
-
         .students-by-faculty-card {
-            width: calc(63% - 25px); /* One quarter width */
+            width: calc(63% - 25px); 
           display: flex;
           flex-direction: column;
           justify-content: center;
         }
-
         .students-by-year-card {
-            width: calc(63% - 25px); /* 40% width */
+            width: calc(63% - 25px); 
         }
 
         .room-environment-card {
-            width: calc(37% - 5px); /* 30% width */
+            width: calc(37% - 5px); 
         }
 
         .room-occupancy-card {
-            width: calc(37% - 5px); /* 45% width */
+            width: calc(37% - 5px); 
         }
-        
-        /* Specific styles for the Room Type Distribution card */
         .room-type-card {
-          width: 100%; /* 35% width */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+          width: 100%; 
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
-
-
         .state-of-residence-card {
-            width: 100%; /* Full width */
+            width: 100%; 
         }
-
         .button-container {
             display: flex;
             justify-content: center;    
         }
         .button-container .btn {
-            margin: 0 10px; /* Space between the buttons */
+            margin: 0 10px; 
         }
       </style>
       </head>
       <body class="bg-light">
-      <!-- Bootstrap Navbar -->
+      <!-- Navbar -->
         <div class="container">
         <nav class="navbar navbar-light bg-light">
             <div class="container mt-0">
@@ -138,8 +127,6 @@
             </div>
         </nav>
         </div>
-
-
 
 <div class="container">
       <div class="container mt-2">
@@ -169,7 +156,6 @@
           <h3>Student Registration Over Time</h3>
           <label for="yearFilter">Year:</label>
           <select id="yearFilter" onchange="updateChart()">
-            <!-- Year options will be populated dynamically by JavaScript -->
           </select>
           <canvas id="studentRegistrationOverTimeChart"></canvas>
       </div>
@@ -177,7 +163,6 @@
         <h3>Students by Year of Study</h3>
         <canvas id="studentsByYearOfStudyChart"></canvas>
     </div>
-
     <div class="chart-card room-environment-card">
         <h3>Room Environment Preference</h3>
         <canvas id="roomEnvironmentPreferenceChart"></canvas>
@@ -187,7 +172,6 @@
       <div class="chart-container">
         <canvas id="studentsByFacultyChart"></canvas>
       </div>
-        
     </div>
     <div class="chart-card room-occupancy-card">
         <h3>Room Occupancy</h3>
@@ -218,7 +202,6 @@
   <div class="container button-container">
       <!-- Button to trigger report generation -->
       <button id="generateReportButton" class="btn btn-primary">Generate Report</button>
-
       <!-- Button to trigger chart display -->
       <button id="displayChartsButton" class="btn btn-primary">Display Charts</button>
   </div>
@@ -253,6 +236,7 @@
        <div id="downloadingMessage" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index: 1000; background-color: #00ff33; padding: 10px; border: 1px solid #ccc;">
            Downloading report...
        </div>
+        
       <!-- Success Modal -->
       <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -319,42 +303,42 @@
             return await response.json();
           }
 
-              // Gender Distribution Pie Chart with Percentages
-              async function renderGenderDistributionChart() {
-                const data = await fetchChartData('/admin/gender-distribution');
-                const labels = data.map(item => item.std_gender);
-                const counts = data.map(item => item.count);
-                const total = counts.reduce((sum, count) => sum + count, 0);
+        // Gender Distribution Pie Chart with Percentages
+        async function renderGenderDistributionChart() {
+          const data = await fetchChartData('/admin/gender-distribution');
+          const labels = data.map(item => item.std_gender);
+          const counts = data.map(item => item.count);
+          const total = counts.reduce((sum, count) => sum + count, 0);
 
-                new Chart(document.getElementById('genderDistributionChart'), {
-                  type: 'pie',
-                  data: {
-                    labels: labels,
-                    datasets: [{
-                      label: 'Gender Distribution',
-                      data: counts,
-                      backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
-                    }]
+          new Chart(document.getElementById('genderDistributionChart'), {
+            type: 'pie',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Gender Distribution',
+                data: counts,
+                backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
+              }]
+            },
+            options: {
+              plugins: {
+                datalabels: {
+                  formatter: (value, context) => {
+                    const percentage = (value / total * 100).toFixed(1);
+                    return `${percentage}%`;
                   },
-                  options: {
-                    plugins: {
-                      datalabels: {
-                        formatter: (value, context) => {
-                          const percentage = (value / total * 100).toFixed(1);
-                          return `${percentage}%`;
-                        },
-                        color: '#fff',
-                        font: {
-                          weight: 'bold'
-                        }
-                      }
-                    }
-                  },
-                  plugins: [ChartDataLabels]
-                });
+                  color: '#fff',
+                  font: {
+                    weight: 'bold'
+                  }
+                }
               }
+            },
+            plugins: [ChartDataLabels]
+          });
+        }
 
-              // Students by Faculty Bar Chart 
+        // Students by Faculty Bar Chart 
         async function renderStudentsByFacultyChart() {
           const data = await fetchChartData('/admin/students-by-faculty');
           const labels = data.map(item => item.std_faculty);
@@ -440,39 +424,39 @@
         }
 
           // Room Environment Preference Pie Chart
-              async function renderRoomEnvironmentPreferenceChart() {
-                const data = await fetchChartData('/admin/room-environment-preference');
-                const labels = data.map(item => item.std_pref);
-                const counts = data.map(item => item.count);
-                const total = counts.reduce((sum, count) => sum + count, 0);
-
-                new Chart(document.getElementById('roomEnvironmentPreferenceChart'), {
-                  type: 'doughnut',
-                  data: {
-                    labels: labels,
-                    datasets: [{
-                      label: 'Room Environment Preference',
-                      data: counts,
-                      backgroundColor: ['#009596', '#06C', '#EC7A08','grey']
-                    }]
-                  },
-                  options: {
-                    plugins: {
-                      datalabels: {
-                        formatter: (value, context) => {
-                          const percentage = (value / total * 100).toFixed(1);
-                          return `${percentage}%`;
-                        },
-                        color: '#fff',
-                        font: {
-                          weight: 'bold'
-                        }
-                      }
+          async function renderRoomEnvironmentPreferenceChart() {
+            const data = await fetchChartData('/admin/room-environment-preference');
+            const labels = data.map(item => item.std_pref);
+            const counts = data.map(item => item.count);
+            const total = counts.reduce((sum, count) => sum + count, 0);
+  
+            new Chart(document.getElementById('roomEnvironmentPreferenceChart'), {
+              type: 'doughnut',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Room Environment Preference',
+                  data: counts,
+                  backgroundColor: ['#009596', '#06C', '#EC7A08','grey']
+                }]
+              },
+              options: {
+                plugins: {
+                  datalabels: {
+                    formatter: (value, context) => {
+                      const percentage = (value / total * 100).toFixed(1);
+                      return `${percentage}%`;
+                    },
+                    color: '#fff',
+                    font: {
+                      weight: 'bold'
                     }
-                  },
-                  plugins: [ChartDataLabels]
-                });
-              }
+                  }
+                }
+              },
+              plugins: [ChartDataLabels]
+            });
+          }
 
           // Students by Year of Study Column Chart with Customizations
           async function renderStudentsByYearOfStudyChart() {
@@ -522,7 +506,7 @@
             });
           }
         
-            // Room type distribution Chart
+          // Room type distribution Chart
           async function renderRoomTypeDistributionChart() {
             const data = await fetchChartData('/admin/room-type-distribution');
             const labels = ['Single Room', 'Double Room', 'Quad Room'];
@@ -604,7 +588,7 @@
             });
           }
         
-            // Room occupancy Chart
+          // Room occupancy Chart
           async function renderRoomOccupancyChart() {
             const data = await fetchChartData('/admin/room-occupancy');
             const labels = ['Single Room', 'Double Room', 'Quad Room'];
@@ -708,61 +692,60 @@
             });
           }
 
-             // state of residence Chart
-              async function renderStateOfResidenceMap() {
-                const data = await fetchChartData('/admin/state-of-residence');
-                const stateData = {};
-                data.forEach(item => {
-                  stateData[item.std_state.toUpperCase()] = item.count;
-                });
+         // state of residence Chart
+          async function renderStateOfResidenceMap() {
+            const data = await fetchChartData('/admin/state-of-residence');
+            const stateData = {};
+            data.forEach(item => {
+              stateData[item.std_state.toUpperCase()] = item.count;
+            });
 
-                // Fetch Malaysia GeoJSON data
-                const response = await fetch('/json/malaysia-states.json');
-                const statesGeoJSON = await response.json();
+            // Fetch Malaysia GeoJSON data
+            const response = await fetch('/json/malaysia-states.json');
+            const statesGeoJSON = await response.json();
 
-                // Filter the GeoJSON to include only the specified states
-                const filteredGeoJSON = {
-                  type: 'FeatureCollection',
-                  features: statesGeoJSON.features.filter(feature =>
-                    ['JOHOR', 'KEDAH', 'KELANTAN', 'MELAKA', 'NEGERI SEMBILAN', 'PAHANG', 'PULAU PINANG', 'PERAK', 'PERLIS', 'SABAH', 'SARAWAK', 'SELANGOR', 'TERENGGANU', 'KUALA LUMPUR', 'LABUAN', 'PUTRAJAYA']
-                    .includes(feature.properties.name.toUpperCase())
-                  )
-                };
+            // Filter the GeoJSON to include only the specified states
+            const filteredGeoJSON = {
+              type: 'FeatureCollection',
+              features: statesGeoJSON.features.filter(feature =>
+                ['JOHOR', 'KEDAH', 'KELANTAN', 'MELAKA', 'NEGERI SEMBILAN', 'PAHANG', 'PULAU PINANG', 'PERAK', 'PERLIS', 'SABAH', 'SARAWAK', 'SELANGOR', 'TERENGGANU', 'KUALA LUMPUR', 'LABUAN', 'PUTRAJAYA']
+                .includes(feature.properties.name.toUpperCase())
+              )
+            };
 
-                const map = L.map('stateOfResidenceMap').setView([4.203998, 109.170778], 6); // Centered on Malaysia
+            const map = L.map('stateOfResidenceMap').setView([4.203998, 109.170778], 6); // Centered on Malaysia
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                  maxZoom: 18,
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 18,
+            }).addTo(map);
+
+            L.geoJSON(filteredGeoJSON, {
+              style: feature => {
+                const count = stateData[feature.properties.name.toUpperCase()] || 0;
+                const fillColor = count > 50 ? '#800026' :
+                                  count > 20 ? '#BD0026' :
+                                  count > 10 ? '#E31A1C' :
+                                  count > 5  ? '#FC4E2A' :
+                                  count > 0  ? '#FD8D3C' : '#FFEDA0';
+                return { fillColor, weight: 2, opacity: 1, color: 'white', dashArray: '3', fillOpacity: 0.7 };
+              },
+              onEachFeature: (feature, layer) => {
+                const count = stateData[feature.properties.name.toUpperCase()] || 0;
+                const center = layer.getBounds().getCenter();
+                L.marker(center, {
+                  icon: L.divIcon({
+                    className: 'label',
+                    html: `<div>${count}</div>`,
+                    iconSize: [30, 30]
+                  })
                 }).addTo(map);
-
-                L.geoJSON(filteredGeoJSON, {
-                  style: feature => {
-                    const count = stateData[feature.properties.name.toUpperCase()] || 0;
-                    const fillColor = count > 50 ? '#800026' :
-                                      count > 20 ? '#BD0026' :
-                                      count > 10 ? '#E31A1C' :
-                                      count > 5  ? '#FC4E2A' :
-                                      count > 0  ? '#FD8D3C' : '#FFEDA0';
-                    return { fillColor, weight: 2, opacity: 1, color: 'white', dashArray: '3', fillOpacity: 0.7 };
-                  },
-                  onEachFeature: (feature, layer) => {
-                    const count = stateData[feature.properties.name.toUpperCase()] || 0;
-                    const center = layer.getBounds().getCenter();
-                    L.marker(center, {
-                      icon: L.divIcon({
-                        className: 'label',
-                        html: `<div>${count}</div>`,
-                        iconSize: [30, 30]
-                      })
-                    }).addTo(map);
-                    layer.bindPopup(`${feature.properties.name}: ${count} students`);
-                  }
-                }).addTo(map);
+                layer.bindPopup(`${feature.properties.name}: ${count} students`);
               }
+            }).addTo(map);
+          }
 
-            // Student Registration Over Time Line Chart
+          // Student Registration Over Time Line Chart
           async function fetchFilteredData(year) {
-            // Adjust the URL and query parameters based on the filters
             let url = `/admin/student-registration-over-time?year=${year}`;
             return await fetchChartData(url);
           }
@@ -855,7 +838,6 @@
                   }
                 }
               },
-             // plugins: [ChartDataLabels]
             });
           }
 
@@ -1110,14 +1092,12 @@
       </script>
 
     
-        <script>
-            function logout() {
-                window.location.href = '/admin-login.html';
-            }
-        </script>
-  
-
-
+      <script>
+          function logout() {
+              window.location.href = '/admin-login.html';
+          }
+      </script>
+        
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

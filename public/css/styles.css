@@ -1,9 +1,7 @@
 /* styles.css */
 
 /* Body background color for full height */
-body {
-  background-color: rgb(0, 244, 255);
-}
+
 
 /* Card border radius */
 .card {
@@ -12,16 +10,93 @@ body {
 
 /* Image styling */
 .card img {
-  border-radius: 1rem 0 0 1rem;
+  border-radius: 1rem;
 }
 
-/* Button styling */
-.btn {
-  background-color: #393f81;
-  color: #fff;
+
+/* Common styles for elements needing shadow and rounded corners */
+.common-shadow {
+  background: #fff;
+  border-radius: 1px;
+  box-shadow: 0 20px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
-.btn:hover {
-  background-color: #282c6b;
-  color: #fff;
+
+/* Table styles */
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: center;
+  /* Corrected 'centre' to 'center' */
+  border-bottom: 1px solid #DDD;
+}
+
+tr:hover {
+  background-color: #dafffc;
+}
+
+.shadow-table th {
+  background-color: #f9f9f9;
+  /* Light grey background for headers */
+  box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tbl-content {
+  height: 300px;
+  overflow-x: auto;
+  margin-top: 0px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Card Container */
+.room-selection-card {
+  background-color: #fff;
+  border-radius: 1px;
+  box-shadow: 0 20px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 20px;
+  max-width: 300px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.room-selection-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Card Header */
+.room-selection-card-header {
+  background-color: #f1f1f1;
+  padding: 20px;
+  font-size: 1.25em;
+  font-weight: bold;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Body */
+.room-selection-card-body {
+  padding: 20px;
+  font-size: 1em;
+  color: #333;
+  box-shadow: 0 100px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Footer */
+.room-selection-card-footer {
+  background-color: #f8f9fa;
+  padding: 10px 20px;
+  text-align: right;
+  border-top: 1px solid #e9ecef;
+}
+
+.room-selection-card-footer a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
 }

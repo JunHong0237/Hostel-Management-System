@@ -5,36 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      table-layout: fixed;
-
-    }
-
-    th, td {
-      padding: 8px;
-      text-align: centre;
-      border-bottom: 1px solid #DDD;
-    }
-
-    tr:hover {background-color: #D6EEEE;}
-        .tbl-header{
-          background-color: #D6EEEE;
-         }
-        .tbl-content{
-          
-          overflow-x:auto;
-          margin-top: 0px;
-          border: 1px solid rgba(255,255,255,0.3);
-        }
-    </style>
+    <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body class="bg-light">
-    <div class="container mt-5">
-        <div class="card shadow-lg">
-            <div class="card-body">
+    <div class="container mt-2">
+        <div class="card common-shadow">
+            <div class="card-body common-shadow">
                 <h1 class="card-title text-center mb-4">Room Details</h1>
                 <table class="table">
                   <tbody>
@@ -58,10 +34,10 @@
                 </table>
 
 <br><br>
-                <h2 class="text-left mb-4">Other Students in Room</h2>
+                <h2 class="text-center mb-4">Other Students in Room</h2>
                 <div class="table-responsive mb-4">
-                     <table class="tbl-header table-bordered">
-                        <thead class="thead-light">
+                     <table class="shadow-table">
+                        <thead >
                             <tr>
                                 <th>#</th>
                                 <th>Faculty</th>
@@ -100,9 +76,9 @@
                 </div>
 <br><br>
 
-                <h2 class="text-left mb-4">Your Information</h2>
+                <h2 class="text-center mb-4">Your Information</h2>
                 <div class="table-responsive mb-4">
-                    <table class="tbl-header table-bordered">
+                    <table class="shadow-table">
                         <thead class="thead-light">
                             <tr>
                                 <th>Faculty</th>
@@ -128,7 +104,7 @@
                         </tbody>
                     </table>
                 </div>
-<br><br>
+<br>
                 <div class="text-center">
                     <a href="/select-room?std_id=<%= selectedStudent.std_id %>" class="btn btn-secondary">Return</a>
                     <form action="/select-room/<%= room.room_id %>" method="post" class="d-inline">
@@ -139,7 +115,7 @@
             </div>
         </div>
     </div>
-
+                            
     <!-- Success Modal -->
     <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">

@@ -5,38 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      table-layout: fixed;
-        
-    }
-
-    th, td {
-      padding: 8px;
-      text-align: centre;
-      border-bottom: 1px solid #DDD;
-    }
-
-    tr:hover {background-color: #D6EEEE;}
-        
-    .tbl-header{
-      background-color: #D6EEEE;
-     }
-    .tbl-content{
-      height:300px;
-      overflow-x:auto;
-      margin-top: 0px;
-      border: 1px solid rgba(255,255,255,0.3);
-    }
-  
-
-    </style>
+    <link rel="stylesheet" href="/css/styles.css" />
 </head>
+
 <body class="bg-light" >
     <nav class="navbar navbar-light bg-light">
-        <div class="container mt-0>
+        <div class="container common-shadow mt-0">
             <a class="navbar-brand">Dashboard</a>
             <div style="display: flex; align-items: center; ">
                 <% if (student.profile_pic) { %>
@@ -60,15 +34,15 @@
 
 
 
-    <div class="container mt-4" style="background-color: #D6EEEE">
+    <div class="container common-shadow mt-4">
         <div class="card mb-4">
-            <div class="card-body text-center">
+            <div class="card-body common-shadow text-center">
                 <% if (student.profile_pic) { %>
                     <img src="/uploads/<%= student.profile_pic %>" alt="Profile Picture" width="150" height="180">
                 <% } else { %>
                     <img src="/images/profile.jpg" alt="Profile Picture" width="150" height="160">
                 <% } %>
-                <table class="table mt-3">
+                <table class="shadow-table text-justified mt-3">
                     <tr>
                         <th>Student ID</th>
                         <td><%= student.std_id %></td>
@@ -117,7 +91,7 @@
             </div>
         </div>
         <div class="card mb-4">
-            <div class="card-body">
+            <div class="card-body common-shadow">
                 <h4 class="card-title text-center">Room Summary</h4>
                 <% if (!student.room_id) { %>
                     <p class="text-center">No record</p>
@@ -154,7 +128,7 @@
 
                                 <!-- Add the collapse container for the roommates information -->
                                 <div class="collapse" id="roommatesCollapse">
-                                    <table class="tbl-header table-bordered">
+                                    <table class="shadow-table table-bordered">
                                         <thead>
                                             <tr>
                                                 <th>Student ID</th>
@@ -169,7 +143,7 @@
                                             </tr>
                                         </thead>
                                     </table>
-                                      <div class="tbl-content">
+                                      <div class="table">
                                         <table cellpadding="0" cellspacing="0" border="0">
                                         <tbody>
                                             <% if (roommates.length > 0) { %>
@@ -194,12 +168,12 @@
                                         </tbody>
                                     </table>
                                 </div>
-
-                <% } %>
+                        <% } %>
             </div>
         </div>
     </div>
-
+ </div>
+<br>
     <!-- Edit Profile Modal -->
     <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -287,7 +261,29 @@
             </div>
         </div>
     </div>
+                    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fields = ['std_email', 'std_phone', 'std_faculty', 'std_year', 'std_state', 'std_pref'];
+            const addRoomButton = document.querySelector('a[href^="/select-room"]');
+            const reminderMessage = document.getElementById('reminder-message');
 
+            function checkFields() {
+                let allFieldsFilled = true;
+                fields.forEach(field => {
+                    const fieldValue = document.getElementById(field).textContent.trim();
+                    if (!fieldValue) {
+                        allFieldsFilled = false;
+                    }
+                });
+                addRoomButton.classList.toggle('disabled', !allFieldsFilled);
+                reminderMessage.style.display = allFieldsFilled ? 'none' : 'block';
+            }
+
+            checkFields();
+        });
+    </script>
+                    
     <script>
         function logout() {
             // If using localStorage to store logged-in state
@@ -299,28 +295,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const fields = ['std_email', 'std_phone', 'std_faculty', 'std_year', 'std_state', 'std_pref'];
-                                const addRoomButton = document.querySelector('a[href^="/select-room"]');
-                                const reminderMessage = document.getElementById('reminder-message');
 
-                                function checkFields() {
-                                    let allFieldsFilled = true;
-                                    fields.forEach(field => {
-                                        const fieldValue = document.getElementById(field).textContent.trim();
-                                        if (!fieldValue) {
-                                            allFieldsFilled = false;
-                                        }
-                                    });
-                                    addRoomButton.classList.toggle('disabled', !allFieldsFilled);
-                                    reminderMessage.style.display = allFieldsFilled ? 'none' : 'block';
-                                }
-
-                                checkFields();
-                            });
-
-
-                     </script>
 </body>
 </html>
