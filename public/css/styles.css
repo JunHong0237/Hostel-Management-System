@@ -4,8 +4,8 @@ login-body {
   background-image: url("/images/background-image.jpg");
   background-attachment: fixed;
   background-size: cover;
-  height: 100vh; /* Optional: May help cover the full viewport height */
-  width: 100vw; /* Optional: May help cover the full viewport width */
+  height: 100vh;
+  width: 100vw;
   margin: 0;
 }
 
@@ -17,12 +17,14 @@ login-body {
   box-shadow: 0 30px 30px rgba(0, 0, 0, 0.1);
   margin-left: 600px;
 }
+
 .login-container h2 {
   font-family: "Times New Roman", Times, serif;
   margin-bottom: 1em;
   color: #007bff;
   font-weight: bold;
 }
+
 .login-container .btn {
   font-size: 1.1em;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
@@ -30,24 +32,18 @@ login-body {
 
 body {
   font-family: "Arial", sans-serif;
-  background-image: url("/images/background-image.jpg");
+  background-image: url("/images/systembackground.jpg");
   background-attachment: fixed;
   background-size: cover;
-  height: 100vh; /* Optional: May help cover the full viewport height */
-  width: 100vw; /* Optional: May help cover the full viewport width */
+  height: 100vh;
+  width: 100vw;
   margin: 0;
 }
-/* Card border radius */
-.card {
-  border-radius: 1rem;
-}
 
-/* Image styling */
 .card img {
   border-radius: 1pix;
 }
 
-/* Common styles for elements needing shadow and rounded corners */
 .common-shadow {
   background: #fff;
   border-radius: 1px;
@@ -55,7 +51,6 @@ body {
   padding: 20px;
 }
 
-/* Table styles */
 table {
   width: 100%;
   table-layout: fixed;
@@ -72,9 +67,7 @@ td {
 
 thead {
   color: #007bff;
-  /* Sets the text color */
   font-weight: bold;
-  /* Makes the text bold */
 }
 
 tr:hover {
@@ -83,22 +76,19 @@ tr:hover {
 
 .shadow-table th {
   background-color: #f9f9f9;
-  /* Light grey background for headers */
   box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
 }
 
 .tbl-content {
-
   overflow-x: auto;
   margin-top: 0px;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Card Container */
 .room-selection-card {
   background-color: #fff;
   border-radius: 1px;
-  box-shadow: 0 20px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 100px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   margin: 20px;
   max-width: 300px;
@@ -109,14 +99,13 @@ tr:hover {
   transform: translateY(-5px);
 }
 
-/* Card Header */
 .room-selection-card-header {
   background-color: #f1f1f1;
   padding: 20px;
   font-size: 1.25em;
   font-weight: bold;
   border-bottom: 1px solid #e9ecef;
-  box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .room-selection-card-header h5 {
@@ -125,15 +114,13 @@ tr:hover {
   text-align: center;
 }
 
-/* Card Body */
 .room-selection-card-body {
   padding: 20px;
   font-size: 1em;
   color: #333;
-  box-shadow: 0 100px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 100px 100px rgba(0, 0, 0, 0.1);
 }
 
-/* Card Footer */
 .room-selection-card-footer {
   background-color: #f8f9fa;
   padding: 10px 20px;
@@ -147,7 +134,6 @@ tr:hover {
   font-weight: bold;
 }
 
-/*css for admin-dashboard*/
 .label {
   text-align: center;
   font-size: 14px;
@@ -165,10 +151,10 @@ tr:hover {
 .summary-card {
   background: #fff;
   border-radius: 1px;
-  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.1);
   padding: 20px;
   text-align: center;
-  width: 30%;
+  width: 31%;
 }
 
 .summary-card h3 {
@@ -208,7 +194,6 @@ tr:hover {
 
 .student-registration-card {
   width: calc(65% - 10px);
-
 }
 
 .students-by-faculty-card {
