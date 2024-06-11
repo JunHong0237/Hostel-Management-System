@@ -10,8 +10,6 @@ import { dirname } from "path";
 import bcrypt from "bcrypt";
 
 const saltRounds = 10;
-//const bcrypt = require("bcrypt"); // Ensure you have bcrypt installed and required
-//const session = require("express-session");
 
 // Function to hash a password
 async function hashPassword(plainPassword) {
@@ -82,8 +80,6 @@ app.set("view engine", "ejs");
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/login.html");
 });
-
-//const bcrypt = require("bcrypt"); // Ensure you have bcrypt installed and required
 
 app.post("/login", (req, res) => {
   const { std_id, std_password } = req.body;
@@ -1005,9 +1001,7 @@ app.post("/admin/rooms/delete/:room_id", async (req, res) => {
   }
 });
 
-//analyse data with api
-// Route to analyze data
-// Route to analyze data
+// Route to analyze data with api
 app.post("/api/analyze-data", async (req, res) => {
   if (!req.session.admin) {
     return res
@@ -1155,6 +1149,7 @@ app.get("/admin/students-by-faculty", (req, res) => {
     res.json(results);
   });
 });
+
 // Fetch room environment preference data from the database
 app.get("/admin/room-environment-preference", (req, res) => {
   if (!req.session.admin) {
@@ -1264,6 +1259,7 @@ app.get("/admin/room-type-distribution", (req, res) => {
     res.json(results);
   });
 });
+
 // Fetch room occupancy data from the database
 app.get("/admin/room-occupancy", (req, res) => {
   if (!req.session.admin) {
