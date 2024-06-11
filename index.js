@@ -6,6 +6,20 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import bcrypt from "bcrypt";
+
+const saltRounds = 10;
+
+// Function to hash a password
+async function hashPassword(plainPassword) {
+  try {
+    const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
+    return hashedPassword;
+  } catch (err) {
+    console.error("Error hashing password:", err);
+    throw err;
+  }
+}
 
 dotenv.config();
 
@@ -59,58 +73,84 @@ app.get("/", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { std_id, std_password } = req.body;
+
   db.query(
-    "SELECT * FROM Student_Details WHERE std_id = ? AND std_password = ?",
-    [std_id, std_password],
-    (error, results) => {
+    "SELECT * FROM Student_Details WHERE std_id = ?",
+    [std_id],
+    async (error, results) => {
+      if (error) {
+        console.error("Error during login:", error);
+        res.status(500).send("An error occurred during login.");
+        return;
+      }
+
       if (results.length > 0) {
         const student = results[0];
-        if (student.room_id) {
-          const roomDetailsQuery = `
-            SELECT r.room_no, r.room_capacity, r.room_occupancy
-            FROM Room_Details r
-            JOIN Student_Details s ON r.room_id = s.room_id
-            WHERE s.std_id = ?
-          `;
-          const roommatesQuery = `
-            SELECT std_id, std_fullname, std_gender, std_faculty, std_year, std_state, std_pref, std_email, std_phone
-            FROM Student_Details
-            WHERE room_id = ? AND std_id != ?
-          `;
-          db.query(roomDetailsQuery, [std_id], (error, roomResults) => {
-            if (error) {
-              console.error("Error fetching room details:", error);
-              res
-                .status(500)
-                .send("An error occurred while fetching room details.");
-              return;
-            }
-            const roomDetails = roomResults.length > 0 ? roomResults[0] : null;
 
-            db.query(
-              roommatesQuery,
-              [student.room_id, std_id],
-              (error, roommates) => {
+        try {
+          const isMatch = await bcrypt.compare(
+            std_password,
+            student.std_password,
+          );
+          if (isMatch) {
+            if (student.room_id) {
+              const roomDetailsQuery = `
+                SELECT r.room_no, r.room_capacity, r.room_occupancy
+                FROM Room_Details r
+                JOIN Student_Details s ON r.room_id = s.room_id
+                WHERE s.std_id = ?
+              `;
+              const roommatesQuery = `
+                SELECT std_id, std_fullname, std_gender, std_faculty, std_year, std_state, std_pref, std_email, std_phone
+                FROM Student_Details
+                WHERE room_id = ? AND std_id != ?
+              `;
+              db.query(roomDetailsQuery, [std_id], (error, roomResults) => {
                 if (error) {
-                  console.error("Error fetching roommates:", error);
+                  console.error("Error fetching room details:", error);
                   res
                     .status(500)
-                    .send("An error occurred while fetching roommates.");
+                    .send("An error occurred while fetching room details.");
                   return;
                 }
-                console.log("Student:", student);
-                console.log("Room Details:", roomDetails);
-                console.log("Roommates:", roommates);
-                res.render("dashboard", { student, roomDetails, roommates });
-              },
-            );
-          });
-        } else {
-          res.render("dashboard", {
-            student,
-            roomDetails: null,
-            roommates: [],
-          });
+                const roomDetails =
+                  roomResults.length > 0 ? roomResults[0] : null;
+
+                db.query(
+                  roommatesQuery,
+                  [student.room_id, std_id],
+                  (error, roommates) => {
+                    if (error) {
+                      console.error("Error fetching roommates:", error);
+                      res
+                        .status(500)
+                        .send("An error occurred while fetching roommates.");
+                      return;
+                    }
+                    console.log("Student:", student);
+                    console.log("Room Details:", roomDetails);
+                    console.log("Roommates:", roommates);
+                    res.render("dashboard", {
+                      student,
+                      roomDetails,
+                      roommates,
+                    });
+                  },
+                );
+              });
+            } else {
+              res.render("dashboard", {
+                student,
+                roomDetails: null,
+                roommates: [],
+              });
+            }
+          } else {
+            res.send("Incorrect Student ID and/or Password!");
+          }
+        } catch (err) {
+          console.error("Error verifying password:", err);
+          res.status(500).send("An error occurred during login.");
         }
       } else {
         res.send("Incorrect Student ID and/or Password!");
@@ -123,7 +163,7 @@ app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
 
-app.post("/edit-profile", upload.single("profile_pic"), (req, res) => {
+app.post("/edit-profile", upload.single("profile_pic"), async (req, res) => {
   const {
     std_id,
     std_email,
@@ -148,27 +188,36 @@ app.post("/edit-profile", upload.single("profile_pic"), (req, res) => {
     std_id,
   ];
 
-  if (std_password) {
-    query += ", std_password = ? ";
-    params.splice(params.length - 1, 0, std_password); // Insert password before std_id
-  }
-
-  if (profilePicPath) {
-    query += ", profile_pic = ? ";
-    params.splice(params.length - 1, 0, profilePicPath); // Insert profilePicPath before std_id
-  }
-
-  query += "WHERE std_id = ?";
-
-  db.query(query, params, (error, results) => {
-    if (error) {
-      console.error("Error updating student details: ", error);
-      res.status(500).send("An error occurred while updating student details.");
-      return;
+  try {
+    if (std_password) {
+      // Hash the new password before updating it
+      const hashedPassword = await bcrypt.hash(std_password, saltRounds);
+      query += ", std_password = ? ";
+      params.splice(params.length - 1, 0, hashedPassword); // Insert hashed password before std_id
     }
 
-    res.redirect(`/dashboard?std_id=${std_id}`);
-  });
+    if (profilePicPath) {
+      query += ", profile_pic = ? ";
+      params.splice(params.length - 1, 0, profilePicPath); // Insert profilePicPath before std_id
+    }
+
+    query += "WHERE std_id = ?";
+
+    db.query(query, params, (error, results) => {
+      if (error) {
+        console.error("Error updating student details: ", error);
+        res
+          .status(500)
+          .send("An error occurred while updating student details.");
+        return;
+      }
+
+      res.redirect(`/dashboard?std_id=${std_id}`);
+    });
+  } catch (error) {
+    console.error("Error hashing password: ", error);
+    res.status(500).send("An error occurred while updating student details.");
+  }
 });
 
 // New route to handle profile picture upload
@@ -530,10 +579,9 @@ app.post("/admin/login", (req, res) => {
   console.log("Admin Password:", admin_password); // For debugging
 
   // SQL query to check admin credentials
-  const query =
-    "SELECT * FROM Admin_Details WHERE admin_id = ? AND admin_password = ?";
+  const query = "SELECT * FROM Admin_Details WHERE admin_id = ?";
 
-  db.query(query, [admin_id, admin_password], (error, results) => {
+  db.query(query, [admin_id], async (error, results) => {
     if (error) {
       // Handle any errors that occur during the query
       console.error("Error in admin login query: ", error);
@@ -543,8 +591,21 @@ app.post("/admin/login", (req, res) => {
 
     console.log("Query Results:", results); // For debugging
     if (results.length > 0) {
-      // If the query returns a record, login is successful
-      res.render("admin-dashboard", { admin: results[0] }); // Pass the admin data to the dashboard
+      const admin = results[0];
+
+      try {
+        const isMatch = await bcrypt.compare(admin_password, admin.admin_password);
+        if (isMatch) {
+          // If the password matches, login is successful
+          res.render("admin-dashboard", { admin }); // Pass the admin data to the dashboard
+        } else {
+          // If the password doesn't match, send an error message
+          res.send("Incorrect username and/or password!");
+        }
+      } catch (err) {
+        console.error("Error comparing passwords: ", err);
+        res.status(500).send("An error occurred during the login process.");
+      }
     } else {
       // If the record is not found, send an error message
       res.send("Incorrect username and/or password!");
@@ -678,7 +739,7 @@ app.get("/admin/rooms", (req, res) => {
   });
 });
 
-app.post("/admin/students/register", (req, res) => {
+app.post("/admin/students/register", async (req, res) => {
   const { std_id, std_fullName, std_gender, std_password } = req.body;
 
   // Creating a new Date object
@@ -686,29 +747,38 @@ app.post("/admin/students/register", (req, res) => {
   // Formatting date and time: YYYY-MM-DD HH:MM:SS
   const reg_date = now.toISOString().slice(0, 19).replace("T", " ");
 
-  // SQL query to insert a new student record
-  const query =
-    "INSERT INTO Student_Details (std_id, std_fullName, std_gender, std_password, reg_date) VALUES (?, ?, ?, ?, ?)";
+  try {
+    // Hash the password before storing it
+    const hashedPassword = await bcrypt.hash(std_password, saltRounds);
 
-  db.query(
-    query,
-    [std_id, std_fullName, std_gender, std_password, reg_date],
-    (error, results) => {
-      if (error) {
-        // Handle any errors that occur during the query
-        console.error("Error registering new student: ", error);
-        res
-          .status(500)
-          .send("An error occurred while registering the student.");
-        return;
-      }
+    // SQL query to insert a new student record
+    const query =
+      "INSERT INTO Student_Details (std_id, std_fullName, std_gender, std_password, reg_date) VALUES (?, ?, ?, ?, ?)";
 
-      // After registration, redirect back to the student details page or send a success message
-      res.redirect("/admin/students");
-      // Or you could render the page with a success message
-      // res.render("admin-student-details", { successMessage: "Student registered successfully." });
-    },
-  );
+    db.query(
+      query,
+      [std_id, std_fullName, std_gender, hashedPassword, reg_date],
+      (error, results) => {
+        if (error) {
+          // Handle any errors that occur during the query
+          console.error("Error registering new student: ", error);
+          res
+            .status(500)
+            .send("An error occurred while registering the student.");
+          return;
+        }
+
+        // After registration, redirect back to the student details page or send a success message
+        res.redirect("/admin/students");
+        // Or you could render the page with a success message
+        // res.render("admin-student-details", { successMessage: "Student registered successfully." });
+      },
+    );
+  } catch (error) {
+    // Handle any errors that occur during hashing
+    console.error("Error hashing password: ", error);
+    res.status(500).send("An error occurred while registering the student.");
+  }
 });
 
 app.get("/admin/room/view/:room_id", async (req, res) => {
@@ -1154,9 +1224,7 @@ app.post("/admin/rooms/edit", (req, res) => {
   });
 });
 
-// Existing code...
-
-app.post("/admin/students/edit", (req, res) => {
+app.post("/admin/students/edit", async (req, res) => {
   const { original_std_id, std_fullname, std_gender, std_password } = req.body;
 
   console.log(req.body); // Debug: log the received form data
@@ -1164,31 +1232,40 @@ app.post("/admin/students/edit", (req, res) => {
   let updateQuery;
   let queryParams;
 
-  if (std_password) {
-    updateQuery = `
-            UPDATE Student_Details 
-            SET std_fullname = ?, std_gender = ?, std_password = ?
-            WHERE std_id = ?
-        `;
-    queryParams = [std_fullname, std_gender, std_password, original_std_id];
-  } else {
-    updateQuery = `
-            UPDATE Student_Details 
-            SET std_fullname = ?, std_gender = ?
-            WHERE std_id = ?
-        `;
-    queryParams = [std_fullname, std_gender, original_std_id];
-  }
-
-  db.query(updateQuery, queryParams, (error, result) => {
-    if (error) {
-      console.error("Error updating student details: ", error);
-      res.status(500).send("An error occurred while updating student details.");
-      return;
+  try {
+    if (std_password) {
+      // Hash the new password before updating it
+      const hashedPassword = await bcrypt.hash(std_password, saltRounds);
+      updateQuery = `
+        UPDATE Student_Details 
+        SET std_fullname = ?, std_gender = ?, std_password = ?
+        WHERE std_id = ?
+      `;
+      queryParams = [std_fullname, std_gender, hashedPassword, original_std_id];
+    } else {
+      updateQuery = `
+        UPDATE Student_Details 
+        SET std_fullname = ?, std_gender = ?
+        WHERE std_id = ?
+      `;
+      queryParams = [std_fullname, std_gender, original_std_id];
     }
 
-    res.redirect("/admin/students");
-  });
+    db.query(updateQuery, queryParams, (error, result) => {
+      if (error) {
+        console.error("Error updating student details: ", error);
+        res
+          .status(500)
+          .send("An error occurred while updating student details.");
+        return;
+      }
+
+      res.redirect("/admin/students");
+    });
+  } catch (error) {
+    console.error("Error hashing password: ", error);
+    res.status(500).send("An error occurred while updating student details.");
+  }
 });
 
 app.post("/admin/students/delete", async (req, res) => {
