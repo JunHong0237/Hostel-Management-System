@@ -18,6 +18,10 @@ login-body {
   margin-left: 600px;
 }
 
+.login-container:hover {
+  transform: translateY(-5px);
+}
+
 .login-container h2 {
   font-family: "Times New Roman", Times, serif;
   margin-bottom: 1em;
@@ -148,6 +152,10 @@ tr:hover {
   margin-bottom: 20px;
 }
 
+.summary-card:hover {
+  transform: translateY(-5px);
+}
+
 .summary-card {
   background: #fff;
   border-radius: 1px;
@@ -180,6 +188,10 @@ tr:hover {
   border-radius: 1px;
   box-shadow: 0 15px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+}
+
+.chart-card:hover {
+  transform: translateY(-5px);
 }
 
 .chart-card h3 {
@@ -237,6 +249,10 @@ tr:hover {
 
 .all-btn {
   box-shadow: 0 20px 10px rgba(0, 0, 0, 0.1);
+}
+
+.all-btn:hover {
+  transform: translateY(-2px);
 }
 
 .spinner {
