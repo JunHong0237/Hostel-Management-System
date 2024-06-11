@@ -1,4 +1,5 @@
 import express from "express";
+import session from "express-session";
 import mysql from "mysql2";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
@@ -9,6 +10,8 @@ import { dirname } from "path";
 import bcrypt from "bcrypt";
 
 const saltRounds = 10;
+//const bcrypt = require("bcrypt"); // Ensure you have bcrypt installed and required
+//const session = require("express-session");
 
 // Function to hash a password
 async function hashPassword(plainPassword) {
@@ -25,6 +28,15 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(
+  session({
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Set to true if using HTTPS
+  }),
+);
 
 // For __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -71,6 +83,8 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/login.html");
 });
 
+//const bcrypt = require("bcrypt"); // Ensure you have bcrypt installed and required
+
 app.post("/login", (req, res) => {
   const { std_id, std_password } = req.body;
 
@@ -93,6 +107,13 @@ app.post("/login", (req, res) => {
             student.std_password,
           );
           if (isMatch) {
+            // Store user information in session
+            req.session.user = {
+              id: std_id,
+              name: student.std_fullname,
+              room_id: student.room_id,
+            };
+
             if (student.room_id) {
               const roomDetailsQuery = `
                 SELECT r.room_no, r.room_capacity, r.room_occupancy
@@ -164,8 +185,13 @@ app.listen(port, () => {
 });
 
 app.post("/edit-profile", upload.single("profile_pic"), async (req, res) => {
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to edit your profile.");
+  }
+
   const {
-    std_id,
     std_email,
     std_phone,
     std_faculty,
@@ -185,7 +211,7 @@ app.post("/edit-profile", upload.single("profile_pic"), async (req, res) => {
     std_year,
     std_state,
     std_pref,
-    std_id,
+    req.session.user.id, // Use session user ID
   ];
 
   try {
@@ -212,7 +238,7 @@ app.post("/edit-profile", upload.single("profile_pic"), async (req, res) => {
         return;
       }
 
-      res.redirect(`/dashboard?std_id=${std_id}`);
+      res.redirect(`/dashboard`);
     });
   } catch (error) {
     console.error("Error hashing password: ", error);
@@ -222,7 +248,13 @@ app.post("/edit-profile", upload.single("profile_pic"), async (req, res) => {
 
 // New route to handle profile picture upload
 app.post("/upload-profile-pic", upload.single("profile_pic"), (req, res) => {
-  const std_id = req.body.std_id;
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to upload a profile picture.");
+  }
+
+  const std_id = req.session.user.id;
   const profilePicPath = req.file.filename;
 
   db.query(
@@ -236,19 +268,20 @@ app.post("/upload-profile-pic", upload.single("profile_pic"), (req, res) => {
           .send("An error occurred while updating profile picture.");
         return;
       }
-      res.redirect(`/dashboard?std_id=${std_id}`);
+      res.redirect(`/dashboard`);
     },
   );
 });
 
 // Route to display room selection page
 app.get("/select-room", (req, res) => {
-  const studentId = req.query.std_id;
-
-  if (!studentId) {
-    res.status(400).send("Student ID is required.");
-    return;
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to select a room.");
   }
+
+  const studentId = req.session.user.id;
 
   const checkStudentQuery = `
     SELECT std_faculty, std_year, std_state, std_pref, std_gender 
@@ -363,15 +396,15 @@ app.get("/select-room", (req, res) => {
 });
 
 // Route to view details for a specific room
-// Route to view details for a specific room
 app.get("/view-room-details/:room_id", (req, res) => {
-  const { room_id } = req.params;
-  const { std_id } = req.query;
-
-  if (!std_id) {
-    res.send("Student ID is required.");
-    return;
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view room details.");
   }
+
+  const { room_id } = req.params;
+  const std_id = req.session.user.id;
 
   const studentQuery = "SELECT * FROM Student_Details WHERE std_id = ?";
   const roomQuery = "SELECT * FROM Room_Details WHERE room_id = ?";
@@ -433,8 +466,14 @@ app.get("/view-room-details/:room_id", (req, res) => {
 
 // Route to handle room selection
 app.post("/select-room/:room_id", (req, res) => {
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to select a room.");
+  }
+
   const { room_id } = req.params;
-  const { std_id } = req.body;
+  const std_id = req.session.user.id;
 
   db.beginTransaction((err) => {
     if (err) {
@@ -492,9 +531,7 @@ app.post("/select-room/:room_id", (req, res) => {
             return;
           }
           console.log("Transaction Complete.");
-          res.redirect(
-            `/view-room-details/${room_id}?std_id=${std_id}&success=true`,
-          );
+          res.redirect(`/view-room-details/${room_id}?success=true`);
         });
       });
     });
@@ -502,12 +539,13 @@ app.post("/select-room/:room_id", (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-  const studentId = req.query.std_id;
-
-  if (!studentId) {
-    res.status(400).send("Student ID is required.");
-    return;
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view the dashboard.");
   }
+
+  const studentId = req.session.user.id;
 
   const studentDetailsQuery = `
     SELECT s.*, r.room_no, r.room_capacity, r.room_occupancy
@@ -594,10 +632,16 @@ app.post("/admin/login", (req, res) => {
       const admin = results[0];
 
       try {
-        const isMatch = await bcrypt.compare(admin_password, admin.admin_password);
+        const isMatch = await bcrypt.compare(
+          admin_password,
+          admin.admin_password,
+        );
         if (isMatch) {
-          // If the password matches, login is successful
-          res.render("admin-dashboard", { admin }); // Pass the admin data to the dashboard
+          // Store admin information in session
+          req.session.admin = { id: admin_id, name: admin.admin_name }; // Assuming admin_name is a field
+
+          // Redirect to the admin dashboard or render it with session data
+          res.render("admin-dashboard", { admin });
         } else {
           // If the password doesn't match, send an error message
           res.send("Incorrect username and/or password!");
@@ -614,8 +658,12 @@ app.post("/admin/login", (req, res) => {
 });
 
 app.get("/admin/dashboard", (req, res) => {
-  // Render the admin dashboard view
-  res.render("admin-dashboard");
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this page.");
+  }
+  res.render("admin-dashboard", { admin: req.session.admin });
 });
 
 const formatDate = (date) => {
@@ -629,9 +677,14 @@ const formatDate = (date) => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
-// Example usage in a route:
 //admin-stdeunt-details route
 app.get("/admin/students", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this page.");
+  }
+
   const { gender, faculty, year, state, pref, search } = req.query;
 
   let query = "SELECT * FROM Student_Details WHERE 1=1";
@@ -707,6 +760,12 @@ app.get("/admin/students", (req, res) => {
 
 //admin-room-details route
 app.get("/admin/rooms", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this page.");
+  }
+
   const { capacity, gender } = req.query;
 
   let query =
@@ -740,6 +799,12 @@ app.get("/admin/rooms", (req, res) => {
 });
 
 app.post("/admin/students/register", async (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to perform this action.");
+  }
+
   const { std_id, std_fullName, std_gender, std_password } = req.body;
 
   // Creating a new Date object
@@ -782,6 +847,12 @@ app.post("/admin/students/register", async (req, res) => {
 });
 
 app.get("/admin/room/view/:room_id", async (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this page.");
+  }
+
   const { room_id } = req.params;
 
   try {
@@ -800,7 +871,14 @@ app.get("/admin/room/view/:room_id", async (req, res) => {
     res.status(500).send("An error occurred while fetching room details.");
   }
 });
+
 app.get("/admin/room/unassign/:std_id", async (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to perform this action.");
+  }
+
   const { std_id } = req.params;
 
   try {
@@ -842,7 +920,14 @@ app.get("/admin/room/unassign/:std_id", async (req, res) => {
       );
   }
 });
+
 app.post("/admin/rooms/add", async (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to perform this action.");
+  }
+
   const { room_no, room_capacity, room_gender } = req.body;
   const room_occupancy = 0;
   const bedAvail = room_capacity; // Initially equal to capacity
@@ -867,7 +952,14 @@ app.post("/admin/rooms/add", async (req, res) => {
     res.status(500).send("An error occurred while adding the room.");
   }
 });
+
 app.get("/admin/rooms/check-students/:room_id", async (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to perform this action.");
+  }
+
   const { room_id } = req.params;
   try {
     const query =
@@ -879,7 +971,14 @@ app.get("/admin/rooms/check-students/:room_id", async (req, res) => {
     res.status(500).send("An error occurred while checking students in room.");
   }
 });
+
 app.post("/admin/rooms/delete/:room_id", async (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to perform this action.");
+  }
+
   const { room_id } = req.params;
   try {
     await db.promise().beginTransaction();
@@ -909,8 +1008,13 @@ app.post("/admin/rooms/delete/:room_id", async (req, res) => {
 //analyse data with api
 // Route to analyze data
 // Route to analyze data
-// Route to analyze data
 app.post("/api/analyze-data", async (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to perform this action.");
+  }
+
   const { stage, data } = req.body;
 
   let prompt;
@@ -963,6 +1067,12 @@ app.post("/api/analyze-data", async (req, res) => {
 
 // Fetch summary data from the database
 app.get("/admin/summary-data", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
+
   const queries = {
     totalStudents: "SELECT COUNT(*) as count FROM Student_Details",
     availableBeds: "SELECT SUM(bedAvail) as count FROM Room_Details",
@@ -1004,6 +1114,12 @@ app.get("/admin/summary-data", (req, res) => {
 
 // Fetch gender distribution data from the database
 app.get("/admin/gender-distribution", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
+
   const query =
     "SELECT std_gender, COUNT(*) as count FROM Student_Details GROUP BY std_gender";
   db.query(query, (error, results) => {
@@ -1017,8 +1133,15 @@ app.get("/admin/gender-distribution", (req, res) => {
     res.json(results);
   });
 });
-// Fetch students by faculty data from the database
+
+// Fetch students by faculty data from the database****
 app.get("/admin/students-by-faculty", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
+
   const query =
     "SELECT std_faculty, COUNT(*) as count FROM Student_Details GROUP BY std_faculty";
   db.query(query, (error, results) => {
@@ -1034,6 +1157,11 @@ app.get("/admin/students-by-faculty", (req, res) => {
 });
 // Fetch room environment preference data from the database
 app.get("/admin/room-environment-preference", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
   const query =
     "SELECT std_pref, COUNT(*) as count FROM Student_Details GROUP BY std_pref";
   db.query(query, (error, results) => {
@@ -1051,9 +1179,13 @@ app.get("/admin/room-environment-preference", (req, res) => {
 });
 
 // Fetch student registration over time data from the database
-// Fetch student registration over time data from the database
-// Fetch student registration over time data from the database
 app.get("/admin/student-registration-over-time", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
+
   let { year } = req.query;
   let query = `
     SELECT DATE_FORMAT(reg_date, '%Y-%m') as date, std_gender, COUNT(*) as count 
@@ -1090,6 +1222,11 @@ app.get("/admin/student-registration-over-time", (req, res) => {
 
 // Fetch year of degree data from the database
 app.get("/admin/year-of-degree", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
   const query =
     "SELECT std_year, COUNT(*) as count FROM Student_Details GROUP BY std_year";
   db.query(query, (error, results) => {
@@ -1103,8 +1240,14 @@ app.get("/admin/year-of-degree", (req, res) => {
     res.json(results);
   });
 });
+
 // Fetch room type distribution data from the database
 app.get("/admin/room-type-distribution", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
   const query = `
     SELECT room_capacity, room_gender, COUNT(*) as count 
     FROM Room_Details 
@@ -1123,6 +1266,11 @@ app.get("/admin/room-type-distribution", (req, res) => {
 });
 // Fetch room occupancy data from the database
 app.get("/admin/room-occupancy", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
   const query = `
     SELECT room_gender, room_capacity, SUM(room_capacity) as total_capacity, 
            SUM(room_occupancy) as total_occupancy, 
@@ -1147,6 +1295,11 @@ app.use(express.static("public"));
 
 // Fetch state of residence data from the database
 app.get("/admin/state-of-residence", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
   const query = `
     SELECT std_state, COUNT(*) as count 
     FROM Student_Details 
@@ -1165,12 +1318,13 @@ app.get("/admin/state-of-residence", (req, res) => {
   });
 });
 
-// Existing code...
-
-// Route to handle room update
-// Route to handle room update
 // Route to handle room update
 app.post("/admin/rooms/edit", (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
   const { room_id, room_no, room_capacity, room_gender } = req.body;
 
   const checkOccupancyQuery =
@@ -1225,6 +1379,11 @@ app.post("/admin/rooms/edit", (req, res) => {
 });
 
 app.post("/admin/students/edit", async (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
   const { original_std_id, std_fullname, std_gender, std_password } = req.body;
 
   console.log(req.body); // Debug: log the received form data
@@ -1269,6 +1428,11 @@ app.post("/admin/students/edit", async (req, res) => {
 });
 
 app.post("/admin/students/delete", async (req, res) => {
+  if (!req.session.admin) {
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
+  }
   const { std_id } = req.body;
 
   try {
