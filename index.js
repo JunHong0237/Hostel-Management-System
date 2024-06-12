@@ -1094,6 +1094,7 @@ app.get("/admin/summary-data", (req, res) => {
     totalStudents: "SELECT COUNT(*) as count FROM Student_Details",
     availableBeds: "SELECT SUM(bedAvail) as count FROM Room_Details",
     totalRooms: "SELECT COUNT(*) as count FROM Room_Details",
+    totalBeds: "SELECT SUM(room_capacity) as count FROM Room_Details"
   };
 
   db.query(queries.totalStudents, (error, totalStudentsResults) => {
@@ -1119,15 +1120,25 @@ app.get("/admin/summary-data", (req, res) => {
           return;
         }
 
-        res.json({
-          totalStudents: totalStudentsResults[0].count,
-          availableBeds: availableBedsResults[0].count,
-          totalRooms: totalRoomsResults[0].count,
+        db.query(queries.totalBeds, (error, totalBedsResults) => {
+          if (error) {
+            console.error("Error fetching total beds:", error);
+            res.status(500).send("An error occurred while fetching total beds.");
+            return;
+          }
+
+          res.json({
+            totalStudents: totalStudentsResults[0].count,
+            availableBeds: availableBedsResults[0].count,
+            totalRooms: totalRoomsResults[0].count,
+            totalBeds: totalBedsResults[0].count
+          });
         });
       });
     });
   });
 });
+
 
 // Fetch gender distribution data from the database
 app.get("/admin/gender-distribution", (req, res) => {

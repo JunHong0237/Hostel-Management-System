@@ -48,7 +48,7 @@
                 <p id="totalStudents" class="summary-number"></p>
             </div>
             <div class="summary-card">
-                <h3>Available Beds</h3>
+              <h3>Available Beds / Total Beds</h3>
                 <p id="availableBeds" class="summary-number"></p>
             </div>
             <div class="summary-card">
@@ -204,16 +204,16 @@
         async function displaySummaryData() {
           const data = await fetchSummaryData();
           document.getElementById('totalStudents').textContent = data.totalStudents;
-          document.getElementById('availableBeds').textContent = data.availableBeds;
+          document.getElementById('availableBeds').textContent = `${data.availableBeds} / ${data.totalBeds}`;
           document.getElementById('totalRooms').textContent = data.totalRooms;
         }
 
         document.addEventListener('DOMContentLoaded', displaySummaryData);
-  
-          async function fetchChartData(url) {
-            const response = await fetch(url);
-            return await response.json();
-          }
+
+        async function fetchChartData(url) {
+          const response = await fetch(url);
+          return await response.json();
+        }
 
         // Gender Distribution Pie Chart with Percentages
         async function renderGenderDistributionChart() {
