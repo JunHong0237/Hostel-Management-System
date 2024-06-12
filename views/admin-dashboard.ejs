@@ -1,43 +1,42 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin Dashboard</title>
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/css/styles.css" /> 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/html2canvas/dist/html2canvas.min.js"></script>
-      </head>
-      <body class="bg-light">
-      <!-- Navbar -->
-        
-        <nav class="navbar common-shadow">
-            <div class="container mt-0">
-              <a class="navbar-brand" href="/admin/dashboard" style="color: #007bff; font-weight: bold; ">Dashboard</a>
-                <div style="display: flex; align-items: center;">
-                    <a class="nav-link" href="/admin/students" style="color: black;">Student Details</a>
-                    <a class="nav-link" href="/admin/rooms" style="color: black;">Room Details</a>
-                </div>
-                <div style="display: flex; align-items: center; margin-left: auto;">
-                    <span class="mr-3">Hello, Admin</span>
-                    <div class="dropdown">
-                        <button class="btn btn-link" type="button" id="settingsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="/images/setting.png" alt="Settings" width="20" height="20">
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="settingsDropdown" style="position: absolute;">
-                            <a class="dropdown-item" href="#" onclick="logout()">Logout</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Admin Dashboard</title>
+      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="/css/styles.css" /> 
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+      <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/html2canvas/dist/html2canvas.min.js"></script>
+    </head>
+    <body class="bg-light">
+
+      <nav class="navbar common-shadow">
+          <div class="container mt-0">
+              <div style="display: flex; align-items: center;">
+                  <a class="navbar-brand" href="/admin/dashboard" style="color: #007bff; font-weight: bold; ">Dashboard</a>
+                  <a class="nav-link" href="/admin/students" style="color: black;">Student Details</a>
+                  <a class="nav-link" href="/admin/rooms" style="color: black;">Room Details</a>
+              </div>
+              <div style="display: flex; align-items: center; margin-left: auto;">
+                  <span class="mr-3">Hello, Admin</span>
+                  <div class="dropdown">
+                      <button class="btn btn-link" type="button" id="settingsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <img src="/images/setting.png" alt="Settings" width="20" height="20">
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="settingsDropdown" style="position: absolute;">
+                          <a class="dropdown-item" href="#" onclick="logout()">Logout</a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </nav>
         
 <br>
 <div class="container common-shadow mt-1">
@@ -196,7 +195,6 @@
         </div>
       </div>
 
-  
       <script>
         async function fetchSummaryData() {
           const response = await fetch('/admin/summary-data');
@@ -1005,13 +1003,12 @@
         });
       </script>
 
-    
       <script>
-          function logout() {
-              window.location.href = '/admin-login.html';
-          }
+        function logout() {
+          window.location.href = '/logout';
+        }
       </script>
-        
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

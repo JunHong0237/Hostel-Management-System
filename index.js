@@ -1469,3 +1469,14 @@ app.post("/admin/students/delete", async (req, res) => {
     res.status(500).send("An error occurred while deleting the student.");
   }
 });
+
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error logging out:", err);
+      return res.status(500).send("Error logging out");
+    }
+    console.log("Session destroyed, redirecting to login page.");
+    res.redirect("/admin-login.html");
+  });
+});
