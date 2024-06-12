@@ -160,19 +160,23 @@ tr:hover {
   background: #fff;
   border-radius: 1px;
   box-shadow: 0 20px 20px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 10px;
   text-align: center;
-  width: 31%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 15%;
 }
 
-.summary-card h3 {
+.summary-card h4 {
   margin-bottom: 10px;
-  font-size: 18px;
+  font-size: 19px;
   color: #333;
 }
 
 .summary-number {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   color: #007bff;
 }

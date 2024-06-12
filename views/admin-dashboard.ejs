@@ -41,21 +41,34 @@
 <br>
 <div class="container common-shadow mt-1">
       <div class="container">
-        <!-- Summary Cards -->
-        <div class="summary-cards mt-3">
-            <div class="summary-card">
-                <h3>Total Students</h3>
-                <p id="totalStudents" class="summary-number"></p>
-            </div>
-            <div class="summary-card">
-              <h3>Available Beds / Total Beds</h3>
-                <p id="availableBeds" class="summary-number"></p>
-            </div>
-            <div class="summary-card">
-                <h3>Total Rooms</h3>
-                <p id="totalRooms" class="summary-number"></p>
-            </div>
+        <div id="summary" class="summary-cards mt-3"> 
+          <div class="summary-card">
+            <h4>Total Students</h4>
+            <p id="totalStudents" class="summary-number"></p>
+          </div>
+          <div class="summary-card">
+            <h4>Students Without Room</h4>
+            <p id="studentsWithoutRoom"class="summary-number"></p>
+          </div>
+          <div class="summary-card">
+            <h4>Available Beds / Total Beds</h4>
+            <p id="availableBeds" class="summary-number"></p>
+          </div>
+          <div class="summary-card">
+            <h4>Total Rooms</h4>
+            <p id="totalRooms" class="summary-number"></p>
+          </div>
+          <div class="summary-card">
+            <h4>Total Beds (Male)</h4>
+            <p id="totalBedsMale"class="summary-number"></p>
+          </div>
+          <div class="summary-card">
+            <h4>Total Beds (Female)</h4>
+            <p id="totalBedsFemale" class="summary-number"></p>
+          </div>
         </div>
+
+
 
   <!-- Charts Grid -->
   <div class="charts-container">
@@ -206,6 +219,9 @@
           document.getElementById('totalStudents').textContent = data.totalStudents;
           document.getElementById('availableBeds').textContent = `${data.availableBeds} / ${data.totalBeds}`;
           document.getElementById('totalRooms').textContent = data.totalRooms;
+          document.getElementById('studentsWithoutRoom').textContent = data.studentsWithoutRoom;
+          document.getElementById('totalBedsMale').textContent = data.totalBedsMale;
+          document.getElementById('totalBedsFemale').textContent = data.totalBedsFemale;
         }
 
         document.addEventListener('DOMContentLoaded', displaySummaryData);
@@ -214,6 +230,8 @@
           const response = await fetch(url);
           return await response.json();
         }
+
+
 
         // Gender Distribution Pie Chart with Percentages
         async function renderGenderDistributionChart() {
@@ -335,40 +353,46 @@
           });
         }
 
-          // Room Environment Preference Pie Chart
-          async function renderRoomEnvironmentPreferenceChart() {
-            const data = await fetchChartData('/admin/room-environment-preference');
-            const labels = data.map(item => item.std_pref);
-            const counts = data.map(item => item.count);
-            const total = counts.reduce((sum, count) => sum + count, 0);
-  
-            new Chart(document.getElementById('roomEnvironmentPreferenceChart'), {
-              type: 'doughnut',
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: 'Room Environment Preference',
-                  data: counts,
-                  backgroundColor: ['#009596', '#06C', '#EC7A08','grey']
-                }]
-              },
-              options: {
-                plugins: {
-                  datalabels: {
-                    formatter: (value, context) => {
-                      const percentage = (value / total * 100).toFixed(1);
-                      return `${percentage}%`;
-                    },
-                    color: '#fff',
-                    font: {
-                      weight: 'bold'
-                    }
+        // Room Environment Preference Pie Chart
+        async function renderRoomEnvironmentPreferenceChart() {
+          const data = await fetchChartData('/admin/room-environment-preference');
+          if (data.length === 0) {
+            console.error('No room environment preference data available.');
+            return;
+          }
+
+          const labels = data.map(item => item.std_pref);
+          const counts = data.map(item => item.count);
+          const total = counts.reduce((sum, count) => sum + count, 0);
+
+          new Chart(document.getElementById('roomEnvironmentPreferenceChart'), {
+            type: 'doughnut',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Room Environment Preference',
+                data: counts,
+                backgroundColor: ['#009596', '#06C', '#EC7A08', 'grey']
+              }]
+            },
+            options: {
+              plugins: {
+                datalabels: {
+                  formatter: (value, context) => {
+                    const percentage = (value / total * 100).toFixed(1);
+                    return `${percentage}%`;
+                  },
+                  color: '#fff',
+                  font: {
+                    weight: 'bold'
                   }
                 }
-              },
-              plugins: [ChartDataLabels]
-            });
-          }
+              }
+            },
+            plugins: [ChartDataLabels]
+          });
+        }
+
 
         // Students by Year of Study Column Chart with Customizations
         async function renderStudentsByYearOfStudyChart() {
@@ -381,7 +405,7 @@
 
           // Find the maximum value in the data sets
           const maxCount = Math.max(...counts);
-          const yAxisMax = maxCount + 5; // Add 10% padding for better visualization
+          const yAxisMax = maxCount + 5; // Add 5 units padding for better visualization
 
           new Chart(document.getElementById('studentsByYearOfStudyChart'), {
             type: 'bar',
@@ -442,7 +466,7 @@
 
           // Find the maximum value in the data sets
           const maxCount = Math.max(...totalCounts);
-          const yAxisMax = maxCount * 1.1; // Add 10% padding for better visualization
+          const yAxisMax = maxCount +10; // Add 10% padding for better visualization
 
           new Chart(document.getElementById('roomTypeDistributionChart'), {
             type: 'bar',

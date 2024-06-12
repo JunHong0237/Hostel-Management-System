@@ -1094,7 +1094,10 @@ app.get("/admin/summary-data", (req, res) => {
     totalStudents: "SELECT COUNT(*) as count FROM Student_Details",
     availableBeds: "SELECT SUM(bedAvail) as count FROM Room_Details",
     totalRooms: "SELECT COUNT(*) as count FROM Room_Details",
-    totalBeds: "SELECT SUM(room_capacity) as count FROM Room_Details"
+    totalBedsMale: "SELECT SUM(room_capacity) as count FROM Room_Details WHERE room_gender = 'Male'",
+    totalBedsFemale: "SELECT SUM(room_capacity) as count FROM Room_Details WHERE room_gender = 'Female'",
+    totalBeds: "SELECT SUM(room_capacity) as count FROM Room_Details",
+    studentsWithoutRoom: "SELECT COUNT(*) as count FROM Student_Details WHERE room_id IS NULL"
   };
 
   db.query(queries.totalStudents, (error, totalStudentsResults) => {
@@ -1120,24 +1123,55 @@ app.get("/admin/summary-data", (req, res) => {
           return;
         }
 
-        db.query(queries.totalBeds, (error, totalBedsResults) => {
+        db.query(queries.totalBedsMale, (error, totalBedsMaleResults) => {
           if (error) {
-            console.error("Error fetching total beds:", error);
-            res.status(500).send("An error occurred while fetching total beds.");
+            console.error("Error fetching total beds for males:", error);
+            res.status(500).send("An error occurred while fetching total beds for males.");
             return;
           }
 
-          res.json({
-            totalStudents: totalStudentsResults[0].count,
-            availableBeds: availableBedsResults[0].count,
-            totalRooms: totalRoomsResults[0].count,
-            totalBeds: totalBedsResults[0].count
+          db.query(queries.totalBedsFemale, (error, totalBedsFemaleResults) => {
+            if (error) {
+              console.error("Error fetching total beds for females:", error);
+              res.status(500).send("An error occurred while fetching total beds for females.");
+              return;
+            }
+
+            db.query(queries.totalBeds, (error, totalBedsResults) => {
+              if (error) {
+                console.error("Error fetching total beds:", error);
+                res
+                  .status(500)
+                  .send("An error occurred while fetching total beds.");
+                return;
+              }
+
+              db.query(queries.studentsWithoutRoom, (error, studentsWithoutRoomResults) => {
+                if (error) {
+                  console.error("Error fetching students without room:", error);
+                  res.status(500).send("An error occurred while fetching students without room.");
+                  return;
+                }
+
+                res.json({
+                  totalStudents: totalStudentsResults[0].count,
+                  availableBeds: availableBedsResults[0].count,
+                  totalRooms: totalRoomsResults[0].count,
+                  totalBedsMale: totalBedsMaleResults[0].count,
+                  totalBedsFemale: totalBedsFemaleResults[0].count,
+                  totalBeds: totalBedsResults[0].count,
+                  studentsWithoutRoom: studentsWithoutRoomResults[0].count
+                });
+              });
+            });
           });
         });
       });
     });
   });
 });
+
+
 
 
 // Fetch gender distribution data from the database
@@ -1192,7 +1226,7 @@ app.get("/admin/room-environment-preference", (req, res) => {
       .send("Unauthorized: Please log in to view this data.");
   }
   const query =
-    "SELECT std_pref, COUNT(*) as count FROM Student_Details GROUP BY std_pref";
+    "SELECT std_pref, COUNT(*) as count FROM Student_Details WHERE std_pref IS NOT NULL GROUP BY std_pref";
   db.query(query, (error, results) => {
     if (error) {
       console.error("Error fetching room environment preference data:", error);
@@ -1206,6 +1240,7 @@ app.get("/admin/room-environment-preference", (req, res) => {
     res.json(results);
   });
 });
+
 
 // Fetch student registration over time data from the database
 app.get("/admin/student-registration-over-time", (req, res) => {
@@ -1256,8 +1291,17 @@ app.get("/admin/year-of-degree", (req, res) => {
       .status(401)
       .send("Unauthorized: Please log in to view this data.");
   }
-  const query =
-    "SELECT std_year, COUNT(*) as count FROM Student_Details GROUP BY std_year";
+  const query = `
+    SELECT 
+      std_year, 
+      COUNT(*) as count 
+    FROM 
+      Student_Details 
+    WHERE 
+      std_year IS NOT NULL
+    GROUP BY 
+      std_year;
+  `;
   db.query(query, (error, results) => {
     if (error) {
       console.error("Error fetching year of degree data:", error);
