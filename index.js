@@ -912,9 +912,12 @@ app.get("/admin/room/unassign/:std_id", async (req, res) => {
       "UPDATE Student_Details SET room_id = NULL WHERE std_id = ?";
     await db.promise().query(unassignStudentQuery, [std_id]);
 
-    // Decrement room occupancy
-    const updateRoomQuery =
-      "UPDATE Room_Details SET room_occupancy = room_occupancy - 1 WHERE room_id = ?";
+    // Decrement room occupancy and increment bed availability
+    const updateRoomQuery = `
+      UPDATE Room_Details 
+      SET room_occupancy = room_occupancy - 1, 
+          bedAvail = bedAvail + 1 
+      WHERE room_id = ?`;
     await db.promise().query(updateRoomQuery, [room_id]);
 
     // Commit the transaction
