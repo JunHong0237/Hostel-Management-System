@@ -816,6 +816,7 @@
       <script>
         // Function to fetch all chart data
         async function fetchAllChartData() {
+          const summaryData = await fetchChartData('/admin/summary-data');
           const genderDistribution = await fetchChartData('/admin/gender-distribution');
           const studentsByFaculty = await fetchChartData('/admin/students-by-faculty');
           const roomEnvironmentPreference = await fetchChartData('/admin/room-environment-preference');
@@ -826,6 +827,7 @@
           const studentRegistrationOverTime = await fetchChartData(`/admin/student-registration-over-time?year=${new Date().getFullYear()}`);
 
           return {
+            summaryData,
             genderDistribution,
             studentsByFaculty,
             roomEnvironmentPreference,
