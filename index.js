@@ -163,14 +163,24 @@ app.post("/login", (req, res) => {
               });
             }
           } else {
-            res.send("Incorrect Student ID and/or Password!");
+            res.send(`
+              <script>
+                alert('Incorrect Student ID and/or Password!');
+                window.location.href = '/login.html'; // Adjust this path to your login page
+              </script>
+            `);
           }
         } catch (err) {
           console.error("Error verifying password:", err);
           res.status(500).send("An error occurred during login.");
         }
       } else {
-        res.send("Incorrect Student ID and/or Password!");
+        res.send(`
+          <script>
+            alert('Incorrect Student ID and/or Password!');
+            window.location.href = '/login.html'; // Adjust this path to your login page
+          </script>
+        `);
       }
     },
   );
@@ -640,7 +650,12 @@ app.post("/admin/login", (req, res) => {
           res.render("admin-dashboard", { admin });
         } else {
           // If the password doesn't match, send an error message
-          res.send("Incorrect username and/or password!");
+          res.send(`
+            <script>
+              alert('Incorrect username and/or password!');
+              window.location.href = '/admin-login.html'; // Adjust this path to your login page
+            </script>
+          `);
         }
       } catch (err) {
         console.error("Error comparing passwords: ", err);
@@ -648,7 +663,12 @@ app.post("/admin/login", (req, res) => {
       }
     } else {
       // If the record is not found, send an error message
-      res.send("Incorrect username and/or password!");
+      res.send(`
+        <script>
+          alert('Incorrect username and/or password!');
+          window.location.href = '/admin-login.html'; // Adjust this path to your login page
+        </script>
+      `);
     }
   });
 });
