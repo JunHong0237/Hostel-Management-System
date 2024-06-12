@@ -45,29 +45,21 @@
           <div class="summary-card">
             <h4>Total Students</h4>
             <p id="totalStudents" class="summary-number"></p>
+            <p id="studentsWithoutRoom" class="summary-subtext"></p>
           </div>
           <div class="summary-card">
-            <h4>Students Without Room</h4>
-            <p id="studentsWithoutRoom"class="summary-number"></p>
-          </div>
-          <div class="summary-card">
-            <h4>Available Beds / Total Beds</h4>
+            <h4>Available Beds<br>/ Total Beds</h4>
             <p id="availableBeds" class="summary-number"></p>
+          </div>
+          <div class="summary-card">
+             <h4>Total Beds<br>(Male / Female)</h4>
+            <p id="totalBedsMaleFemale" class="summary-number"></p>
           </div>
           <div class="summary-card">
             <h4>Total Rooms</h4>
             <p id="totalRooms" class="summary-number"></p>
           </div>
-          <div class="summary-card">
-            <h4>Total Beds (Male)</h4>
-            <p id="totalBedsMale"class="summary-number"></p>
-          </div>
-          <div class="summary-card">
-            <h4>Total Beds (Female)</h4>
-            <p id="totalBedsFemale" class="summary-number"></p>
-          </div>
         </div>
-
 
 
   <!-- Charts Grid -->
@@ -216,12 +208,12 @@
 
         async function displaySummaryData() {
           const data = await fetchSummaryData();
+          console.log(data);
           document.getElementById('totalStudents').textContent = data.totalStudents;
+          document.getElementById('studentsWithoutRoom').textContent = `Pending Room Selection: ${data.studentsWithoutRoom}`;
           document.getElementById('availableBeds').textContent = `${data.availableBeds} / ${data.totalBeds}`;
           document.getElementById('totalRooms').textContent = data.totalRooms;
-          document.getElementById('studentsWithoutRoom').textContent = data.studentsWithoutRoom;
-          document.getElementById('totalBedsMale').textContent = data.totalBedsMale;
-          document.getElementById('totalBedsFemale').textContent = data.totalBedsFemale;
+          document.getElementById('totalBedsMaleFemale').textContent = `${data.totalBedsMale} / ${data.totalBedsFemale}`;
         }
 
         document.addEventListener('DOMContentLoaded', displaySummaryData);
@@ -230,8 +222,6 @@
           const response = await fetch(url);
           return await response.json();
         }
-
-
 
         // Gender Distribution Pie Chart with Percentages
         async function renderGenderDistributionChart() {

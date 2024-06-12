@@ -1085,9 +1085,7 @@ app.post("/api/analyze-data", async (req, res) => {
 // Fetch summary data from the database
 app.get("/admin/summary-data", (req, res) => {
   if (!req.session.admin) {
-    return res
-      .status(401)
-      .send("Unauthorized: Please log in to view this data.");
+    return res.status(401).send("Unauthorized: Please log in to view this data.");
   }
 
   const queries = {
@@ -1110,9 +1108,7 @@ app.get("/admin/summary-data", (req, res) => {
     db.query(queries.availableBeds, (error, availableBedsResults) => {
       if (error) {
         console.error("Error fetching available beds:", error);
-        res
-          .status(500)
-          .send("An error occurred while fetching available beds.");
+        res.status(500).send("An error occurred while fetching available beds.");
         return;
       }
 
@@ -1140,9 +1136,7 @@ app.get("/admin/summary-data", (req, res) => {
             db.query(queries.totalBeds, (error, totalBedsResults) => {
               if (error) {
                 console.error("Error fetching total beds:", error);
-                res
-                  .status(500)
-                  .send("An error occurred while fetching total beds.");
+                res.status(500).send("An error occurred while fetching total beds.");
                 return;
               }
 
@@ -1170,8 +1164,6 @@ app.get("/admin/summary-data", (req, res) => {
     });
   });
 });
-
-
 
 
 // Fetch gender distribution data from the database
@@ -1240,7 +1232,6 @@ app.get("/admin/room-environment-preference", (req, res) => {
     res.json(results);
   });
 });
-
 
 // Fetch student registration over time data from the database
 app.get("/admin/student-registration-over-time", (req, res) => {

@@ -166,12 +166,12 @@ tr:hover {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 15%;
+  width: 23%;
 }
 
 .summary-card h4 {
   margin-bottom: 10px;
-  font-size: 19px;
+  font-size: 18px;
   color: #333;
 }
 
@@ -179,6 +179,11 @@ tr:hover {
   font-size: 20px;
   font-weight: bold;
   color: #007bff;
+}
+
+.summary-subtext {
+  font-size: 14px;
+  color: #666;
 }
 
 .charts-container {
