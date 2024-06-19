@@ -62,7 +62,7 @@
                                 <th>Preference</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Matching %</th>
+                                <th>Matching Score</th>
                             </tr>
                         </thead>
                      </table>
@@ -70,23 +70,24 @@
                         <table>
                         <tbody>
                             <% if (students.length > 0) { %>
-                                <% students.forEach(function(student, index) { %>
-                                    <tr>
-                                        <td><%= index + 1 %></td>
-                                        <td class="<%= student.std_faculty === selectedStudent.std_faculty ? 'bg-success text-white' : '' %>"><%= student.std_faculty %></td>
-                                        <td class="<%= student.std_year === selectedStudent.std_year ? 'bg-success text-white' : '' %>"><%= student.std_year %></td>
-                                        <td class="<%= student.std_state === selectedStudent.std_state ? 'bg-success text-white' : '' %>"><%= student.std_state %></td>
-                                        <td class="<%= student.std_pref === selectedStudent.std_pref ? 'bg-success text-white' : '' %>"><%= student.std_pref %></td>
-                                        <td><%= student.std_email %></td>
-                                        <td><%= student.std_phone %></td>
-                                        <td class="text-success"><%= student.matchingPercentage %>%</td>
-                                    </tr>
-                                <% }); %>
-                            <% } else { %>
+                              <% students.forEach(function(student, index) { %>
                                 <tr>
-                                    <td colspan="8" class="text-center">No other students in this room.</td>
+                                  <td><%= index + 1 %></td>
+                                  <td class="<%= student.std_faculty === selectedStudent.std_faculty ? 'bg-success text-white' : '' %>"><%= student.std_faculty %></td>
+                                  <td class="<%= student.std_year === selectedStudent.std_year ? 'bg-success text-white' : '' %>"><%= student.std_year %></td>
+                                  <td class="<%= student.std_state === selectedStudent.std_state ? 'bg-success text-white' : '' %>"><%= student.std_state %></td>
+                                  <td class="<%= student.std_pref === selectedStudent.std_pref ? 'bg-success text-white' : (selectedStudent.std_pref === 'FLEXIBLE' && (student.std_pref === 'SOCIAL' || student.std_pref === 'QUIET')) ? 'bg-success text-white' : '' %>"><%= student.std_pref %></td>
+                                  <td><%= student.std_email %></td>
+                                  <td><%= student.std_phone %></td>
+                                  <td class="text-success"><%= student.matchingPercentage %></td>
                                 </tr>
+                              <% }); %>
+                            <% } else { %>
+                              <tr>
+                                <td colspan="8" class="text-center">No other students in this room.</td>
+                              </tr>
                             <% } %>
+
                         </tbody>
                     </table>
                 </div>

@@ -371,10 +371,21 @@ app.get("/select-room", (req, res) => {
             let stateMatchCount = 0;
 
             roommates.forEach((roommate) => {
-              if (roommate.std_pref === student.std_pref) {
-                score += 40;
-                preferenceMatchCount++;
+              if (student.std_pref === "FLEXIBLE") {
+                if (
+                  roommate.std_pref === "SOCIAL" ||
+                  roommate.std_pref === "QUIET"
+                ) {
+                  score += 40;
+                  preferenceMatchCount++;
+                }
+              } else {
+                if (roommate.std_pref === student.std_pref) {
+                  score += 40;
+                  preferenceMatchCount++;
+                }
               }
+
               if (roommate.std_faculty === student.std_faculty) {
                 score += 20;
                 facultyMatchCount++;
@@ -420,6 +431,7 @@ app.get("/select-room", (req, res) => {
 });
 
 // Route to view details for a specific room
+// Route to view details for a specific room
 app.get("/view-room-details/:room_id", (req, res) => {
   if (!req.session.user) {
     return res.send(`
@@ -444,7 +456,9 @@ app.get("/view-room-details/:room_id", (req, res) => {
          CASE
             WHEN std_state = ? THEN 5 ELSE 0 END +
          CASE
-            WHEN std_pref = ? THEN 40 ELSE 0 END
+            WHEN ? = 'flexible' AND (std_pref = 'social' OR std_pref = 'quiet') THEN 40 ELSE 0 END +
+         CASE
+            WHEN std_pref = ? AND ? != 'flexible' THEN 40 ELSE 0 END
         ) AS matchingPercentage
         FROM Student_Details
         WHERE room_id = ?
@@ -470,6 +484,8 @@ app.get("/view-room-details/:room_id", (req, res) => {
           selectedStudent.std_faculty,
           selectedStudent.std_year,
           selectedStudent.std_state,
+          selectedStudent.std_pref,
+          selectedStudent.std_pref,
           selectedStudent.std_pref,
           room_id,
         ],
