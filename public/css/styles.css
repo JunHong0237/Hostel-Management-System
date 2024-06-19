@@ -296,3 +296,8 @@ tr:hover {
   color: #000000;
   font-weight: bold;
 }
+
+.no-interaction {
+  pointer-events: none;
+  opacity: 1;
+}

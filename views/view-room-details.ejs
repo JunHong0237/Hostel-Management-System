@@ -124,9 +124,9 @@
                 </div>
 <br><br>
                 <div class="text-center">
-                    <form action="/select-room/<%= room.room_id %>" method="post" class="d-inline">
+                    <form id="selectRoomForm" action="/select-room/<%= room.room_id %>" method="post" class="d-inline">
                         <input type="hidden" name="std_id" value="<%= selectedStudent.std_id %>">
-                        <button type="submit" class="btn all-btn btn-success" >Select This Room</button>
+                        <button type="submit" class="btn all-btn btn-success">Select This Room</button>
                     </form>
                 </div>
             </div>
@@ -145,10 +145,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    You have successfully selected the room!
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn all-btn btn-primary" onclick="redirectToDashboard()">Return to Dashboard</button>
+                    You have successfully selected the room! You will be redirected to the dashboard in a few seconds.
                 </div>
             </div>
         </div>
@@ -164,12 +161,39 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <% if (showSuccessModal) { %>
-        <script>
-            $(document).ready(function() {
-                $('#successModal').modal('show');
+    <script>
+        function showSuccessModalAndRedirect() {
+            // Add the class to disable interactions
+            document.body.classList.add('no-interaction');
+
+            $('#successModal').modal('show');
+            setTimeout(() => {
+                window.location.href = '/dashboard'; 
+            }, 2000); 
+        }
+
+        document.getElementById('selectRoomForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formAction = this.action;
+            const formData = new FormData(this);
+
+            fetch(formAction, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    showSuccessModalAndRedirect();
+                } else {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .catch(error => {
+                console.error('Error selecting room:', error);
+                alert('An error occurred while selecting the room.');
             });
-        </script>
-    <% } %>
+        });
+    </script>
 </body>
 </html>
