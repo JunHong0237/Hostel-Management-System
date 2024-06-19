@@ -232,7 +232,7 @@ app.post("/edit-profile", upload.single("profile_pic"), async (req, res) => {
     std_year,
     std_state,
     std_pref,
-    req.session.user.id, // Use session user ID
+    req.session.user.id,
   ];
 
   try {
@@ -297,9 +297,12 @@ app.post("/upload-profile-pic", upload.single("profile_pic"), (req, res) => {
 // Route to display room selection page
 app.get("/select-room", (req, res) => {
   if (!req.session.user) {
-    return res
-      .status(401)
-      .send("Unauthorized: Please log in to select a room.");
+    return res.send(`
+             <script>
+               alert('Unauthorized: Please log in to perform this action.');
+               window.location.href = '/login.html'; 
+             </script>
+           `);
   }
 
   const studentId = req.session.user.id;
@@ -419,9 +422,12 @@ app.get("/select-room", (req, res) => {
 // Route to view details for a specific room
 app.get("/view-room-details/:room_id", (req, res) => {
   if (!req.session.user) {
-    return res
-      .status(401)
-      .send("Unauthorized: Please log in to view room details.");
+    return res.send(`
+               <script>
+                 alert('Unauthorized: Please log in to view room details.');
+                 window.location.href = '/login.html'; 
+               </script>
+             `);
   }
 
   const { room_id } = req.params;
@@ -561,9 +567,12 @@ app.post("/select-room/:room_id", (req, res) => {
 
 app.get("/dashboard", (req, res) => {
   if (!req.session.user) {
-    return res
-      .status(401)
-      .send("Unauthorized: Please log in to view the dashboard.");
+    return res.send(`
+             <script>
+               alert('Unauthorized: Please log in to view the dashboard.');
+               window.location.href = '/'; 
+             </script>
+           `);
   }
 
   const studentId = req.session.user.id;
@@ -659,7 +668,7 @@ app.post("/admin/login", (req, res) => {
         );
         if (isMatch) {
           // Store admin information in session
-          req.session.admin = { id: admin_id, name: admin.admin_name }; // Assuming admin_name is a field
+          req.session.admin = { id: admin_id, name: admin.admin_name };
 
           // Redirect to the admin dashboard or render it with session data
           res.render("admin-dashboard", { admin });
@@ -668,7 +677,7 @@ app.post("/admin/login", (req, res) => {
           res.send(`
             <script>
               alert('Incorrect username and/or password!');
-              window.location.href = '/admin-login.html'; // Adjust this path to your login page
+              window.location.href = '/admin-login.html'; 
             </script>
           `);
         }
@@ -690,9 +699,12 @@ app.post("/admin/login", (req, res) => {
 
 app.get("/admin/dashboard", (req, res) => {
   if (!req.session.admin) {
-    return res
-      .status(401)
-      .send("Unauthorized: Please log in to view this page.");
+    return res.send(`
+              <script>
+                alert('Unauthorized: Please log in to view the dashboard.');
+                window.location.href = '/admin-login.html'; 
+              </script>
+            `);
   }
   res.render("admin-dashboard", { admin: req.session.admin });
 });
@@ -711,9 +723,12 @@ const formatDate = (date) => {
 //admin-stdeunt-details route
 app.get("/admin/students", (req, res) => {
   if (!req.session.admin) {
-    return res
-      .status(401)
-      .send("Unauthorized: Please log in to view this page.");
+    return res.send(`
+             <script>
+               alert('Unauthorized: Please log in to view this page.');
+               window.location.href = '/admin-login.html'; 
+             </script>
+           `);
   }
 
   const { gender, faculty, year, state, pref, search } = req.query;
@@ -792,9 +807,12 @@ app.get("/admin/students", (req, res) => {
 //admin-room-details route
 app.get("/admin/rooms", (req, res) => {
   if (!req.session.admin) {
-    return res
-      .status(401)
-      .send("Unauthorized: Please log in to view this page.");
+    return res.send(`
+              <script>
+                alert('Unauthorized: Please log in to view this page.');
+                window.location.href = '/admin-login.html'; 
+              </script>
+            `);
   }
 
   const { capacity, gender } = req.query;
@@ -899,9 +917,12 @@ app.post("/admin/students/register", async (req, res) => {
 
 app.get("/admin/room/view/:room_id", async (req, res) => {
   if (!req.session.admin) {
-    return res
-      .status(401)
-      .send("Unauthorized: Please log in to view this page.");
+    return res.send(`
+              <script>
+                alert('Unauthorized: Please log in to view this page.');
+                window.location.href = '/admin-login.html'; 
+              </script>
+            `);
   }
 
   const { room_id } = req.params;
@@ -999,7 +1020,7 @@ app.post("/admin/rooms/add", async (req, res) => {
         bedAvail,
       ]);
 
-    // Redirect back to the room details page or send a success message
+    // Redirect back to the room details page
     res.redirect("/admin/rooms");
   } catch (error) {
     console.error("Error adding new room: ", error);
