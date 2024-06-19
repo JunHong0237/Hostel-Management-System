@@ -1486,7 +1486,7 @@ app.post("/admin/students/edit", async (req, res) => {
       .status(401)
       .send("Unauthorized: Please log in to view this data.");
   }
-  const { original_std_id, std_fullname, std_gender, std_password } = req.body;
+  const { original_std_id, std_fullname, std_password } = req.body;
 
   console.log(req.body); // Debug: log the received form data
 
@@ -1499,17 +1499,17 @@ app.post("/admin/students/edit", async (req, res) => {
       const hashedPassword = await bcrypt.hash(std_password, saltRounds);
       updateQuery = `
         UPDATE Student_Details 
-        SET std_fullname = ?, std_gender = ?, std_password = ?
+        SET std_fullname = ?, std_password = ?
         WHERE std_id = ?
       `;
-      queryParams = [std_fullname, std_gender, hashedPassword, original_std_id];
+      queryParams = [std_fullname, hashedPassword, original_std_id];
     } else {
       updateQuery = `
         UPDATE Student_Details 
-        SET std_fullname = ?, std_gender = ?
+        SET std_fullname = ?
         WHERE std_id = ?
       `;
-      queryParams = [std_fullname, std_gender, original_std_id];
+      queryParams = [std_fullname, original_std_id];
     }
 
     db.query(updateQuery, queryParams, (error, result) => {

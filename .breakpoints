@@ -4,7 +4,7 @@
       {
         "id": "08794e69-315e-4eab-844a-e5e0b763016f",
         "line": 1,
-        "version": 362,
+        "version": 388,
         "index": 0
       }
     ],
@@ -12,16 +12,16 @@
       {
         "id": "42d1733d-d377-4f49-bcf3-fa81298eb3e5",
         "line": 1,
-        "version": 1,
+        "version": 3,
         "index": 0
       }
     ],
     "views/view-room-details.ejs": [
       {
         "id": "3071b65b-8cc2-4dd8-8792-b322bd18895f",
-        "line": 46,
-        "version": 1,
-        "index": 1928
+        "line": 47,
+        "version": 3,
+        "index": 1972
       }
     ]
   }

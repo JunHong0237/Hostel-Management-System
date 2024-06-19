@@ -199,40 +199,41 @@
 
         <!-- Edit Student Modal -->
         <div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="editStudentModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editStudentModalLabel">Edit Student</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="editStudentForm" action="/admin/students/edit" method="post">
-                            <input type="hidden" id="original_std_id" name="original_std_id">
-                            <div class="form-group">
-                                <label for="edit_std_fullname">Full Name:</label>
-                                <input type="text" id="edit_std_fullname" name="std_fullname" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_std_gender">Gender:</label>
-                                <select id="edit_std_gender" name="std_gender" class="form-control" required>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="edit_std_password">Reset Password:</label>
-                                <input type="password" id="edit_std_password" name="std_password" class="form-control" placeholder="Enter New Password">
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn all-btn btn-success">Update Student</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editStudentModalLabel">Edit Student</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form id="editStudentForm" action="/admin/students/edit" method="post">
+                  <input type="hidden" id="original_std_id" name="original_std_id">
+                  <div class="form-group">
+                    <label for="edit_std_fullname">Full Name:</label>
+                    <input type="text" id="edit_std_fullname" name="std_fullname" class="form-control" required>
+                  </div>
+                  <div class="form-group" id="genderField">
+                    <label for="edit_std_gender">Gender:</label>
+                    <select id="edit_std_gender" name="std_gender" class="form-control" required>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="edit_std_password">Reset Password:</label>
+                    <input type="password" id="edit_std_password" name="std_password" class="form-control" placeholder="Enter New Password">
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn all-btn btn-success">Update Student</button>
+                  </div>
+                </form>
+              </div>
             </div>
+          </div>
         </div>
+
 
         <!-- Delete Confirmation Modal -->
         <div class="modal fade" id="deleteStudentModal" tabindex="-1" role="dialog" aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
@@ -294,13 +295,13 @@
             });
         }
 
-        function openEditModal(std_id, std_fullname, std_gender) {
+          function openEditModal(std_id, std_fullname, std_gender) {
             document.getElementById('original_std_id').value = std_id;
             document.getElementById('edit_std_fullname').value = std_fullname;
-            document.getElementById('edit_std_gender').value = std_gender;
             document.getElementById('edit_std_password').value = '';
+            document.getElementById('genderField').style.display = 'none';
             $('#editStudentModal').modal('show');
-        }
+          }
 
         function openDeleteModal(std_id, std_fullname) {
             document.getElementById('delete_std_id').value = std_id;
