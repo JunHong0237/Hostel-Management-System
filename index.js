@@ -36,6 +36,23 @@ app.use(
   }),
 );
 
+
+app.get('/preventBack.js', (req, res) => {
+  res.type('.js');
+  res.send(`
+    function preventBack() {
+      window.history.forward();
+    }
+
+    preventBack();
+    setTimeout(preventBack, 0);
+
+    window.onunload = function () {
+      null;
+    };
+  `);
+});
+
 // For __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
