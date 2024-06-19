@@ -11,7 +11,6 @@ import bcrypt from "bcrypt";
 
 const saltRounds = 10;
 
-// Function to hash a password
 async function hashPassword(plainPassword) {
   try {
     const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
@@ -29,16 +28,15 @@ const port = process.env.PORT || 3000;
 
 app.use(
   session({
-    secret: "your-secret-key",
+    secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // Set to true if using HTTPS
+    cookie: { secure: false },
   }),
 );
 
-
-app.get('/preventBack.js', (req, res) => {
-  res.type('.js');
+app.get("/preventBack.js", (req, res) => {
+  res.type(".js");
   res.send(`
     function preventBack() {
       window.history.forward();
@@ -868,8 +866,6 @@ app.post("/admin/students/register", async (req, res) => {
 
         // After registration, redirect back to the student details page or send a success message
         res.redirect("/admin/students");
-        // Or you could render the page with a success message
-        // res.render("admin-student-details", { successMessage: "Student registered successfully." });
       },
     );
   } catch (error) {
@@ -1102,17 +1098,22 @@ app.post("/api/analyze-data", async (req, res) => {
 // Fetch summary data from the database
 app.get("/admin/summary-data", (req, res) => {
   if (!req.session.admin) {
-    return res.status(401).send("Unauthorized: Please log in to view this data.");
+    return res
+      .status(401)
+      .send("Unauthorized: Please log in to view this data.");
   }
 
   const queries = {
     totalStudents: "SELECT COUNT(*) as count FROM Student_Details",
     availableBeds: "SELECT SUM(bedAvail) as count FROM Room_Details",
     totalRooms: "SELECT COUNT(*) as count FROM Room_Details",
-    totalBedsMale: "SELECT SUM(room_capacity) as count FROM Room_Details WHERE room_gender = 'Male'",
-    totalBedsFemale: "SELECT SUM(room_capacity) as count FROM Room_Details WHERE room_gender = 'Female'",
+    totalBedsMale:
+      "SELECT SUM(room_capacity) as count FROM Room_Details WHERE room_gender = 'Male'",
+    totalBedsFemale:
+      "SELECT SUM(room_capacity) as count FROM Room_Details WHERE room_gender = 'Female'",
     totalBeds: "SELECT SUM(room_capacity) as count FROM Room_Details",
-    studentsWithoutRoom: "SELECT COUNT(*) as count FROM Student_Details WHERE room_id IS NULL"
+    studentsWithoutRoom:
+      "SELECT COUNT(*) as count FROM Student_Details WHERE room_id IS NULL",
   };
 
   db.query(queries.totalStudents, (error, totalStudentsResults) => {
@@ -1125,7 +1126,9 @@ app.get("/admin/summary-data", (req, res) => {
     db.query(queries.availableBeds, (error, availableBedsResults) => {
       if (error) {
         console.error("Error fetching available beds:", error);
-        res.status(500).send("An error occurred while fetching available beds.");
+        res
+          .status(500)
+          .send("An error occurred while fetching available beds.");
         return;
       }
 
@@ -1139,41 +1142,59 @@ app.get("/admin/summary-data", (req, res) => {
         db.query(queries.totalBedsMale, (error, totalBedsMaleResults) => {
           if (error) {
             console.error("Error fetching total beds for males:", error);
-            res.status(500).send("An error occurred while fetching total beds for males.");
+            res
+              .status(500)
+              .send("An error occurred while fetching total beds for males.");
             return;
           }
 
           db.query(queries.totalBedsFemale, (error, totalBedsFemaleResults) => {
             if (error) {
               console.error("Error fetching total beds for females:", error);
-              res.status(500).send("An error occurred while fetching total beds for females.");
+              res
+                .status(500)
+                .send(
+                  "An error occurred while fetching total beds for females.",
+                );
               return;
             }
 
             db.query(queries.totalBeds, (error, totalBedsResults) => {
               if (error) {
                 console.error("Error fetching total beds:", error);
-                res.status(500).send("An error occurred while fetching total beds.");
+                res
+                  .status(500)
+                  .send("An error occurred while fetching total beds.");
                 return;
               }
 
-              db.query(queries.studentsWithoutRoom, (error, studentsWithoutRoomResults) => {
-                if (error) {
-                  console.error("Error fetching students without room:", error);
-                  res.status(500).send("An error occurred while fetching students without room.");
-                  return;
-                }
+              db.query(
+                queries.studentsWithoutRoom,
+                (error, studentsWithoutRoomResults) => {
+                  if (error) {
+                    console.error(
+                      "Error fetching students without room:",
+                      error,
+                    );
+                    res
+                      .status(500)
+                      .send(
+                        "An error occurred while fetching students without room.",
+                      );
+                    return;
+                  }
 
-                res.json({
-                  totalStudents: totalStudentsResults[0].count,
-                  availableBeds: availableBedsResults[0].count,
-                  totalRooms: totalRoomsResults[0].count,
-                  totalBedsMale: totalBedsMaleResults[0].count,
-                  totalBedsFemale: totalBedsFemaleResults[0].count,
-                  totalBeds: totalBedsResults[0].count,
-                  studentsWithoutRoom: studentsWithoutRoomResults[0].count
-                });
-              });
+                  res.json({
+                    totalStudents: totalStudentsResults[0].count,
+                    availableBeds: availableBedsResults[0].count,
+                    totalRooms: totalRoomsResults[0].count,
+                    totalBedsMale: totalBedsMaleResults[0].count,
+                    totalBedsFemale: totalBedsFemaleResults[0].count,
+                    totalBeds: totalBedsResults[0].count,
+                    studentsWithoutRoom: studentsWithoutRoomResults[0].count,
+                  });
+                },
+              );
             });
           });
         });
@@ -1181,7 +1202,6 @@ app.get("/admin/summary-data", (req, res) => {
     });
   });
 });
-
 
 // Fetch gender distribution data from the database
 app.get("/admin/gender-distribution", (req, res) => {
