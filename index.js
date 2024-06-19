@@ -181,7 +181,7 @@ app.post("/login", (req, res) => {
             res.send(`
               <script>
                 alert('Incorrect Student ID and/or Password!');
-                window.location.href = '/login.html'; // Adjust this path to your login page
+                window.location.href = '/login.html'; 
               </script>
             `);
           }
@@ -193,7 +193,7 @@ app.post("/login", (req, res) => {
         res.send(`
           <script>
             alert('Incorrect Student ID and/or Password!');
-            window.location.href = '/login.html'; // Adjust this path to your login page
+            window.location.href = '/login.html'; 
           </script>
         `);
       }
@@ -844,30 +844,52 @@ app.post("/admin/students/register", async (req, res) => {
   const reg_date = now.toISOString().slice(0, 19).replace("T", " ");
 
   try {
-    // Hash the password before storing it
-    const hashedPassword = await bcrypt.hash(std_password, saltRounds);
+    // Check if std_id already exists
+    const checkQuery = "SELECT std_id FROM Student_Details WHERE std_id = ?";
+    db.query(checkQuery, [std_id], async (checkError, checkResults) => {
+      if (checkError) {
+        console.error("Error checking student ID: ", checkError);
+        return res
+          .status(500)
+          .send("An error occurred while checking the student ID.");
+      }
 
-    // SQL query to insert a new student record
-    const query =
-      "INSERT INTO Student_Details (std_id, std_fullName, std_gender, std_password, reg_date) VALUES (?, ?, ?, ?, ?)";
+      if (checkResults.length > 0) {
+        // Student ID already exists
+        return res.send(
+          `
+              <script>
+                alert('A student with this ID already exists. Please use a different ID.');
+                window.location.href = '/admin/students'; 
+              </script>
+            `,
+        );
+      }
 
-    db.query(
-      query,
-      [std_id, std_fullName, std_gender, hashedPassword, reg_date],
-      (error, results) => {
-        if (error) {
-          // Handle any errors that occur during the query
-          console.error("Error registering new student: ", error);
-          res
-            .status(500)
-            .send("An error occurred while registering the student.");
-          return;
-        }
+      // Hash the password before storing it
+      const hashedPassword = await bcrypt.hash(std_password, saltRounds);
 
-        // After registration, redirect back to the student details page or send a success message
-        res.redirect("/admin/students");
-      },
-    );
+      // SQL query to insert a new student record
+      const insertQuery =
+        "INSERT INTO Student_Details (std_id, std_fullName, std_gender, std_password, reg_date) VALUES (?, ?, ?, ?, ?)";
+
+      db.query(
+        insertQuery,
+        [std_id, std_fullName, std_gender, hashedPassword, reg_date],
+        (insertError, insertResults) => {
+          if (insertError) {
+            // Handle any errors that occur during the query
+            console.error("Error registering new student: ", insertError);
+            return res
+              .status(500)
+              .send("An error occurred while registering the student.");
+          }
+
+          // After registration, redirect back to the student details page or send a success message
+          res.redirect("/admin/students");
+        },
+      );
+    });
   } catch (error) {
     // Handle any errors that occur during hashing
     console.error("Error hashing password: ", error);
