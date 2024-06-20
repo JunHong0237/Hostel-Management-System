@@ -379,8 +379,19 @@ app.get("/select-room", (req, res) => {
                   score += 40;
                   preferenceMatchCount++;
                 }
-              } else {
-                if (roommate.std_pref === student.std_pref) {
+              } else if (student.std_pref === "SOCIAL") {
+                if (
+                  roommate.std_pref === "SOCIAL" ||
+                  roommate.std_pref === "FLEXIBLE"
+                ) {
+                  score += 40;
+                  preferenceMatchCount++;
+                }
+              } else if (student.std_pref === "QUIET") {
+                if (
+                  roommate.std_pref === "QUIET" ||
+                  roommate.std_pref === "FLEXIBLE"
+                ) {
                   score += 40;
                   preferenceMatchCount++;
                 }
@@ -431,7 +442,6 @@ app.get("/select-room", (req, res) => {
 });
 
 // Route to view details for a specific room
-// Route to view details for a specific room
 app.get("/view-room-details/:room_id", (req, res) => {
   if (!req.session.user) {
     return res.send(`
@@ -456,9 +466,10 @@ app.get("/view-room-details/:room_id", (req, res) => {
          CASE
             WHEN std_state = ? THEN 5 ELSE 0 END +
          CASE
-            WHEN ? = 'flexible' AND (std_pref = 'social' OR std_pref = 'quiet') THEN 40 ELSE 0 END +
-         CASE
-            WHEN std_pref = ? AND ? != 'flexible' THEN 40 ELSE 0 END
+            WHEN (? = 'FLEXIBLE' AND (std_pref = 'SOCIAL' OR std_pref = 'QUIET')) OR
+                 (? = 'SOCIAL' AND (std_pref = 'SOCIAL' OR std_pref = 'FLEXIBLE')) OR
+                 (? = 'QUIET' AND (std_pref = 'QUIET' OR std_pref = 'FLEXIBLE')) OR
+                 (? = std_pref) THEN 40 ELSE 0 END
         ) AS matchingPercentage
         FROM Student_Details
         WHERE room_id = ?
@@ -484,6 +495,7 @@ app.get("/view-room-details/:room_id", (req, res) => {
           selectedStudent.std_faculty,
           selectedStudent.std_year,
           selectedStudent.std_state,
+          selectedStudent.std_pref,
           selectedStudent.std_pref,
           selectedStudent.std_pref,
           selectedStudent.std_pref,
